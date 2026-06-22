@@ -187,18 +187,15 @@
                       <button class="btn btn-sm btn-primary" onclick="editFranchise(<%= f.id %>, '<%= f.member_name %>', '<%= f.branch_name || '' %>', '<%= f.phone || '' %>', '<%= f.address || '' %>', '<%= f.city || '' %>')">Edit</button>
                       <button class="btn btn-sm btn-warning" onclick="changePassword(<%= f.id %>, '<%= f.franchise_code %>')">Pass</button>
                       <button class="btn btn-sm btn-success" onclick="addStock(<%= f.id %>, '<%= f.franchise_code %> - <%= f.member_name %>')">Stock</button>
-                      <button class="btn btn-sm btn-info" onclick="fundTransfer(<%= f.id %>, '<%= f.franchise_code %>')">Fund</button>
-                      <button class="btn btn-sm btn-purple" onclick="commissionPayout(<%= f.id %>, '<%= f.franchise_code %>')">Pay</button>
+                      <button class="btn btn-sm btn-info" onclick="fundTransfer(<%= f.id %>, '<%= f.franchise_code %>', <%= (f.commission_wallet || 0) %>)">Fund</button>
+                      <button class="btn btn-sm btn-purple" onclick="commissionPayout(<%= f.id %>, '<%= f.franchise_code %>', <%= (f.commission_wallet || 0) %>)">Pay</button>
                       <form method="POST" action="/admin/login-as-franchise/<%= f.id %>" style="display:inline">
                         <button type="submit" class="btn btn-sm btn-outline" style="border:1px solid #0ea5e9;color:#0ea5e9" onclick="return confirm('Login as <%= f.franchise_code %>?')">Login</button>
                       </form>
                       <form method="POST" action="/admin/franchise/<%= f.id %>/toggle-status" style="display:inline">
                         <button class="btn btn-sm <%= f.status === 'active' ? 'btn-danger' : 'btn-success' %>"><%= f.status === 'active' ? 'Block' : 'Unblock' %></button>
                       </form>
-                      <form method="POST" action="/admin/franchise/delete" style="display:inline" onsubmit="return confirm('Are you sure you want to DELETE franchise <%= f.franchise_code %> (<%= f.member_name %>)? This cannot be undone.')">
-                        <input type="hidden" name="franchise_id" value="<%= f.id %>">
-                        <button type="submit" class="btn btn-sm btn-danger" style="background:#dc2626;color:#fff;border:none">Delete</button>
-                      </form>
+
                     </div>
                   </td>
                 </tr>
@@ -331,14 +328,14 @@
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
             <div style="background:white;border:1px solid #d1fae5;border-radius:10px;padding:14px">
               <label style="display:block;font-size:11px;font-weight:600;color:#059669;text-transform:uppercase;margin-bottom:6px">Commission Type</label>
-              <select name="activation_commission_type" class="form-control" style="border-color:#a7f3d0">
+              <select name="activation_commission_type" class="form-control" style="border-color:#a7f3d0" onchange="updateActivationLabel(this)">
                 <option value="bv" <%= actType === 'bv' ? 'selected' : '' %>>&#128176; Per BV (Business Volume)</option>
                 <option value="amount" <%= actType === 'amount' ? 'selected' : '' %>>&#128176; Fixed Amount (&#8377;)</option>
-                <option value="percentage" <%= actType === 'percentage' ? 'selected' : '' %>>&#128176; Percentage (%)</option>
+                <option value="dp" <%= actType === 'dp' ? 'selected' : '' %>>&#128176; Percentage (%) [dp]</option>
               </select>
             </div>
             <div style="background:white;border:1px solid #d1fae5;border-radius:10px;padding:14px">
-              <label style="display:block;font-size:11px;font-weight:600;color:#059669;text-transform:uppercase;margin-bottom:6px">Commission Value</label>
+              <label style="display:block;font-size:11px;font-weight:600;color:#059669;text-transform:uppercase;margin-bottom:6px">Commission Value <span id="act_label" style="font-size:13px;font-weight:700">(<%= actType === 'amount' ? '₹' : '%' %>)</span></label>
               <input type="number" step="0.01" name="franchise_activation_commission_value" class="form-control" value="<%= actVal %>" style="border-color:#a7f3d0;font-size:18px;font-weight:700;color:#065f46"/>
             </div>
           </div>
@@ -359,14 +356,14 @@
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
             <div style="background:white;border:1px solid #bfdbfe;border-radius:10px;padding:14px">
               <label style="display:block;font-size:11px;font-weight:600;color:#2563eb;text-transform:uppercase;margin-bottom:6px">Commission Type</label>
-              <select name="repurchase_commission_type" class="form-control" style="border-color:#93c5fd">
+              <select name="repurchase_commission_type" class="form-control" style="border-color:#93c5fd" onchange="updateRepurchaseLabel(this)">
                 <option value="bv" <%= repType === 'bv' ? 'selected' : '' %>>&#128176; Per BV (Business Volume)</option>
                 <option value="amount" <%= repType === 'amount' ? 'selected' : '' %>>&#128176; Fixed Amount (&#8377;)</option>
-                <option value="percentage" <%= repType === 'percentage' ? 'selected' : '' %>>&#128176; Percentage (%)</option>
+                <option value="dp" <%= repType === 'dp' ? 'selected' : '' %>>&#128176; Percentage (%) [dp]</option>
               </select>
             </div>
             <div style="background:white;border:1px solid #bfdbfe;border-radius:10px;padding:14px">
-              <label style="display:block;font-size:11px;font-weight:600;color:#2563eb;text-transform:uppercase;margin-bottom:6px">Commission Value</label>
+              <label style="display:block;font-size:11px;font-weight:600;color:#2563eb;text-transform:uppercase;margin-bottom:6px">Commission Value <span id="rep_label" style="font-size:13px;font-weight:700">(<%= repType === 'amount' ? '₹' : '%' %>)</span></label>
               <input type="number" step="0.01" name="franchise_repurchase_commission_value" class="form-control" value="<%= repVal %>" style="border-color:#93c5fd;font-size:18px;font-weight:700;color:#1e40af"/>
             </div>
           </div>
@@ -603,21 +600,22 @@
       <h3>Fund Transfer</h3>
       <form method="POST" action="/admin/franchise/fund-transfer">
         <input type="hidden" name="franchise_id" id="fund_id"/>
+        <input type="hidden" id="fund_commission_balance" value="0"/>
         <div class="form-group">
           <label>Franchise</label>
           <p id="fund_name_display" style="font-weight:600;font-size:14px"></p>
         </div>
         <div class="form-group">
           <label>Type</label>
-          <select name="type" class="form-control" required>
+          <select name="type" class="form-control" required onchange="showFundCommission(this)">
             <option value="credit">Credit (Add Funds)</option>
             <option value="debit">Debit (Deduct Funds)</option>
             <option value="commission_transfer">Transfer Commission to Fund</option>
           </select>
         </div>
         <div class="form-group">
-          <label>Amount (&#8377;)</label>
-          <input type="number" step="0.01" min="0.01" name="amount" class="form-control" required/>
+          <label>Amount (&#8377;) <span id="fund_commission_info" style="font-weight:normal;font-size:12px;color:#888;display:none"></span></label>
+          <input type="number" step="0.01" min="0.01" name="amount" id="fund_amount" class="form-control" required/>
         </div>
         <div class="form-group">
           <label>Note (optional)</label>
@@ -642,8 +640,8 @@
           <p id="payout_name_display" style="font-weight:600;font-size:14px"></p>
         </div>
         <div class="form-group">
-          <label>Amount (&#8377;)</label>
-          <input type="number" step="0.01" min="0.01" name="amount" class="form-control" required/>
+          <label>Amount (&#8377;) <span id="payout_available" style="font-weight:normal;font-size:12px;color:#888"></span></label>
+          <input type="number" step="0.01" min="0.01" name="amount" id="payout_amount" class="form-control" required/>
         </div>
         <div class="form-group">
           <label>Bank Reference / UTR No.</label>
@@ -672,6 +670,12 @@
       document.getElementById('pw_name_display').textContent = label;
       document.getElementById('passwordModal').classList.add('active');
     }
+    function updateActivationLabel(sel) {
+      document.getElementById('act_label').textContent = sel.value === 'amount' ? '(₹)' : '(%)';
+    }
+    function updateRepurchaseLabel(sel) {
+      document.getElementById('rep_label').textContent = sel.value === 'amount' ? '(₹)' : '(%)';
+    }
     var franchiseStockStats = <%- JSON.stringify(franchiseStockStats) %>;
     var productIds = <%- JSON.stringify(products.map(function(p){ return p.id })) %>;
     function addStock(id, label) {
@@ -689,14 +693,32 @@
       });
       document.getElementById('stockModal').classList.add('active');
     }
-    function fundTransfer(id, label) {
+    function fundTransfer(id, label, commission) {
       document.getElementById('fund_id').value = id;
       document.getElementById('fund_name_display').textContent = label;
+      document.getElementById('fund_commission_balance').value = commission || 0;
+      document.getElementById('fund_commission_info').textContent = '';
+      document.getElementById('fund_commission_info').style.display = 'none';
+      document.getElementById('fund_amount').max = '';
       document.getElementById('fundModal').classList.add('active');
     }
-    function commissionPayout(id, label) {
+    function showFundCommission(sel) {
+      var info = document.getElementById('fund_commission_info');
+      var bal = parseFloat(document.getElementById('fund_commission_balance').value) || 0;
+      if (sel.value === 'commission_transfer') {
+        info.textContent = '(Available: \u20B9' + bal.toFixed(2) + ')';
+        info.style.display = '';
+      } else {
+        info.textContent = '';
+        info.style.display = 'none';
+      }
+    }
+    function commissionPayout(id, label, amount) {
       document.getElementById('payout_id').value = id;
       document.getElementById('payout_name_display').textContent = label;
+      document.getElementById('payout_available').textContent = '(Available: \u20B9' + (amount || 0).toFixed(2) + ')';
+      document.getElementById('payout_amount').value = amount || 0;
+      document.getElementById('payout_amount').max = amount || 0;
       document.getElementById('payoutModal').classList.add('active');
     }
     function closeModal(id) {

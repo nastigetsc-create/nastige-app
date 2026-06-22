@@ -2975,7 +2975,7 @@ app.use('/receipts', express.static(path.join(ROOT_UPLOADS_DIR, 'receipts')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(morgan('dev'));
-app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false, frameguard: false }));
+app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false, frameguard: { action: 'sameorigin' } }));
 app.use(
   session({
     secret: process.env.SESSION_SECRET || 'nastige-mlm-secure-key-9f8a2b7c3d1e4f5a6b7c8d9e0f1a2b3c',
@@ -2983,9 +2983,10 @@ app.use(
     saveUninitialized: false,
     rolling: true,
     cookie: {
-      secure: false,
+      secure: process.env.NODE_ENV === 'production',
       httpOnly: true,
-      maxAge: 10 * 60 * 1000
+      sameSite: 'lax',
+      maxAge: 30 * 60 * 1000
     }
   })
 );
@@ -2997,13 +2998,29 @@ app.use((req, res, next) => {
   next();
 });
 
-// Lightweight CSRF warning (log only, non-blocking)
+// CSRF protection — block cross-origin POST/PUT/DELETE/PATCH
 app.use((req, res, next) => {
   if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) {
     const origin = req.get('Origin');
     const host = req.get('Host');
-    if (origin && host && !origin.toLowerCase().includes(host.toLowerCase())) {
-      console.log('[CSRF WARN] Possible cross-origin request - origin:', origin, 'host:', host, 'path:', req.path);
+    const referer = req.get('Referer');
+    if (origin && host) {
+      const originHost = new URL(origin).hostname;
+      const serverHost = host.split(':')[0];
+      if (originHost !== serverHost) {
+        console.log('[CSRF BLOCKED]', req.method, req.path, 'origin:', origin);
+        return res.status(403).json({ error: 'Forbidden: Cross-origin request blocked' });
+      }
+    }
+    if (referer) {
+      try {
+        const refererHost = new URL(referer).hostname;
+        const serverHost = host.split(':')[0];
+        if (refererHost !== serverHost) {
+          console.log('[CSRF BLOCKED]', req.method, req.path, 'referer:', referer);
+          return res.status(403).json({ error: 'Forbidden: Invalid referer' });
+        }
+      } catch(e) {}
     }
   }
   next();
