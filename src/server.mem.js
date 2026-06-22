@@ -2957,12 +2957,12 @@ app.set('views', path.join(__dirname, '..', 'views'));
 app.set('view cache', false);
 app.use(compression());
 app.use((req, res, next) => {
-  const origSetHeader = res.setHeader.bind(res);
-  res.setHeader = (name, value) => {
-    if (name.toLowerCase() === 'content-type' && typeof value === 'string' && value.includes('text/') && !value.includes('charset')) {
-      value = value + '; charset=utf-8';
+  const origSend = res.send;
+  res.send = function(body) {
+    if (!res.headersSent) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
     }
-    return origSetHeader(name, value);
+    return origSend.call(this, body);
   };
   next();
 });
