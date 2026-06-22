@@ -1,0 +1,303 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Profile | Nastige</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <link rel="stylesheet" href="/css/user-panel.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+  <% if (typeof admin_backup !== 'undefined' && admin_backup) { %>
+  <div style="background:#dc3545;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:600;">
+    <span>You are viewing <strong><%= (user.member_name || user.username).toUpperCase() %></strong>'s account as Admin</span>
+    <form method="post" action="/admin/back-to-admin" style="margin:0">
+      <button type="submit" style="background:#fff;color:#dc3545;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;font-weight:700;">Back to Admin</button>
+    </form>
+  </div>
+  <% } %>
+  <div class="page-wrapper">
+    <div class="page-header">
+      <div class="page-header-left">
+        <img src="/brand/logo" class="page-header-logo" alt="Logo" onerror="this.style.display='none'"/>
+        <div>
+          <h2 style="margin:0; font-size:20px;">Profile</h2>
+          <p style="margin:4px 0 0; opacity:0.9; font-size:13px;">Edit Your Profile</p>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <a href="/dashboard" class="back-btn"><i class="fas fa-arrow-left"></i> Dashboard</a>
+      </div>
+    </div>
+<div class="nav-bar">
+  <a href="/dashboard" class="nav-link">Dashboard</a>
+  <a href="/my-offers" class="nav-link">Offers</a>
+  <a href="/products" class="nav-link">Products</a>
+  <a href="/pins" class="nav-link">My Pins</a>
+  <a href="/my-tree" class="nav-link">Tree</a>
+  <a href="/downline" class="nav-link">Downline</a>
+  <a href="/transactions" class="nav-link">Transactions</a>
+  <a href="/my-ranks" class="nav-link">Ranks</a>
+  <a href="/invoices" class="nav-link">Invoices</a>
+  <a href="/tickets" class="nav-link">Support</a>
+  <a href="/kyc" class="nav-link">KYC</a>
+  <a href="/profile" class="nav-link active">Profile</a>
+  <a href="/my-id-card" class="nav-link">ID Card</a>
+</div>
+<div class="content"><% if (typeof saved !== 'undefined' && saved) { %>
+    <div class="alert alert-success"><i class="fas fa-check-circle"></i> <%= saved %></div>
+    <% } %>
+    <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> <%= error %></div>
+    <% } %>
+
+    <% if (user.status !== 'active') { %>
+    <!-- Self Activation -->
+    <div class="card" style="margin-bottom:20px; border:2px solid #f59e0b;">
+      <div class="card-header" style="background:linear-gradient(135deg, #fef3c7, #fde68a);"><i class="fas fa-bolt" style="color:#d97706; margin-right:8px;"></i> Activate Your Account</div>
+      <div class="card-body">
+        <p style="color:#92400e; margin-bottom:16px; font-size:13px;">Enter your Package PIN and Login PIN to activate your account.</p>
+        <form method="post" action="/user/self-activate" id="activateForm" onsubmit="return submitActivation(event)">
+          <div class="grid-2" style="gap:12px;">
+            <div class="form-group">
+              <label><i class="fas fa-key"></i> Package PIN</label>
+              <input name="package_pin" id="packagePin" class="form-control" placeholder="Enter Package PIN" required/>
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-lock"></i> Login PIN</label>
+              <input name="login_pin" id="loginPin" class="form-control" placeholder="Enter Login PIN" required/>
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary" style="width:100%; margin-bottom:12px;" onclick="checkPin()"><i class="fas fa-search"></i> Check PIN Details</button>
+          <div id="pinDetails" style="display:none; background:#f0fdf4; border:1px solid #10b981; border-radius:10px; padding:16px; margin-bottom:12px;"></div>
+          <div id="successMsg" style="display:none; background:#d1fae5; border:1px solid #10b981; border-radius:10px; padding:16px; margin-bottom:12px; text-align:center;"></div>
+          <button type="submit" id="activateBtn" class="btn btn-success" style="width:100%;"><i class="fas fa-bolt"></i> Activate Now</button>
+        </form>
+      </div>
+    </div>
+    <script>
+      function checkPin() {
+        const pkg = document.getElementById('packagePin').value.trim();
+        const lp = document.getElementById('loginPin').value.trim();
+        const details = document.getElementById('pinDetails');
+        if (!pkg || !lp) { alert('Enter both PINs'); return; }
+        fetch('/user/self-activate/preview', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ package_pin: pkg, login_pin: lp })
+        })
+        .then(r => r.json())
+        .then(data => {
+          if (data.ok && data.activation) {
+            const a = data.activation;
+            let html = '<div style="font-weight:700; color:#059669; font-size:16px; margin-bottom:8px;"><i class="fas fa-check-circle"></i> ' + a.name + (a.is_matrix_pin ? ' <span style="background:#7c3aed; color:#fff; padding:2px 8px; border-radius:4px; font-size:11px">MATRIX</span>' : '') + '</div>';
+            html += '<div style="font-size:13px; color:#374151;">';
+            if (a.items && a.items.length > 0) {
+              a.items.forEach(item => {
+                html += '<div style="display:flex; justify-content:space-between; padding:4px 0;"><span>📦 ' + item.product_name + '</span><span>₹' + item.line_total_inr.toFixed(0) + '</span></div>';
+              });
+            }
+            html += '</div>';
+            html += '<div style="border-top:1px solid #10b981; margin-top:8px; padding-top:8px; font-weight:700; color:#059669;">Total: ₹' + (a.amount_inr || 0).toFixed(0) + '</div>';
+            details.innerHTML = html;
+            details.style.display = 'block';
+            details.style.background = '#f0fdf4';
+            details.style.borderColor = '#10b981';
+          } else {
+            details.innerHTML = '<div style="color:#dc2626;"><i class="fas fa-times-circle"></i> ' + (data.error || 'Invalid PIN') + '</div>';
+            details.style.display = 'block';
+            details.style.borderColor = '#dc2626';
+            details.style.background = '#fef2f2';
+          }
+        })
+        .catch(e => {
+          details.innerHTML = '<div style="color:#dc2626;">Error checking PIN</div>';
+          details.style.display = 'block';
+        });
+      }
+
+      function submitActivation(e) {
+        e.preventDefault();
+        const pkg = document.getElementById('packagePin').value.trim();
+        const lp = document.getElementById('loginPin').value.trim();
+        const btn = document.getElementById('activateBtn');
+        const successMsg = document.getElementById('successMsg');
+        if (!pkg || !lp) { alert('Enter both PINs'); return false; }
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Activating...';
+        fetch('/user/self-activate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ package_pin: pkg, login_pin: lp })
+        })
+        .then(r => r.json())
+        .then(data => {
+          if (data.ok) {
+            const inv = data.invoice || {};
+            let html = '<div style="font-size:24px; margin-bottom:8px;">🎉</div>';
+            html += '<div style="font-size:18px; font-weight:700; color:#059669;">Activation Successful!</div>';
+            html += '<div style="font-size:13px; color:#374151; margin-top:8px;">';
+            html += '<div><strong>Plan:</strong> ' + (data.activation?.name || '-') + '</div>';
+            if (inv.invoice_no) html += '<div><strong>Invoice:</strong> ' + inv.invoice_no + '</div>';
+            if (inv.total_bv) html += '<div><strong>BV:</strong> ' + inv.total_bv + '</div>';
+            html += '</div>';
+            html += '<a href="/dashboard" class="btn btn-primary" style="margin-top:12px;">Go to Dashboard</a>';
+            successMsg.innerHTML = html;
+            successMsg.style.display = 'block';
+            document.getElementById('activateForm').querySelectorAll('input, button').forEach(el => el.disabled = true);
+          } else {
+            alert(data.error || 'Activation failed');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-bolt"></i> Activate Now';
+          }
+        })
+        .catch(e => {
+          alert('Activation failed. Please try again.');
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-bolt"></i> Activate Now';
+        });
+        return false;
+      }
+    </script>
+    <% } %>
+
+    <div class="grid-2">
+      <!-- Profile Info -->
+      <div class="card">
+        <div class="card-header"><i class="fas fa-user" style="color:#667eea; margin-right:8px;"></i> Profile Info</div>
+        <div class="card-body">
+          <div class="row-item"><span class="row-label">Name</span><span class="row-value"><%= (user.member_name || '-').toUpperCase() %></span></div>
+          <div class="row-item"><span class="row-label">User ID</span><span class="row-value"><%= (user.user_code || user.username || '').toUpperCase() %></span></div>
+          <div class="row-item"><span class="row-label">Mobile</span><span class="row-value"><%= user.phone || '-' %></span></div>
+          <div class="row-item"><span class="row-label">Email</span><span class="row-value"><%= user.email || '-' %></span></div>
+          <div class="row-item"><span class="row-label">Emergency</span><span class="row-value"><%= user.emergency_phone || '-' %></span></div>
+          <div class="row-item"><span class="row-label">DOB</span><span class="row-value"><%= user.dob ? new Date(user.dob).toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric', timeZone: 'Asia/Kolkata'}) : '-' %></span></div>
+          <div class="row-item"><span class="row-label">Status</span><span class="row-value"><span class="badge <%= user.status === 'active' ? 'badge-success' : 'badge-warning' %>"><%= (user.status || 'inactive').toUpperCase() %></span></span></div>
+          <div class="row-item"><span class="row-label">Activation PIN</span><span class="row-value"><%= typeof activationPin !== 'undefined' && activationPin ? activationPin : (user.activation_pin || user.package_pin || '-') %></span></div>
+          <div class="row-item"><span class="row-label">Plan</span><span class="row-value"><%= (typeof planName !== 'undefined' && planName ? planName : (user.plan_name || '-')).toUpperCase() %></span></div>
+          <div class="row-item"><span class="row-label">Rank</span><span class="row-value"><span class="badge badge-info"><i class="fas fa-crown"></i> <%= (user.rank_name || 'No Rank').toUpperCase() %></span></span></div>
+          <div class="row-item"><span class="row-label">Sponsor</span><span class="row-value"><%= (typeof sponsor_info !== 'undefined' && sponsor_info ? (sponsor_info.member_name || sponsor_info.username) : '-').toUpperCase() %></span></div>
+          <div class="row-item"><span class="row-label">Joined</span><span class="row-value"><%= user.created_at ? new Date(user.created_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : '-' %></span></div>
+        </div>
+      </div>
+
+      <!-- Nominee Info -->
+      <div class="card">
+        <div class="card-header"><i class="fas fa-user-friends" style="color:#8b5cf6; margin-right:8px;"></i> Nominee Details</div>
+        <div class="card-body">
+          <div class="row-item"><span class="row-label">Nominee Name</span><span class="row-value"><%= String(user.nominee_name || '-').toUpperCase() %></span></div>
+          <div class="row-item"><span class="row-label">Relation</span><span class="row-value"><%= (user.nominee_relation || '-').toUpperCase() %></span></div>
+          <div class="row-item"><span class="row-label">Nominee Mobile</span><span class="row-value"><%= user.nominee_mobile || '-' %></span></div>
+          <div class="row-item"><span class="row-label">Nominee DOB</span><span class="row-value"><%= user.nominee_dob || '-' %></span></div>
+          <div class="row-item"><span class="row-label">Nominee Aadhar</span><span class="row-value"><%= user.nominee_aadhar || '-' %></span></div>
+          <div class="row-item"><span class="row-label">Nominee Document</span><span class="row-value"><%= user.nominee_doc_url ? '✅ Uploaded' : '❌ Not uploaded' %></span></div>
+        </div>
+      </div>
+
+      <!-- Edit Form -->
+      <div class="card">
+        <% const isKYCApprovedProfile = (user.kyc_status || '').toLowerCase() === 'verified'; %>
+        <div class="card-header">
+          <i class="fas fa-edit" style="color:#10b981; margin-right:8px;"></i> Edit Profile
+          <% if (isKYCApprovedProfile) { %>
+          <span style="color:#10b981; font-size:12px; margin-left:10px;"><i class="fas fa-lock"></i> Phone & Email locked (KYC Approved)</span>
+          <% } %>
+        </div>
+        <div class="card-body">
+          <% if (isKYCApprovedProfile) { %>
+          <div style="background:#d1fae5; padding:10px; border-radius:8px; margin-bottom:16px; color:#065f46; font-size:13px;">
+            <i class="fas fa-info-circle"></i> Phone and Email are locked because your KYC is approved by admin.
+          </div>
+          <% } %>
+          <form method="post" action="/profile" enctype="multipart/form-data">
+            <div class="form-group">
+              <label><i class="fas fa-user"></i> Member Name</label>
+              <input class="form-control" value="<%= user.member_name || '' %>" readonly style="background:#f3f4f6;"/>
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-phone"></i> Mobile Number</label>
+              <input name="phone" class="form-control" value="<%= user.phone || '' %>" maxlength="10" <%= isKYCApprovedProfile ? 'readonly style="background:#f3f4f6;"' : '' %>/>
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-envelope"></i> Email</label>
+              <input name="email" type="email" class="form-control" value="<%= user.email || '' %>" <%= isKYCApprovedProfile ? 'readonly style="background:#f3f4f6;"' : '' %>/>
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-calendar"></i> Date of Birth</label>
+              <input name="dob" type="date" class="form-control" value="<%= user.dob ? user.dob.split('T')[0] : '' %>"/>
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-map-marker-alt"></i> Address</label>
+              <textarea name="address" class="form-control" rows="3"><%= user.address || '' %></textarea>
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-phone-alt"></i> Emergency Contact Number</label>
+              <input name="emergency_phone" class="form-control" value="<%= user.emergency_phone || '' %>" placeholder="+91-9999999999"/>
+            </div>
+            
+            <h4 style="margin:20px 0 12px; color:#8b5cf6;"><i class="fas fa-user-friends"></i> Nominee Details</h4>
+            
+            <% if (isKYCApprovedProfile) { %>
+            <div class="form-group" style="background:#f3e8ff; padding:12px; border-radius:6px;">
+              <div class="row-item"><span class="row-label">Nominee Name</span><span class="row-value"><%= user.nominee_name || '-' %></span></div>
+              <div class="row-item"><span class="row-label">Relation</span><span class="row-value"><%= user.nominee_relation || '-' %></span></div>
+              <div class="row-item"><span class="row-label">Nominee Mobile</span><span class="row-value"><%= user.nominee_mobile || '-' %></span></div>
+              <div class="row-item"><span class="row-label">Nominee Aadhar</span><span class="row-value"><%= user.nominee_aadhar || '-' %></span></div>
+              <div class="row-item"><span class="row-label">Nominee DOB</span><span class="row-value"><%= user.nominee_dob || '-' %></span></div>
+              <div class="row-item"><span class="row-label">Document</span><span class="row-value"><%= user.nominee_doc_url ? '✅ Uploaded' : '❌ Not uploaded' %></span></div>
+            </div>
+            <p style="color:#6b7280; font-size:12px; margin-top:8px;"><i class="fas fa-lock"></i> To update nominee details, please contact admin.</p>
+            <% } else { %>
+            <div class="form-group">
+              <label><i class="fas fa-user" style="color:#8b5cf6;margin-right:6px;"></i> Nominee Name</label>
+              <input name="nominee_name" class="form-control" value="<%= user.nominee_name || '' %>"/>
+            </div>
+            <div class="form-group">
+              <label>Relation</label>
+              <select name="nominee_relation" class="form-control">
+                <option value="">-- Select --</option>
+                <option value="Father" <%= user.nominee_relation === 'Father' ? 'selected' : '' %>>Father</option>
+                <option value="Mother" <%= user.nominee_relation === 'Mother' ? 'selected' : '' %>>Mother</option>
+                <option value="Spouse" <%= user.nominee_relation === 'Spouse' ? 'selected' : '' %>>Spouse</option>
+                <option value="Son" <%= user.nominee_relation === 'Son' ? 'selected' : '' %>>Son</option>
+                <option value="Daughter" <%= user.nominee_relation === 'Daughter' ? 'selected' : '' %>>Daughter</option>
+                <option value="Brother" <%= user.nominee_relation === 'Brother' ? 'selected' : '' %>>Brother</option>
+                <option value="Sister" <%= user.nominee_relation === 'Sister' ? 'selected' : '' %>>Sister</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-phone" style="color:#8b5cf6;margin-right:6px;"></i> Nominee Mobile</label>
+              <input name="nominee_mobile" class="form-control" value="<%= user.nominee_mobile || '' %>" maxlength="10"/>
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-id-card" style="color:#8b5cf6;margin-right:6px;"></i> Nominee Aadhar Number</label>
+              <input name="nominee_aadhar" class="form-control" value="<%= user.nominee_aadhar || '' %>" maxlength="12"/>
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-calendar" style="color:#8b5cf6;margin-right:6px;"></i> Nominee Date of Birth</label>
+              <input name="nominee_dob" type="date" class="form-control" value="<%= user.nominee_dob || '' %>"/>
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-file" style="color:#8b5cf6;margin-right:6px;"></i> Nominee Document <span style="color:#666; font-size:11px; font-weight:normal;">(Optional)</span></label>
+              <input type="file" name="nominee_doc" accept="image/*,.pdf" class="form-control"/>
+              <% if (user.nominee_doc_url) { %>
+                <div style="margin-top:6px; color:#10b981; font-size:12px;"><i class="fas fa-check"></i> Already Uploaded</div>
+              <% } else { %>
+              <div style="margin-top:4px; color:#999; font-size:11px;">Not required</div>
+              <% } %>
+            </div>
+            <% } %>
+            
+            <button type="submit" class="btn btn-primary" style="width:100%;"><i class="fas fa-save"></i> Save Changes</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+<script>document.querySelectorAll('.side-link').forEach(function(l){var p=l.getAttribute('href');if(window.location.pathname===p||(p!=='/admin'&&window.location.pathname.startsWith(p)))l.classList.add('active')});</script>
+</body>
+</html>

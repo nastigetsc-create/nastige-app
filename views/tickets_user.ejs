@@ -1,0 +1,104 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Support | Nastige</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <link rel="stylesheet" href="/css/user-panel.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+  <% if (typeof admin_backup !== 'undefined' && admin_backup) { %>
+  <div style="background:#dc3545;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:600;">
+    <span>You are viewing <strong><%= (user.member_name || user.username).toUpperCase() %></strong>'s account as Admin</span>
+    <form method="post" action="/admin/back-to-admin" style="margin:0">
+      <button type="submit" style="background:#fff;color:#dc3545;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;font-weight:700;">Back to Admin</button>
+    </form>
+  </div>
+  <% } %>
+  <div class="page-wrapper">
+    <div class="page-header">
+      <div class="page-header-left">
+        <img src="/brand/logo" class="page-header-logo" alt="Logo" onerror="this.style.display='none'"/>
+        <div>
+          <h2 style="margin:0; font-size:20px;">Support Tickets</h2>
+          <p style="margin:4px 0 0; opacity:0.9; font-size:13px;">Get Help & Support</p>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <a href="/dashboard" class="back-btn"><i class="fas fa-arrow-left"></i> Dashboard</a>
+      </div>
+    </div>
+<div class="nav-bar">
+  <a href="/dashboard" class="nav-link">Dashboard</a>
+  <a href="/my-offers" class="nav-link">Offers</a>
+  <a href="/products" class="nav-link">Products</a>
+  <a href="/pins" class="nav-link">My Pins</a>
+  <a href="/my-tree" class="nav-link">Tree</a>
+  <a href="/downline" class="nav-link">Downline</a>
+  <a href="/transactions" class="nav-link">Transactions</a>
+  <a href="/my-ranks" class="nav-link">Ranks</a>
+  <a href="/invoices" class="nav-link">Invoices</a>
+  <a href="/tickets" class="nav-link active">Support</a>
+  <a href="/kyc" class="nav-link">KYC</a>
+  <a href="/profile" class="nav-link">Profile</a>
+  <a href="/my-id-card" class="nav-link">ID Card</a>
+</div>
+<div class="content"><% if (typeof success !== 'undefined' && success) { %>
+    <div class="alert alert-success"><i class="fas fa-check-circle"></i> <%= success %></div>
+    <% } %>
+    <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> <%= error %></div>
+    <% } %>
+
+    <!-- New Ticket Button -->
+    <div style="margin-bottom:20px;">
+      <a href="/tickets/new" class="btn btn-primary"><i class="fas fa-plus"></i> Create New Ticket</a>
+    </div>
+
+    <!-- Tickets List -->
+    <div class="card">
+      <div class="card-header">
+        <span><i class="fas fa-headset" style="color:#667eea; margin-right:8px;"></i> My Tickets</span>
+      </div>
+      <div class="card-body" style="padding:0;">
+        <% if ((tickets||[]).length > 0) { %>
+        <table>
+          <thead>
+            <tr>
+              <th>Ticket #</th>
+              <th>Subject</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% tickets.forEach(function(t) { %>
+            <tr>
+              <td><strong>#<%= t.id %></strong></td>
+              <td><%= t.subject || '-' %></td>
+              <td><span class="badge <%= t.status === 'resolved' ? 'badge-success' : (t.status === 'open' ? 'badge-warning' : 'badge-info') %>"><%= t.status || 'open' %></span></td>
+              <td><%= t.created_at ? new Date(t.created_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : '-' %></td>
+              <td><a href="/tickets/<%= t.id %>" class="btn btn-secondary" style="padding:4px 12px; font-size:11px;">View</a></td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+        <% } else { %>
+        <div style="text-align:center; padding:60px; color:#94a3b8;">
+          <i class="fas fa-headset" style="font-size:48px; margin-bottom:12px;"></i>
+          <p>No tickets yet</p>
+          <a href="/tickets/new" class="btn btn-primary" style="margin-top:12px;">Create Your First Ticket</a>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+<script>document.querySelectorAll('.side-link').forEach(function(l){var p=l.getAttribute('href');if(window.location.pathname===p||(p!=='/admin'&&window.location.pathname.startsWith(p)))l.classList.add('active')});</script>
+</body>
+</html>

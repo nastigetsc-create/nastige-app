@@ -1,0 +1,205 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Payout Invoice - <%= payout.invoice_no || ('PAY' + payout.id) %></title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    .container-print { max-width: 800px; margin: 10px auto; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .toolbar { display:flex; justify-content:space-between; align-items:center; padding: 8px 15px; background: #f8f9fa; border-bottom: 1px solid #ddd; }
+    .btn { padding: 6px 12px; border: 1px solid #999; border-radius: 4px; background: #fff; cursor: pointer; text-decoration: none; color: #333; font-size: 13px; }
+    .btn-primary { background: #667eea; color: #fff; border-color: #667eea; }
+    .invoice-header { text-align: center; padding: 15px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; }
+    .invoice-header h1 { font-size: 22px; margin-bottom: 3px; }
+    .invoice-header h2 { font-size: 14px; font-weight: 400; opacity: 0.9; }
+    .invoice-body { padding: 20px; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+    .info-box { border: 1px solid #e0e0e0; border-radius: 6px; padding: 10px; background: #fafafa; }
+    .info-box h3 { font-size: 12px; color: #667eea; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+    .info-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px dashed #eee; }
+    .info-row:last-child { border-bottom: none; }
+    .info-row .label { color: #666; font-size: 12px; }
+    .info-row .value { font-weight: 600; font-size: 13px; }
+    .week-box { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 6px; padding: 10px; margin-bottom: 12px; text-align: center; }
+    .week-box h2 { color: #667eea; font-size: 16px; margin-bottom: 3px; }
+    .week-box p { color: #666; font-size: 12px; }
+    .income-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+    .income-table th, .income-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid #eee; font-size: 13px; }
+    .income-table th { background: #f8f9fa; font-weight: 600; color: #333; font-size: 12px; text-transform: uppercase; }
+    .income-table td.right { text-align: right; font-weight: 500; }
+    .income-table tr.total-row { background: #e8f5e9; font-weight: 700; }
+    .deductions-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+    .deductions-table th, .deductions-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid #eee; font-size: 13px; }
+    .deductions-table th { background: #fff3cd; font-weight: 600; color: #856404; font-size: 12px; }
+    .deductions-table td.right { text-align: right; color: #dc3545; }
+    .net-payable { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; border-radius: 8px; padding: 15px; text-align: center; margin: 12px 0; }
+    .net-payable .label { font-size: 12px; opacity: 0.9; margin-bottom: 3px; }
+    .net-payable .amount { font-size: 24px; font-weight: 700; }
+    .net-payable .words { font-size: 12px; opacity: 0.8; margin-top: 3px; font-style: italic; }
+    .note-box { background: #f8f9fa; border-left: 3px solid #667eea; padding: 8px; margin-top: 10px; font-size: 11px; color: #666; }
+    .footer { text-align: center; padding: 8px; color: #999; font-size: 10px; border-top: 1px solid #eee; margin-top: 10px; }
+    @media print {
+      .toolbar, .btn { display: none !important; }
+      .container-print { box-shadow: none; margin: 0; max-width: 100%; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .container-print { page-break-inside: avoid; }
+    }
+    @media (max-width: 600px) {
+      .info-grid { grid-template-columns: 1fr; }
+      .invoice-body { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container-print">
+    <div class="toolbar">
+      <% if (isAdmin) { %>
+        <a href="/admin/transactions" class="btn">← Back to Admin</a>
+      <% } else { %>
+        <a href="/transactions" class="btn">← Back</a>
+      <% } %>
+      <button class="btn btn-primary" onclick="window.print()">🖨 Print</button>
+    </div>
+    
+    <div class="invoice-header">
+      <h1><%= company_name %></h1>
+      <h2>Payout Statement / Income Statement</h2>
+    </div>
+    
+    <div class="invoice-body">
+      <div class="info-grid">
+        <div class="info-box">
+          <h3>User Details</h3>
+          <div class="info-row">
+            <span class="label">User Name</span>
+            <span class="value"><%= user.member_name || user.username %></span>
+          </div>
+          <div class="info-row">
+            <span class="label">User ID</span>
+            <span class="value"><%= user.user_code || '-' %></span>
+          </div>
+          <div class="info-row">
+            <span class="label">Phone</span>
+            <span class="value"><%= user.phone || '-' %></span>
+          </div>
+          <div class="info-row">
+            <span class="label">Bank Account</span>
+            <span class="value"><%= String(user.bank_account_name || '-').toUpperCase() %></span>
+          </div>
+          <div class="info-row">
+            <span class="label">Account No</span>
+            <span class="value"><%= user.bank_account_number || '-' %></span>
+          </div>
+          <div class="info-row">
+            <span class="label">IFSC</span>
+            <span class="value"><%= String(user.bank_ifsc || '-').toUpperCase() %></span>
+          </div>
+          <div class="info-row">
+            <span class="label">Bank / Branch</span>
+            <span class="value"><%= String(user.bank_name || '-').toUpperCase() %><% if (user.bank_branch) { %> / <%= String(user.bank_branch || '').toUpperCase() %><% } %></span>
+          </div>
+        </div>
+        <div class="info-box">
+          <h3>Invoice Details</h3>
+          <div class="info-row">
+            <span class="label">Invoice No</span>
+            <span class="value"><%= payout.invoice_no || ('PAY' + payout.id) %></span>
+          </div>
+          <div class="info-row">
+            <span class="label">Invoice Date</span>
+            <span class="value"><%= invoice_date %></span>
+          </div>
+          <div class="info-row">
+            <span class="label">UTR / Reference</span>
+            <span class="value"><%= payout.transfer_id || 'Pending' %></span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="week-box">
+        <h2><%= week_number %></h2>
+        <p><%= start_date %> - <%= end_date %></p>
+      </div>
+      
+       <h3 style="margin-bottom: 15px; color: #333; font-size: 16px;">Income Details</h3>
+       <table class="income-table">
+         <thead>
+           <tr>
+             <th>Income Type</th>
+             <th class="right">Amount</th>
+           </tr>
+         </thead>
+         <tbody>
+           <tr>
+             <td>Binary Income</td>
+             <td class="right"><%= rupee.format(Math.round(binary_income * 100) / 100) %></td>
+           </tr>
+           <tr>
+             <td>Repurchase Binary Income</td>
+             <td class="right"><%= rupee.format(Math.round((repurchase_income || 0) * 100) / 100) %></td>
+           </tr>
+           <tr>
+             <td>Direct / Leadership Income</td>
+             <td class="right" style="color:#7b1fa2"><%= rupee.format(Math.round((direct_income || 0) * 100) / 100) %></td>
+           </tr>
+           <% if (other_income > 0) { %>
+           <tr>
+             <td>Other Income</td>
+             <td class="right"><%= rupee.format(Math.round(other_income * 100) / 100) %></td>
+           </tr>
+           <% } %>
+           <tr class="total-row">
+             <td>Total Income</td>
+             <td class="right"><%= rupee.format(Math.round((binary_income + repurchase_income + direct_income + other_income) * 100) / 100) %></td>
+           </tr>
+         </tbody>
+      </table>
+      
+      <h3 style="margin-bottom: 15px; color: #856404; font-size: 16px;">Deductions</h3>
+      <table class="deductions-table">
+        <thead>
+          <tr>
+            <th>Deduction Type</th>
+            <th class="right">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>TDS (2%)</td>
+            <td class="right">- <%= rupee.format(Math.round(tds_amt * 100) / 100) %></td>
+          </tr>
+          <tr>
+            <td>Processing Fee</td>
+            <td class="right">- <%= rupee.format(Math.round(admin_amt * 100) / 100) %></td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <div class="net-payable">
+        <div class="label">Net Payable Amount</div>
+        <div class="amount"><%= rupee.format(Math.round(net_payable * 100) / 100) %></div>
+        <div class="words">(<%= amount_words %>)</div>
+      </div>
+      
+      <div class="note-box">
+        <strong>Note:</strong> This is a system-generated payout statement. For any queries, please contact support.
+        <% if (payout.status) { %>
+        <br><strong>Payment Status:</strong> <%= payout.status.charAt(0).toUpperCase() + payout.status.slice(1) %>
+        <% } %>
+        <% if (payout.transfer_date) { %>
+        <br><strong>Payment Date:</strong> <%= new Date(payout.transfer_date).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) %>
+        <% } %>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p><%= company_name %> | <%= company_address %></p>
+      <% if (company_phone || company_email) { %>
+      <p><%= company_phone %><%= company_phone && company_email ? ' | ' : '' %><%= company_email %></p>
+      <% } %>
+      <p style="margin-top: 8px;">Generated on <%= new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) %></p>
+    </div>
+  </div>
+</body>
+</html>

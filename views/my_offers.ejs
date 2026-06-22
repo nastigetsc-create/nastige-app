@@ -1,0 +1,230 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>My Offers | Nastige</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <link rel="stylesheet" href="/css/user-panel.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+  <% if (typeof admin_backup !== 'undefined' && admin_backup) { %>
+  <div style="background:#dc3545;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:600;">
+    <span>You are viewing <strong><%= (user.member_name || user.username).toUpperCase() %></strong>'s account as Admin</span>
+    <form method="post" action="/admin/back-to-admin" style="margin:0">
+      <button type="submit" style="background:#fff;color:#dc3545;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;font-weight:700;">Back to Admin</button>
+    </form>
+  </div>
+  <% } %>
+  <div class="page-wrapper">
+    <div class="page-header">
+      <div class="page-header-left">
+        <img src="/brand/logo" class="page-header-logo" alt="Logo" onerror="this.style.display='none'"/>
+        <div>
+          <h2 style="margin:0; font-size:20px;">My Offers</h2>
+          <p style="margin:4px 0 0; opacity:0.9; font-size:13px;">Active Offers & Targets</p>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <a href="/dashboard" class="back-btn"><i class="fas fa-arrow-left"></i> Dashboard</a>
+      </div>
+    </div>
+<div class="nav-bar">
+  <a href="/dashboard" class="nav-link">Dashboard</a>
+  <a href="/my-offers" class="nav-link active">Offers</a>
+  <a href="/products" class="nav-link">Products</a>
+  <a href="/pins" class="nav-link">My Pins</a>
+  <a href="/my-tree" class="nav-link">Tree</a>
+  <a href="/downline" class="nav-link">Downline</a>
+  <a href="/transactions" class="nav-link">Transactions</a>
+  <a href="/my-ranks" class="nav-link">Ranks</a>
+  <a href="/invoices" class="nav-link">Invoices</a>
+  <a href="/tickets" class="nav-link">Support</a>
+  <a href="/kyc" class="nav-link">KYC</a>
+  <a href="/profile" class="nav-link">Profile</a>
+  <a href="/my-id-card" class="nav-link">ID Card</a>
+</div>
+<div class="content"><!-- Star Winner -->
+    <% if (typeof starWinnerInfo !== 'undefined' && starWinnerInfo) { %>
+    <div class="card" style="margin-bottom:20px; border:2px solid #667eea;">
+      <div class="card-header" style="background:linear-gradient(135deg, #f0f4ff, #e0e7ff);">
+        <span><i class="fas fa-star" style="color:#667eea; margin-right:8px;"></i> ⭐ STAR WINNER Challenge</span>
+        <% if (starWinnerInfo.achieved) { %>
+          <span style="background:#10b981; color:white; padding:4px 12px; border-radius:12px; font-size:12px; font-weight:600;">✓ ACHIEVED</span>
+        <% } else { %>
+          <span style="background:#f59e0b; color:white; padding:4px 12px; border-radius:12px; font-size:12px; font-weight:600;"><%= starWinnerInfo.days_remaining %> Days Left</span>
+        <% } %>
+      </div>
+      <div class="card-body">
+        <% if (starWinnerInfo.achieved) { %>
+        <div style="text-align:center; padding:30px 20px;">
+          <div style="font-size:64px; margin-bottom:16px;">🏆</div>
+          <div style="font-size:24px; font-weight:800; color:#10b981; margin-bottom:8px;">Congratulations!</div>
+          <div style="font-size:16px; color:#64748b; margin-bottom:4px;">You have achieved</div>
+          <div style="font-size:20px; font-weight:700; color:#667eea;">⭐ STAR WINNER</div>
+        </div>
+        <% } else { %>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div style="text-align:center; padding:20px; background:<%= starWinnerInfo.user_left >= starWinnerInfo.target_left ? '#d1fae5' : '#f0fdf4' %>; border-radius:12px; border:2px solid <%= starWinnerInfo.user_left >= starWinnerInfo.target_left ? '#10b981' : '#e2e8f0' %>;">
+            <div style="font-size:12px; color:#64748b; margin-bottom:4px;"><i class="fas fa-arrow-left"></i> ORG L Members</div>
+            <div style="font-size:32px; font-weight:800; color:#10b981;"><%= starWinnerInfo.user_left %></div>
+            <div style="font-size:14px; color:#64748b;">/ <%= starWinnerInfo.target_left %></div>
+            <div style="background:#e5e7eb; border-radius:6px; height:8px; overflow:hidden; margin-top:8px;">
+              <div style="height:100%; width:<%= Math.min(100, (starWinnerInfo.user_left / starWinnerInfo.target_left) * 100) %>%; background:<%= starWinnerInfo.user_left >= starWinnerInfo.target_left ? '#10b981' : '#3b82f6' %>; border-radius:6px; transition:width 0.3s;"></div>
+            </div>
+            <% if (starWinnerInfo.left_remaining > 0) { %>
+              <div style="font-size:12px; color:#ef4444; margin-top:6px;"><%= starWinnerInfo.left_remaining %> more needed</div>
+            <% } else { %>
+              <div style="font-size:12px; color:#10b981; margin-top:6px;"><i class="fas fa-check-circle"></i> Complete</div>
+            <% } %>
+          </div>
+          <div style="text-align:center; padding:20px; background:<%= starWinnerInfo.user_right >= starWinnerInfo.target_right ? '#fee2e2' : '#fef2f2' %>; border-radius:12px; border:2px solid <%= starWinnerInfo.user_right >= starWinnerInfo.target_right ? '#ef4444' : '#e2e8f0' %>;">
+            <div style="font-size:12px; color:#64748b; margin-bottom:4px;"><i class="fas fa-arrow-right"></i> ORG R Members</div>
+            <div style="font-size:32px; font-weight:800; color:#ef4444;"><%= starWinnerInfo.user_right %></div>
+            <div style="font-size:14px; color:#64748b;">/ <%= starWinnerInfo.target_right %></div>
+            <div style="background:#e5e7eb; border-radius:6px; height:8px; overflow:hidden; margin-top:8px;">
+              <div style="height:100%; width:<%= Math.min(100, (starWinnerInfo.user_right / starWinnerInfo.target_right) * 100) %>%; background:<%= starWinnerInfo.user_right >= starWinnerInfo.target_right ? '#10b981' : '#ef4444' %>; border-radius:6px; transition:width 0.3s;"></div>
+            </div>
+            <% if (starWinnerInfo.right_remaining > 0) { %>
+              <div style="font-size:12px; color:#ef4444; margin-top:6px;"><%= starWinnerInfo.right_remaining %> more needed</div>
+            <% } else { %>
+              <div style="font-size:12px; color:#10b981; margin-top:6px;"><i class="fas fa-check-circle"></i> Complete</div>
+            <% } %>
+          </div>
+        </div>
+        <div style="text-align:center; margin-top:16px; padding:12px; background:linear-gradient(135deg,#fef3c7,#fde68a); border-radius:10px;">
+          <div style="font-size:14px; color:#92400e; font-weight:700;">🏆 Add ORG L: <%= starWinnerInfo.left_remaining %> | ORG R: <%= starWinnerInfo.right_remaining %> members within <%= starWinnerInfo.days_remaining %> days!</div>
+        </div>
+        <% } %>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- Active Offers -->
+    <% if (typeof offers !== 'undefined' && offers.length > 0) { %>
+      <% offers.forEach(function(offer) { 
+        var target = offer.target_pairs || offer.target_bv || offer.target_amount || 1;
+        var progress = offer.user_progress || 0;
+        var pct = Math.min(100, Math.round((progress / target) * 100));
+        var offerCat = offer.category || 'pairs';
+        var isRepurchase = offerCat === 'repurchase';
+        var isLeadership = offerCat === 'leadership';
+        var isPairs = offerCat === 'pairs';
+        var icon = isRepurchase ? 'fa-sync-alt' : (isLeadership ? 'fa-crown' : 'fa-layer-group');
+        var color = isRepurchase ? '#8b5cf6' : (isLeadership ? '#f59e0b' : '#667eea');
+        var offerId = 'OFR-' + String(offer.id).padStart(4, '0');
+
+        if (offer.achieved) {
+      %>
+      <div class="card" style="margin-bottom:16px; border-left:4px solid #10b981;">
+        <div class="card-header">
+          <span><span style="background:#e0e7ff; color:#4338ca; padding:2px 10px; border-radius:6px; font-size:11px; font-weight:700; margin-right:8px;"><%= offerId %></span><i class="fas <%= icon %>" style="color:#10b981; margin-right:8px;"></i> <%= offer.name %></span>
+          <span style="background:#10b981; color:white; padding:4px 12px; border-radius:12px; font-size:12px; font-weight:600;"><%= offer.claimed ? 'CLAIMED' : 'ACHIEVED' %></span>
+        </div>
+        <div class="card-body" style="text-align:center; padding:24px;">
+          <div style="font-size:48px; margin-bottom:12px;">🏆</div>
+          <div style="font-size:20px; font-weight:800; color:#10b981; margin-bottom:4px;">Congratulations!</div>
+          <div style="font-size:14px; color:#64748b; margin-bottom:4px;">You have achieved</div>
+          <div style="font-size:18px; font-weight:700; color:#667eea;"><%= offer.name %></div>
+          <% if (offer.reward_amount > 0 || offer.reward_product_name) { %>
+          <div style="margin-top:12px; padding:8px 16px; background:#fef3c7; border-radius:8px; display:inline-block;">
+            <span style="font-size:13px; font-weight:700; color:#92400e;">Reward: <%= offer.reward_amount > 0 ? '₹' + offer.reward_amount : offer.reward_product_name %></span>
+          </div>
+          <% } %>
+        </div>
+      </div>
+      <% } else { %>
+      <div class="card" style="margin-bottom:16px; border-left:4px solid <%= color %>;">
+        <div class="card-header">
+          <span><span style="background:#e0e7ff; color:#4338ca; padding:2px 10px; border-radius:6px; font-size:11px; font-weight:700; margin-right:8px;"><%= offerId %></span><i class="fas <%= icon %>" style="color:<%= color %>; margin-right:8px;"></i> <%= offer.name %></span>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <% if (!offer.achieved && offer.end_date) { 
+              var end = new Date(offer.end_date);
+              var now = new Date();
+              var daysLeft = Math.max(0, Math.ceil((end - now) / (1000 * 60 * 60 * 24)));
+            %>
+              <span style="background:#fef3c7; color:#92400e; padding:4px 10px; border-radius:12px; font-size:11px; font-weight:600;"><%= daysLeft %> days left</span>
+            <% } %>
+          </div>
+        </div>
+        <div class="card-body">
+          <div style="font-size:13px; color:#64748b; margin-bottom:12px;"><%= offer.description || 'Complete target to earn reward' %></div>
+          
+          <% if (isPairs) { %>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-size:14px; color:#64748b;">Target: <%= target %> Pairs</span>
+              <span style="font-size:14px; color:#64748b;"><%= pct %>%</span>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+              <div style="text-align:center; padding:14px; background:#f0fdf4; border-radius:10px; border:2px solid #bbf7d0;">
+                <div style="font-size:11px; color:#64748b; margin-bottom:4px;"><i class="fas fa-arrow-left"></i> ORG L</div>
+                <div style="font-size:28px; font-weight:800; color:#10b981;"><%= offer.user_left || 0 %></div>
+                <div style="font-size:12px; color:#64748b; margin-bottom:8px;">/ <%= offer.target_pairs || 1 %> Pairs</div>
+                <div style="background:#e5e7eb; border-radius:6px; height:10px; overflow:hidden;">
+                  <div style="height:100%; width:<%= Math.min(100, ((offer.user_left || 0) / (offer.target_pairs || 1)) * 100) %>%; background:linear-gradient(90deg,#10b981,#34d399); border-radius:6px; transition:width 0.3s;"></div>
+                </div>
+                <% if ((offer.left_remaining || 0) > 0) { %>
+                  <div style="font-size:11px; color:#ef4444; margin-top:6px;"><%= offer.left_remaining %> more needed</div>
+                <% } else { %>
+                  <div style="font-size:11px; color:#10b981; margin-top:6px;"><i class="fas fa-check-circle"></i> Complete</div>
+                <% } %>
+              </div>
+              <div style="text-align:center; padding:14px; background:#fef2f2; border-radius:10px; border:2px solid #fecaca;">
+                <div style="font-size:11px; color:#64748b; margin-bottom:4px;"><i class="fas fa-arrow-right"></i> ORG R</div>
+                <div style="font-size:28px; font-weight:800; color:#ef4444;"><%= offer.user_right || 0 %></div>
+                <div style="font-size:12px; color:#64748b; margin-bottom:8px;">/ <%= offer.target_pairs || 1 %> Pairs</div>
+                <div style="background:#e5e7eb; border-radius:6px; height:10px; overflow:hidden;">
+                  <div style="height:100%; width:<%= Math.min(100, ((offer.user_right || 0) / (offer.target_pairs || 1)) * 100) %>%; background:linear-gradient(90deg,#ef4444,#f87171); border-radius:6px; transition:width 0.3s;"></div>
+                </div>
+                <% if ((offer.right_remaining || 0) > 0) { %>
+                  <div style="font-size:11px; color:#ef4444; margin-top:6px;"><%= offer.right_remaining %> more needed</div>
+                <% } else { %>
+                  <div style="font-size:11px; color:#10b981; margin-top:6px;"><i class="fas fa-check-circle"></i> Complete</div>
+                <% } %>
+              </div>
+            </div>
+          <% } else { %>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:24px; font-weight:800; color:<%= color %>;"><%= progress %></span>
+            <span style="font-size:14px; color:#64748b;">/ <%= target %> <%= isRepurchase ? 'BV' : (isLeadership ? '₹' : '') %></span>
+          </div>
+          <div style="background:#f1f5f9; border-radius:8px; height:12px; overflow:hidden; margin-bottom:8px;">
+            <div style="height:100%; width:<%= pct %>%; background:<%= color %>; border-radius:8px; transition:width 0.5s;"></div>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:#64748b; margin-bottom:12px;">
+            <span><%= pct %>% Complete</span>
+            <span><%= offer.remaining %> more needed</span>
+          </div>
+          <% } %>
+          
+          <% if (offer.reward_amount > 0 || offer.reward_product_name) { %>
+            <div style="padding:10px; background:#fef3c7; border-radius:8px; text-align:center;">
+              <div style="font-size:11px; color:#64748b;">Reward</div>
+              <div style="font-size:16px; font-weight:700; color:#92400e;">
+                <%= offer.reward_amount > 0 ? '₹' + offer.reward_amount : offer.reward_product_name %>
+              </div>
+            </div>
+          <% } %>
+          
+          <div style="font-size:11px; color:#94a3b8; margin-top:10px;">
+            Period: <%= offer.start_date %> to <%= offer.end_date %>
+          </div>
+        </div>
+      </div>
+      <% } }); %>
+    <% } else if (typeof starWinnerInfo === 'undefined' || !starWinnerInfo) { %>
+      <div class="card">
+        <div class="card-body" style="text-align:center; padding:60px; color:#94a3b8;">
+          <i class="fas fa-gift" style="font-size:48px; margin-bottom:12px;"></i>
+          <p>No active offers at the moment</p>
+        </div>
+      </div>
+    <% } %>
+  </div>
+  </div>
+  </div>
+<script>document.querySelectorAll('.side-link').forEach(function(l){var p=l.getAttribute('href');if(window.location.pathname===p||(p!=='/admin'&&window.location.pathname.startsWith(p)))l.classList.add('active')});</script>
+</body>
+</html>

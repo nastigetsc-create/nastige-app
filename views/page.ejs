@@ -1,0 +1,38 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title><%= title %> | Nastige</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <style>
+    .cms-content { line-height:1.8; }
+    .cms-content p { font-size:16px; margin-bottom:12px; }
+    .cms-content font[size="1"], .cms-content font[size="2"] { font-size:13px; }
+    .cms-content font[size="3"] { font-size:16px; }
+    .cms-content font[size="4"], .cms-content font[size="5"] { font-size:20px; }
+    .cms-content font[size="6"], .cms-content font[size="7"] { font-size:26px; }
+  </style>
+</head>
+<body>
+  <%- include('_public_header') %>
+  <div class="container">
+    <div class="card" style="margin-top:12px">
+      <div class="pad">
+        <h2><%= title %></h2>
+        <% if (pdfUrl) { %>
+          <div style="margin:20px 0; padding:20px; background:#f8f9fa; border-radius:8px; text-align:center;">
+            <p style="margin-bottom:12px; font-size:16px;">📄 Download Business Plan</p>
+            <a href="<%= pdfUrl %>" target="_blank" class="btn" style="background:#7fad39; color:#fff; padding:12px 24px; border-radius:8px; display:inline-block;">View/Download PDF</a>
+          </div>
+        <% } %>
+        <% if (typeof content === 'string' && content.trim().length > 0) { %>
+          <div class="cms-content"><%- content %></div>
+        <% } else if (!pdfUrl) { %>
+          <p>Content coming soon.</p>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

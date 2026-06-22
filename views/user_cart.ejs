@@ -1,0 +1,258 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Shopping Cart | Nastige</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <link rel="stylesheet" href="/css/user-panel.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    .page-wrapper { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .page-header { background:linear-gradient(135deg,#1e293b 0%,#334155 100%); color: white; padding:20px 30px; border-radius: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
+    .page-header-left { display: flex; align-items: center; gap:16px; }
+    .back-btn { background:rgba(255,255,255,0.2); color: white; padding:8px 16px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s; }
+    .back-btn:hover { background: rgba(255,255,255,0.3); }
+    
+    
+    
+    .cart-container { display: grid; grid-template-columns: 1fr 380px; gap: 24px; }
+    @media (max-width: 900px) { .cart-container { grid-template-columns: 1fr; } }
+    .cart-items { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    .cart-item { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid #e5e7eb; align-items: center; }
+    .cart-item:last-child { border-bottom: none; }
+    .cart-item-image { width: 80px; height: 80px; border-radius: 10px; object-fit: cover; background: #f1f5f9; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .cart-item-image img { width: 100%; height: 100%; object-fit: cover; }
+    .cart-item-image i { font-size: 24px; color: #94a3b8; }
+    .cart-item-details { flex: 1; }
+    .cart-item-name { font-weight: 600; font-size: 16px; color: #1e293b; margin-bottom: 4px; }
+    .cart-item-price { color: #667eea; font-weight: 600; }
+    .cart-item-bv { font-size: 12px; color: #10b981; }
+    .cart-item-actions { display: flex; align-items: center; gap: 12px; }
+    .qty-control { display: flex; align-items: center; gap: 8px; background: #f1f5f9; border-radius: 8px; padding: 4px; }
+    .qty-btn { width: 28px; height: 28px; border: none; background: white; border-radius: 6px; cursor: pointer; font-weight: 600; color: #667eea; transition: all 0.2s; }
+    .qty-btn:hover { background: #667eea; color: white; }
+    .qty-value { min-width: 30px; text-align: center; font-weight: 600; }
+    .remove-btn { background: #fee2e2; color: #ef4444; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; transition: all 0.2s; }
+    .remove-btn:hover { background: #ef4444; color: white; }
+    .cart-summary { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); position: sticky; top: 20px; }
+    .summary-title { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 2px solid #e5e7eb; }
+    .summary-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; }
+    .summary-row.total { font-size: 18px; font-weight: 700; color: #1e293b; padding-top: 16px; margin-top: 8px; border-top: 2px solid #e5e7eb; }
+    .summary-row .label { color: #64748b; }
+    .summary-row .value { font-weight: 600; }
+    .summary-row .bv-value { color: #10b981; }
+    .checkout-btn { display: block; width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; text-align: center; text-decoration: none; margin-top: 20px; transition: all 0.3s; }
+    .checkout-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(102,126,234,0.4); }
+    .clear-cart-btn { display: block; width: 100%; padding: 12px; background: #f1f5f9; color: #64748b; border: none; border-radius: 10px; font-size: 14px; cursor: pointer; margin-top: 12px; transition: all 0.2s; }
+    .clear-cart-btn:hover { background: #fee2e2; color: #ef4444; }
+    .empty-cart { text-align: center; padding: 60px 20px; }
+    .empty-cart i { font-size: 80px; color: #e5e7eb; margin-bottom: 20px; }
+    .empty-cart h3 { color: #64748b; margin: 0 0 12px; }
+    .empty-cart p { color: #94a3b8; margin: 0 0 24px; }
+    .empty-cart a { display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; text-decoration: none; border-radius: 10px; font-weight: 600; }
+    .cart-badge { background: #ef4444; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 4px; }
+    .success-msg { background: #d1fae5; color: #065f46; padding: 16px; border-radius: 12px; margin-bottom: 20px; border: 2px solid #6ee7b7; }
+    .error-msg { background: #fee2e2; color: #991b1b; padding: 16px; border-radius: 12px; margin-bottom: 20px; border: 2px solid #fca5a5; }
+    @media (max-width: 768px) {
+      .page-wrapper { padding: 12px; }
+      .page-header { padding: 14px 16px; flex-direction: column; gap: 12px; text-align: center; }
+      .page-header-left { flex-direction: column; gap: 8px; }
+      .page-header h2 { font-size: 18px; }
+      .back-btn { padding: 8px 14px; font-size: 13px; }
+      
+      
+      .cart-items { padding: 16px; }
+      .cart-item { flex-wrap: wrap; gap: 12px; padding: 12px 0; }
+      .cart-item-image { width: 60px; height: 60px; }
+      .cart-item-details { flex: 1; min-width: 0; }
+      .cart-item-name { font-size: 14px; }
+      .cart-item-price { font-size: 13px; }
+      .cart-item-actions { width: 100%; justify-content: space-between; margin-top: 8px; }
+      .qty-control { gap: 4px; }
+      .remove-btn { padding: 6px 10px; }
+      .cart-summary { padding: 16px; position: static; margin-top: 16px; }
+      .summary-title { font-size: 16px; padding-bottom: 12px; margin-bottom: 16px; }
+      .summary-row { font-size: 13px; }
+      .summary-row.total { font-size: 16px; }
+      .checkout-btn { padding: 14px; font-size: 15px; }
+      .empty-cart { padding: 40px 16px; }
+      .empty-cart i { font-size: 60px; }
+      .empty-cart h3 { font-size: 18px; }
+    }
+  
+    .admin-layout{display:flex;gap:20px}
+
+    .sidebar{width:220px;flex-shrink:0;background:white;border-radius:12px;padding:8px;box-shadow:0 2px 10px rgba(0,0,0,0.05);position:sticky;top:20px;height:fit-content;max-height:calc(100vh - 120px);overflow-y:auto}
+    .sidebar::-webkit-scrollbar{width:4px}
+    .sidebar::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:4px}
+    .side-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;text-decoration:none;color:#475569;font-size:12px;font-weight:500;transition:all 0.1s}
+    .side-link:hover{background:#f1f5f9;color:#1e293b}
+    .side-link.active{background:#1e293b;color:white}
+    .side-link svg{width:16px;height:16px;flex-shrink:0;fill:currentColor}
+    .side-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;padding:12px 10px 4px}
+    @media(max-width:1024px){.sidebar{width:100%;position:static;max-height:none;display:flex;flex-wrap:wrap;gap:4px;overflow:visible}.side-link{font-size:11px;padding:5px 8px}.side-section{display:none}}
+  </style>
+</head>
+<body>
+  <% if (typeof admin_backup !== 'undefined' && admin_backup) { %>
+  <div style="background:#dc3545;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:600;">
+    <span>You are viewing <strong><%= (user.member_name || user.username).toUpperCase() %></strong>'s account as Admin</span>
+    <form method="post" action="/admin/back-to-admin" style="margin:0">
+      <button type="submit" style="background:#fff;color:#dc3545;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;font-weight:700;">Back to Admin</button>
+    </form>
+  </div>
+  <% } %>
+  <div class="page-wrapper">
+    <div class="page-header">
+      <div class="page-header-left">
+        <i class="fas fa-shopping-cart" style="font-size: 28px;"></i>
+        <div>
+          <h2 style="margin:0; font-size:18px;">Shopping Cart</h2>
+          <p style="margin:4px 0 0; opacity:0.9; font-size:13px;"><%= totalItems %> items in cart</p>
+        </div>
+      </div>
+      <a href="/products" class="back-btn"><i class="fas fa-arrow-left"></i> Continue Shopping</a>
+    </div>
+<div class="content">
+    <% if (success) { %>
+      <div class="success-msg"><i class="fas fa-check-circle"></i> <%= success %></div>
+    <% } %>
+    <% if (error) { %>
+      <div class="error-msg"><i class="fas fa-exclamation-circle"></i> <%= error %></div>
+    <% } %>
+    <% if (cart.length === 0) { %>
+      <div class="cart-items">
+        <div class="empty-cart">
+          <i class="fas fa-shopping-cart"></i>
+          <h3>Your Cart is Empty</h3>
+          <p>Add some products to get started!</p>
+          <a href="/products"><i class="fas fa-store"></i> Browse Products</a>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="cart-container">
+        <div class="cart-items">
+          <h3 style="margin:0 0 20px; font-size:16px; color:#64748b;"><i class="fas fa-box"></i> Cart Items (<%= cart.length %>)</h3>
+          
+          <% cart.forEach(function(item) { %>
+            <div class="cart-item" id="cart-item-<%= item.product_id %>">
+              <div class="cart-item-image">
+                <% if (item.image_url) { %>
+                  <img src="<%= item.image_url %>" alt="<%= item.name %>">
+                <% } else { %>
+                  <i class="fas fa-box"></i>
+                <% } %>
+              </div>
+              <div class="cart-item-details">
+                <div class="cart-item-name"><%= item.name %></div>
+                <div class="cart-item-price"><%= typeof rupee !== 'undefined' ? rupee.format(item.price) : '₹' + item.price %></div>
+                <div class="cart-item-bv"><i class="fas fa-star"></i> <%= item.bv %> BV per unit</div>
+              </div>
+              <div class="cart-item-actions">
+                <div class="qty-control">
+                  <button type="button" class="qty-btn" onclick="updateQty(<%= item.product_id %>, <%= item.quantity - 1 %>)">-</button>
+                  <span class="qty-value" id="qty-<%= item.product_id %>"><%= item.quantity %></span>
+                  <button type="button" class="qty-btn" onclick="updateQty(<%= item.product_id %>, <%= item.quantity + 1 %>)">+</button>
+                </div>
+                <div style="font-weight:700; min-width:80px; text-align:right;">
+                  <%= typeof rupee !== 'undefined' ? rupee.format(item.price * item.quantity) : '₹' + (item.price * item.quantity) %>
+                </div>
+                <button type="button" class="remove-btn" onclick="removeItem(<%= item.product_id %>)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+
+        <div class="cart-summary">
+          <div class="summary-title"><i class="fas fa-receipt"></i> Order Summary</div>
+          
+          <div class="summary-row">
+            <span class="label">Total Items</span>
+            <span class="value"><%= totalItems %></span>
+          </div>
+          <div class="summary-row">
+            <span class="label">Products</span>
+            <span class="value"><%= cart.length %></span>
+          </div>
+          <div class="summary-row">
+            <span class="label">Total BV</span>
+            <span class="value bv-value"><i class="fas fa-star"></i> <%= totalBV %> BV</span>
+          </div>
+          <div class="summary-row total">
+            <span class="label">Total Amount</span>
+            <span class="value" style="color:#667eea;"><%= typeof rupee !== 'undefined' ? rupee.format(totalAmount) : '₹' + totalAmount %></span>
+          </div>
+
+          <a href="/cart/checkout" class="checkout-btn">
+            <i class="fas fa-lock"></i> Proceed to Checkout
+          </a>
+          <button type="button" class="clear-cart-btn" onclick="clearCart()">
+            <i class="fas fa-times-circle"></i> Clear Cart
+          </button>
+        </div>
+      </div>
+    <% } %>
+  </div>
+
+  <script>
+    function updateQty(productId, qty) {
+      if (qty < 1) {
+        if (confirm('Remove this item from cart?')) {
+          removeItem(productId);
+        }
+        return;
+      }
+      
+      fetch('/cart/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product_id: productId, quantity: qty })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.ok) {
+          document.getElementById('qty-' + productId).textContent = qty;
+          location.reload();
+        } else {
+          alert(data.error || 'Failed to update');
+        }
+      });
+    }
+
+    function removeItem(productId) {
+      fetch('/cart/remove', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product_id: productId })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.ok) {
+          const item = document.getElementById('cart-item-' + productId);
+          if (item) {
+            item.style.opacity = '0.5';
+            setTimeout(() => location.reload(), 300);
+          } else {
+            location.reload();
+          }
+        }
+      });
+    }
+
+    function clearCart() {
+      if (confirm('Clear all items from cart?')) {
+        fetch('/cart/clear', { method: 'POST' })
+        .then(r => r.json())
+        .then(() => location.reload());
+      }
+    }
+  </script>
+  </div>
+  </div>
+<script>document.querySelectorAll('.side-link').forEach(function(l){var p=l.getAttribute('href');if(window.location.pathname===p||(p!=='/admin'&&window.location.pathname.startsWith(p)))l.classList.add('active')});</script>
+</body>
+</html>

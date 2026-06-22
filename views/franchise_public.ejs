@@ -1,0 +1,83 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Our Franchise | <%= (typeof company_name !== 'undefined' && company_name) ? company_name : 'Nastige' %></title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #f8fafc; }
+    .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+    .page-title { font-size: 32px; font-weight: 700; color: #1e293b; margin-bottom: 30px; text-align: center; }
+    
+/* Excel Table Style */
+    .excel-table-wrapper { overflow-x: auto; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-top: 20px; }
+    .excel-table { width: 100%; border-collapse: collapse; min-width: 700px; }
+    .excel-table thead { background-color: #667eea !important; }
+    .excel-table thead th { 
+      padding: 16px 12px; 
+      text-align: left; 
+      color: #ffffff !important; 
+      font-weight: 700; 
+      font-size: 15px; 
+      background: #667eea !important;
+      border: 1px solid #5a6fd6;
+    }
+    .excel-table thead th:first-child { 
+      border-radius: 8px 0 0 0; 
+      width: 60px; 
+      text-align: center; 
+    }
+    .excel-table thead th:last-child { border-radius: 0 8px 0 0; }
+    .excel-table tbody tr { border-bottom: 1px solid #e2e8f0; }
+    .excel-table tbody tr:nth-child(even) { background-color: #f8fafc; }
+    .excel-table tbody tr:hover { background-color: #eef2ff; }
+    .excel-table tbody td { padding: 14px 12px; font-size: 13px; color: #374151; border: 1px solid #e2e8f0; }
+    .excel-table tbody td:first-child { text-align: center; font-weight: 700; color: #667eea; background: #f1f5f9; }
+    
+    @media (max-width: 768px) {
+    }
+  </style>
+</head>
+<body>
+  <%- include('_public_header') %>
+  
+  <div class="container">
+    <h1 class="page-title">📍 Our Franchise Network</h1>
+    
+    <% if (franchises.length === 0) { %>
+      <p class="no-data">No franchises yet.</p>
+    <% } else { %>
+      <div class="excel-table-wrapper">
+        <table class="excel-table">
+          <thead>
+            <tr>
+              <th>SR</th>
+              <th>CITY</th>
+              <th>BRANCH NAME</th>
+              <th>CONTACT PERSON</th>
+              <th>CONTACT NUMBER</th>
+              <th>ADDRESS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% franchises.forEach((f, index) => { %>
+              <tr>
+                <td><%= index + 1 %></td>
+                <td><%= f.city || '-' %></td>
+                <td><strong><%= f.branch_name || f.franchise_code || f.username || '-' %></strong></td>
+                <td><%= f.member_name || f.contact_person || '-' %></td>
+                <td><a href="tel:<%= f.phone %>" style="color:#667eea;text-decoration:none;font-weight:600;"><%= f.phone || '-' %></a></td>
+                <td><%= f.address || '-' %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+  <script src="/lightbox.js"></script>
+</body>
+</html>

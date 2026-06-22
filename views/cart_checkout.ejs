@@ -1,0 +1,308 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Checkout | Nastige</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    :root { --primary: #667eea; --secondary: #764ba2; --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --dark: #1e293b; --light: #f8fafc; --border: #e5e7eb; --radius: 16px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    .checkout-container { max-width: 900px; margin: 0 auto; background: #fff; border-radius: var(--radius); box-shadow: 0 25px 50px rgba(0,0,0,0.15); overflow: hidden; }
+    .checkout-header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; padding: 24px 32px; }
+    .checkout-header h1 { margin: 0; font-size: 24px; font-weight: 700; }
+    .checkout-header p { margin: 8px 0 0; opacity: 0.9; font-size: 14px; }
+    .checkout-body { padding: 24px 32px; }
+    .order-items { background: #f8fafc; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+    .order-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed #e5e7eb; align-items: center; }
+    .order-item:last-child { border-bottom: none; }
+    .order-item-name { flex: 1; }
+    .order-item-qty { color: #64748b; margin: 0 16px; }
+    .order-item-price { font-weight: 600; }
+    .order-total { display: flex; justify-content: space-between; padding-top: 16px; margin-top: 8px; border-top: 2px solid #1e293b; font-weight: 700; font-size: 18px; }
+    .section-title { font-size: 16px; font-weight: 600; color: #1e293b; margin: 24px 0 16px; display: flex; align-items: center; gap: 8px; }
+    .payment-methods { display: grid; gap: 10px; margin-bottom: 16px; }
+    .payment-method { display: none; }
+    .payment-method + label { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: #fff; border: 2px solid #e5e7eb; border-radius: 12px; cursor: pointer; transition: all 0.3s; }
+    .payment-method + label:hover { border-color: var(--primary); background: #f8fafc; }
+    .payment-method:checked + label { border-color: var(--primary); background: #eff6ff; }
+    .payment-method-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; font-weight: 700; flex-shrink: 0; }
+    .payment-method-info { flex: 1; }
+    .payment-method-name { font-weight: 600; font-size: 15px; color: #1e293b; }
+    .payment-method-desc { font-size: 12px; color: #64748b; }
+    .payment-method-check { width: 22px; height: 22px; border: 2px solid #d1d5db; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .payment-method:checked + label .payment-method-check { background: var(--primary); border-color: var(--primary); }
+    .payment-method:checked + label .payment-method-check::after { content: '✓'; color: #fff; font-size: 12px; }
+    .payment-details { display: none; margin-top: 20px; background: #f8fafc; border-radius: 12px; padding: 20px; }
+    .payment-details.active { display: block; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 8px; color: #374151; }
+    .form-group input, .form-group select { width: 100%; padding: 12px 14px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 14px; transition: border-color 0.3s; }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary); }
+    .upload-area { border: 2px dashed #d1d5db; border-radius: 12px; padding: 30px; text-align: center; cursor: pointer; transition: all 0.3s; background: #fff; }
+    .upload-area:hover { border-color: var(--primary); background: #f8fafc; }
+    .upload-area.has-file { border-color: var(--success); background: #f0fdf4; }
+    .upload-icon { font-size: 40px; color: #9ca3af; margin-bottom: 10px; }
+    .upload-preview { max-width: 100%; max-height: 200px; margin-top: 10px; border-radius: 8px; }
+    .upload-input { display: none; }
+    .btn-place { display: block; width: 100%; padding: 16px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+    .btn-place:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(102,126,234,0.4); }
+    .btn-place:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .cancel-link { display: block; text-align: center; margin-top: 16px; color: #64748b; text-decoration: none; font-size: 14px; }
+    .cancel-link:hover { color: var(--danger); }
+    .company-details { background: linear-gradient(135deg, #667eea20, #764ba220); border: 2px solid var(--primary); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+    .company-details h3 { color: var(--primary); margin-bottom: 12px; font-size: 16px; }
+    .qr-container { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+    .qr-box { text-align: center; background: #fff; padding: 12px; border-radius: 10px; }
+    .qr-box img { width: 120px; height: 120px; object-fit: contain; }
+    .qr-box p { font-size: 11px; color: #64748b; margin-top: 6px; }
+    .account-info { flex: 1; min-width: 200px; }
+    .account-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #e5e7eb; font-size: 13px; }
+    .account-row:last-child { border-bottom: none; }
+    .account-label { color: #64748b; }
+    .account-value { font-weight: 600; color: #1e293b; }
+    .copy-btn { background: var(--primary); color: #fff; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; }
+    .note-box { background: #ede9fe; border-radius: 8px; padding: 12px; font-size: 13px; color: #6b21a8; }
+    @media (max-width: 768px) {
+      .checkout-container { border-radius: 12px; }
+      .checkout-header { padding: 16px 20px; }
+      .checkout-header h1 { font-size: 20px; }
+      .checkout-body { padding: 24px 32px; }
+      .order-items { padding: 14px; }
+      .order-item { flex-wrap: wrap; gap: 8px; }
+      .order-item-name { width: 100%; }
+      .order-item-qty { margin: 0; font-size: 13px; }
+      .order-item-price { font-size: 14px; }
+      .order-total { font-size: 16px; padding-top: 12px; }
+      .company-details { padding: 14px; }
+      .qr-container { flex-direction: column; gap: 14px; }
+      .qr-box img { width: 100px; height: 100px; }
+      .account-row { font-size: 12px; }
+      .payment-method + label { padding: 12px; }
+      .payment-method-icon { width: 36px; height: 36px; font-size: 14px; }
+      .payment-method-name { font-size: 14px; }
+      .section-title { font-size: 14px; margin: 16px 0 12px; }
+      .form-group input, .form-group select { padding: 10px 12px; font-size: 14px; }
+      .upload-area { padding: 20px; }
+      .upload-icon { font-size: 32px; }
+      .btn-place { padding: 14px; font-size: 15px; }
+      .note-box { font-size: 12px; padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="checkout-container">
+    <div class="checkout-header">
+      <h1><i class="fas fa-shopping-bag"></i> Checkout</h1>
+      <p>Order ID: <%= order_no %></p>
+    </div>
+    
+    <div class="checkout-body">
+      <div class="order-items">
+        <h3 style="margin:0 0 16px; font-size:16px; color:#64748b;"><i class="fas fa-box"></i> Order Items (<%= cart.length %>)</h3>
+        <% cart.forEach(function(item) { %>
+          <div class="order-item">
+            <div class="order-item-name">
+              <strong><%= item.name %></strong>
+              <span class="order-item-qty">x <%= item.quantity %></span>
+            </div>
+            <div class="order-item-price"><%= typeof rupee !== 'undefined' ? rupee.format(item.price * item.quantity) : '₹' + (item.price * item.quantity) %></div>
+          </div>
+        <% }); %>
+        <div class="order-item" style="color:#10b981; font-weight:600;">
+          <span>Total BV Earned</span>
+          <span><i class="fas fa-star"></i> <%= totalBV %> BV</span>
+        </div>
+        <div class="order-total">
+          <span>Total Amount</span>
+          <span style="color:var(--primary);"><%= typeof rupee !== 'undefined' ? rupee.format(totalAmount) : '₹' + totalAmount %></span>
+        </div>
+      </div>
+
+      <% if (settings.company_upi_id || settings.company_account_name) { %>
+      <div class="company-details">
+        <h3><i class="fas fa-building"></i> Payment Details</h3>
+        <div class="qr-container">
+          <% if (settings.company_qr_image) { %>
+          <div class="qr-box">
+            <img src="<%= settings.company_qr_image %>" alt="QR Code">
+            <p>Scan to Pay</p>
+          </div>
+          <% } %>
+          <div class="account-info">
+            <% if (settings.company_upi_id) { %>
+            <div class="account-row">
+              <span class="account-label">UPI ID</span>
+              <span class="account-value"><%= settings.company_upi_id %></span>
+            </div>
+            <% } %>
+            <% if (settings.company_account_name) { %>
+            <div class="account-row">
+              <span class="account-label">A/C Name</span>
+              <span class="account-value"><%= settings.company_account_name %></span>
+            </div>
+            <div class="account-row">
+              <span class="account-label">A/C Number</span>
+              <span class="account-value"><%= settings.company_account_number || 'XXXX' %></span>
+            </div>
+            <div class="account-row">
+              <span class="account-label">Bank</span>
+              <span class="account-value"><%= settings.company_bank_name || 'Bank' %></span>
+            </div>
+            <div class="account-row">
+              <span class="account-label">IFSC</span>
+              <span class="account-value"><%= settings.company_ifsc || 'XXXXXX' %></span>
+            </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+      <% } %>
+
+      <form method="post" action="/cart/confirm" enctype="multipart/form-data" onsubmit="return validateForm()">
+        <h3 class="section-title"><i class="fas fa-credit-card"></i> Select Payment Method</h3>
+        
+        <div class="payment-methods">
+          <input type="radio" name="payment_method" id="method_upi" value="upi" class="payment-method" checked>
+          <label for="method_upi">
+            <div class="payment-method-icon" style="background:linear-gradient(135deg,#5f259f,#00b9f1)">UPI</div>
+            <div class="payment-method-info">
+              <div class="payment-method-name">UPI App (GPay/PhonePe/Paytm/BHIM)</div>
+              <div class="payment-method-desc">Pay using any UPI app</div>
+            </div>
+            <div class="payment-method-check"></div>
+          </label>
+          
+          <input type="radio" name="payment_method" id="method_netbanking" value="netbanking" class="payment-method">
+          <label for="method_netbanking">
+            <div class="payment-method-icon" style="background:#10b981">N</div>
+            <div class="payment-method-info">
+              <div class="payment-method-name">Net Banking</div>
+              <div class="payment-method-desc">Pay via your bank online</div>
+            </div>
+            <div class="payment-method-check"></div>
+          </label>
+          
+          <input type="radio" name="payment_method" id="method_card" value="card" class="payment-method">
+          <label for="method_card">
+            <div class="payment-method-icon" style="background:#f59e0b">💳</div>
+            <div class="payment-method-info">
+              <div class="payment-method-name">Credit / Debit Card</div>
+              <div class="payment-method-desc">Visa, Mastercard, RuPay</div>
+            </div>
+            <div class="payment-method-check"></div>
+          </label>
+        </div>
+
+        <div id="upiSection" class="payment-details active">
+          <div class="form-group">
+            <label>Which UPI App Did You Use?</label>
+            <select name="upi_app" id="upiApp">
+              <option value="">Select UPI App</option>
+              <option value="Google Pay">Google Pay (GPay)</option>
+              <option value="PhonePe">PhonePe</option>
+              <option value="Paytm">Paytm</option>
+              <option value="BHIM">BHIM UPI</option>
+              <option value="Amazon Pay">Amazon Pay</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>UPI Reference / Transaction ID *</label>
+            <input type="text" name="transaction_id" id="upiTxnId" placeholder="Enter UPI Reference ID" maxlength="50">
+          </div>
+        </div>
+
+        <div id="netbankingSection" class="payment-details">
+          <div class="form-group">
+            <label>Transaction ID / Reference Number *</label>
+            <input type="text" name="transaction_id" id="netTxnId" placeholder="Enter UTR/Transaction ID" maxlength="50">
+          </div>
+        </div>
+
+        <div id="cardSection" class="payment-details">
+          <div class="form-group">
+            <label>Card Number (Last 4 digits) *</label>
+            <input type="text" name="card_last4" id="cardLast4" placeholder="XXXX" maxlength="4" pattern="[0-9]{4}">
+          </div>
+          <div class="form-group">
+            <label>Card Type</label>
+            <select name="card_type" id="cardType">
+              <option value="">Select Card Type</option>
+              <option value="Credit Card">Credit Card</option>
+              <option value="Debit Card">Debit Card</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Transaction ID *</label>
+            <input type="text" name="transaction_id" id="cardTxnId" placeholder="Enter Transaction ID" maxlength="50">
+          </div>
+        </div>
+
+        <h3 class="section-title"><i class="fas fa-camera"></i> Upload Payment Screenshot *</h3>
+        <div class="upload-area" id="uploadArea" onclick="document.getElementById('paymentScreenshot').click()">
+          <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+          <div class="upload-text">
+            Click to upload screenshot<br>
+            <strong>Supported: JPG, PNG, PDF (Max 10MB)</strong>
+          </div>
+          <img id="previewImage" class="upload-preview" style="display:none;">
+        </div>
+        <input type="file" name="payment_screenshot" id="paymentScreenshot" class="upload-input" accept="image/*,.pdf" onchange="previewFile(this)">
+
+        <div class="note-box" style="margin-top:16px;">
+          <strong>Note:</strong> Screenshot must clearly show transaction successful message, amount, and UPI ID.
+        </div>
+
+        <button type="submit" class="btn-place" style="margin-top:24px;">
+          <i class="fas fa-check-circle"></i> Place Order
+        </button>
+      </form>
+
+      <a href="/cart" class="cancel-link"><i class="fas fa-arrow-left"></i> Back to Cart</a>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
+      radio.addEventListener('change', function() {
+        document.querySelectorAll('.payment-details').forEach(d => d.classList.remove('active'));
+        if (this.value === 'upi') document.getElementById('upiSection').classList.add('active');
+        else if (this.value === 'netbanking') document.getElementById('netbankingSection').classList.add('active');
+        else if (this.value === 'card') document.getElementById('cardSection').classList.add('active');
+      });
+    });
+
+    function previewFile(input) {
+      const file = input.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const preview = document.getElementById('previewImage');
+          const uploadArea = document.getElementById('uploadArea');
+          if (file.type === 'application/pdf') {
+            preview.style.display = 'none';
+          } else {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+          }
+          uploadArea.classList.add('has-file');
+          uploadArea.querySelector('.upload-icon').innerHTML = '<i class="fas fa-check-circle" style="color:#10b981;"></i>';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function validateForm() {
+      const screenshot = document.getElementById('paymentScreenshot').files[0];
+      if (!screenshot) {
+        alert('Please upload payment screenshot');
+        return false;
+      }
+      return confirm('Have you completed the payment?\n\nClick OK to place your order.');
+    }
+  </script>
+</body>
+</html>

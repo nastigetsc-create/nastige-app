@@ -1,0 +1,214 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Edit Product | Nastige</title>
+  <style>
+    html{font-size:16px;-webkit-text-size-adjust:100%;scroll-padding-top:0}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1e293b;font-size:14px;line-height:1.5}
+    .dashboard-wrapper{max-width:1600px;margin:0 auto;padding:20px}
+    .header{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:white;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;border-radius:16px;margin-bottom:18px}
+    .header-left{display:flex;align-items:center;gap:12px}
+    .header-logo{height:44px;border-radius:8px}
+    .header-right{display:flex;align-items:center;gap:10px}
+    .user-chip{background:rgba(255,255,255,0.15);padding:6px 14px;border-radius:20px;font-size:13px}
+    .logout-btn{background:rgba(255,255,255,0.15);border:none;color:white;padding:6px 14px;border-radius:20px;cursor:pointer;text-decoration:none}
+    
+    
+    
+    
+    .card{background:white;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.05);overflow:hidden}
+    .card-header{padding:14px 18px;border-bottom:1px solid #e2e8f0;font-weight:700;font-size:16px;display:flex;align-items:center;gap:10px}
+    .card-body{padding:24px}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .form-group{margin-bottom:6px}
+    .form-group.full{grid-column:1/-1}
+    .form-group label{display:block;font-size:13px;font-weight:600;color:#475569;margin-bottom:4px}
+    .form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;outline:none;transition:border 0.2s;box-sizing:border-box}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,0.15)}
+    .form-group textarea{min-height:100px;resize:vertical;font-family:monospace;font-size:12px;word-wrap:break-word;overflow-wrap:break-word}
+    .form-group .hint{font-size:11px;color:#94a3b8;margin-top:2px}
+    .form-actions{display:flex;gap:12px;margin-top:20px;padding-top:16px;border-top:1px solid #e2e8f0}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;border:none;cursor:pointer;text-decoration:none;transition:all 0.2s}
+    .btn-primary{background:#1e293b;color:white}
+    .btn-primary:hover{background:#334155}
+    .btn-secondary{background:#f1f5f9;color:#475569}
+    .btn-secondary:hover{background:#e2e8f0}
+    .btn-danger{background:#ef4444;color:white}
+    .btn-danger:hover{background:#dc2626}
+    .msg{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-weight:500;font-size:14px}
+    .msg-success{background:#d1fae5;border:1px solid #6ee7b7;border-left:4px solid #10b981;color:#065f46}
+    .msg-error{background:#fee2e2;border:1px solid #fca5a5;border-left:4px solid #ef4444;color:#991b1b}
+    .toggle-group{display:flex;gap:16px;flex-wrap:wrap}
+    .toggle-group label{display:flex;align-items:center;gap:6px;font-weight:400;cursor:pointer}
+    .preview-img{max-width:160px;border-radius:8px;border:1px solid #e2e8f0;margin-top:8px}
+    @media(max-width:768px){.dashboard-wrapper{padding:12px}.header{flex-direction:row;align-items:center;padding:10px 14px;gap:8px;border-radius:12px;flex-wrap:wrap}.form-grid{grid-template-columns:1fr}.card-body{padding:16px}}
+  
+    .admin-layout{display:flex;gap:20px}
+    .sidebar{width:220px;flex-shrink:0;background:white;border-radius:12px;padding:8px;box-shadow:0 2px 10px rgba(0,0,0,0.05);position:sticky;top:20px;height:fit-content;max-height:calc(100vh - 20px);overflow-y:auto}
+    .sidebar::-webkit-scrollbar{width:4px}
+    .sidebar::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:4px}
+    .side-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;text-decoration:none;color:#475569;font-size:12px;font-weight:500;transition:all 0.1s}
+    .side-link:hover{background:#f1f5f9;color:#1e293b}
+    .side-link.active{background:#1e293b;color:white}
+    .side-link svg{width:16px;height:16px;flex-shrink:0;fill:currentColor}
+    .side-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;padding:12px 10px 4px}
+    .content{flex:1;min-width:0}
+    @media(max-width:1024px){.admin-layout{flex-direction:column}.sidebar{width:260px;position:fixed;top:0;left:-280px;height:100vh;max-height:100vh;border-radius:0;padding:12px;transition:left 0.25s ease;z-index:1001;overflow-y:auto}.sidebar.open{left:0}.side-link{font-size:12px;padding:8px 10px}.side-section{display:none}}
+  </style>
+  <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <div class="header">
+      <div class="header-left">
+        <img src="/brand/logo" class="header-logo" alt="Logo" onerror="this.style.display='none'"/>
+        <div>
+          <h2 style="margin:0;font-size:20px;">Edit Product</h2>
+          <p style="margin:4px 0 0;opacity:0.9;font-size:13px;">Nastige Industries Admin Panel</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div style="position:relative;">
+          <span id="adminMenuChip" class="user-chip" onclick="var d=document.getElementById('adminMenuDrop');d.style.display=d.style.display==='block'?'none':'block'" style="cursor:pointer;user-select:none;">Admin ▾</span>
+          <div id="adminMenuDrop" style="display:none;position:absolute;right:0;top:110%;background:white;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.15);min-width:180px;z-index:9999;overflow:hidden;">
+            <a href="/admin/password" style="display:flex;align-items:center;gap:8px;padding:12px 16px;text-decoration:none;color:#1e293b;font-size:13px;font-weight:500;border-bottom:1px solid #f1f5f9;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Change Password
+            </a>
+            <a href="/logout" onclick="sessionStorage.removeItem('broadcastsShown');" style="display:flex;align-items:center;gap:8px;padding:12px 16px;text-decoration:none;color:#dc2626;font-size:13px;font-weight:600;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Logout
+            </a>
+          </div>
+        </div>
+        <script>
+        document.addEventListener('click',function(e){var d=document.getElementById('adminMenuDrop');if(d&&d.style.display==='block'&&!e.target.closest('#adminMenuDrop')&&e.target.id!=='adminMenuChip')d.style.display='none'});
+        </script>
+      </div>
+    </div>
+
+<div class="admin-layout">
+    <%- include('_admin_sidebar', { active: 'products' }) %>
+    <div class="content"><% if (success) { %>
+    <div class="msg msg-success"><%= success %></div>
+    <% } %>
+    <% if (error) { %>
+    <div class="msg msg-error"><%= error %></div>
+    <% } %>
+
+    <div class="card">
+      <div class="card-header">
+        <span>Editing: <strong><%= product.name %></strong></span>
+        <span style="font-size:12px;color:#94a3b8;font-weight:400;">ID: <%= product.id %></span>
+      </div>
+      <div class="card-body">
+        <form action="/admin/products/<%= product.id %>" method="POST" enctype="multipart/form-data">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="category">Category</label>
+              <select id="category" name="category">
+                <option value="">-- Select --</option>
+                <option value="WELL" <%= product.category === 'WELL' ? 'selected' : '' %>>WELL</option>
+                <option value="SKIN" <%= product.category === 'SKIN' ? 'selected' : '' %>>SKIN</option>
+                <option value="HAIR" <%= product.category === 'HAIR' ? 'selected' : '' %>>HAIR</option>
+                <option value="HEALTH" <%= product.category === 'HEALTH' ? 'selected' : '' %>>HEALTH</option>
+                <option value="HOME" <%= product.category === 'HOME' ? 'selected' : '' %>>HOME</option>
+                <option value="FMCG" <%= product.category === 'FMCG' ? 'selected' : '' %>>FMCG</option>
+                <option value="FOOD" <%= product.category === 'FOOD' ? 'selected' : '' %>>FOOD</option>
+                <option value="FIRE" <%= product.category === 'FIRE' ? 'selected' : '' %>>FIRE</option>
+                <option value="OTHER" <%= product.category === 'OTHER' ? 'selected' : '' %>>OTHER</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="product_code">Product Code</label>
+              <input id="product_code" name="product_code" type="text" value="<%= product.product_code || '' %>"/>
+            </div>
+            <div class="form-group">
+              <label for="hsn_code">HSN Code</label>
+              <input id="hsn_code" name="hsn_code" type="text" value="<%= product.hsn_code || '' %>"/>
+            </div>
+            <div class="form-group">
+              <label for="name">Product Name <span style="color:#ef4444;">*</span></label>
+              <input id="name" name="name" type="text" required value="<%= product.name || '' %>"/>
+            </div>
+            <div class="form-group">
+              <label for="mrp_inr">MRP (INR)</label>
+              <input id="mrp_inr" name="mrp_inr" type="number" step="0.01" value="<%= product.mrp_inr || 0 %>"/>
+            </div>
+            <div class="form-group">
+              <label for="selling_price_inr">Selling Price / DP (INR)</label>
+              <input id="selling_price_inr" name="selling_price_inr" type="number" step="0.01" value="<%= product.selling_price_inr || 0 %>"/>
+            </div>
+            <div class="form-group">
+              <label for="bv">BV (Business Volume)</label>
+              <input id="bv" name="bv" type="number" step="0.01" value="<%= product.bv || 0 %>"/>
+            </div>
+            <div class="form-group">
+              <label for="gst_percent">GST (%)</label>
+              <input id="gst_percent" name="gst_percent" type="number" step="0.01" value="<%= product.gst_percent || 0 %>"/>
+            </div>
+            <div class="form-group">
+              <label for="total_stock">Total Stock</label>
+              <input id="total_stock" name="total_stock" type="number" value="<%= product.total_stock || 0 %>"/>
+            </div>
+            <div class="form-group">
+              <label for="weight">Weight</label>
+              <input id="weight" name="weight" type="text" value="<%= product.weight || '' %>"/>
+            </div>
+            <div class="form-group">
+              <label for="stock">Stock Keeping Unit (SKU)</label>
+              <input id="stock" name="stock" type="text" value="<%= product.stock || '' %>"/>
+            </div>
+            <div class="form-group">
+              <label for="image1">Product Image</label>
+              <input id="image1" name="image1" type="file" accept="image/*"/>
+              <% if (product.image1_url) { %>
+              <div>
+                <img src="<%= product.image1_url %>" alt="Current image" class="preview-img"/>
+                <div style="font-size:11px;color:#94a3b8;margin-top:4px;">Current image. Upload a new one to replace.</div>
+              </div>
+              <% } %>
+            </div>
+            <div class="form-group full" style="position:relative;z-index:1;padding-bottom:20px;overflow:hidden">
+              <label for="details">Product Details / Description</label>
+              <div id="quillEditor" style="min-height:200px"></div>
+              <input type="hidden" name="details" id="details"/>
+            </div>
+          </div>
+          <div class="form-group full" style="padding:16px 0;border-top:1px solid #e2e8f0;position:relative;z-index:2">
+            <label>Options</label>
+            <div class="toggle-group">
+              <label><input type="checkbox" name="active" value="on" <%= product.active ? 'checked' : '' %>/> Active</label>
+              <label><input type="checkbox" name="show_on_home" value="on" <%= product.show_on_home ? 'checked' : '' %>/> Show on Homepage</label>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Update Product</button>
+            <a href="/admin/products" class="btn btn-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  </div>
+
+<script>document.querySelectorAll('.side-link').forEach(function(l){var p=l.getAttribute('href');if(window.location.pathname===p||(p!=='/admin'&&window.location.pathname.startsWith(p)))l.classList.add('active')});</script>
+  </div>
+
+
+<script>
+fetch('/admin/api/kyc-pending-count').then(function(r){return r.json()}).then(function(d){if(d.count>0){var b=document.getElementById('kyc-badge');if(b){b.textContent=d.count;b.style.display='inline';}}});
+</script>
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+<script>
+var quill = new Quill('#quillEditor', { theme: 'snow', placeholder: 'Write product description...' });
+var existing = <%- JSON.stringify(product.details || '') %>;
+if (existing) { quill.root.innerHTML = existing; }
+var form = document.querySelector('form');
+form.onsubmit = function() { document.getElementById('details').value = quill.root.innerHTML; };
+</script>
+</body>
+</html>

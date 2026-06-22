@@ -1,0 +1,102 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Downline | Nastige</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <link rel="stylesheet" href="/css/user-panel.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+  <% if (typeof admin_backup !== 'undefined' && admin_backup) { %>
+  <div style="background:#dc3545;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:600;">
+    <span>You are viewing <strong><%= (user.member_name || user.username).toUpperCase() %></strong>'s account as Admin</span>
+    <form method="post" action="/admin/back-to-admin" style="margin:0">
+      <button type="submit" style="background:#fff;color:#dc3545;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;font-weight:700;">Back to Admin</button>
+    </form>
+  </div>
+  <% } %>
+  <div class="page-wrapper">
+    <div class="page-header">
+      <div class="page-header-left">
+        <img src="/brand/logo" class="page-header-logo" alt="Logo" onerror="this.style.display='none'"/>
+        <div>
+          <h2 style="margin:0; font-size:20px;">Downline (<%= side || 'all' %>)</h2>
+          <p style="margin:4px 0 0; opacity:0.9; font-size:13px;"><%= count || 0 %> Members</p>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <a href="/dashboard" class="back-btn"><i class="fas fa-arrow-left"></i> Dashboard</a>
+      </div>
+    </div>
+<div class="nav-bar">
+  <a href="/dashboard" class="nav-link">Dashboard</a>
+  <a href="/my-offers" class="nav-link">Offers</a>
+  <a href="/products" class="nav-link">Products</a>
+  <a href="/pins" class="nav-link">My Pins</a>
+  <a href="/my-tree" class="nav-link">Tree</a>
+  <a href="/downline" class="nav-link active">Downline</a>
+  <a href="/transactions" class="nav-link">Transactions</a>
+  <a href="/my-ranks" class="nav-link">Ranks</a>
+  <a href="/invoices" class="nav-link">Invoices</a>
+  <a href="/tickets" class="nav-link">Support</a>
+  <a href="/kyc" class="nav-link">KYC</a>
+  <a href="/profile" class="nav-link">Profile</a>
+  <a href="/my-id-card" class="nav-link">ID Card</a>
+</div>
+<div class="content"><!-- Side Filter -->
+    <div style="display:flex; gap:10px; margin-bottom:20px;">
+      <a href="/downline?side=left" class="btn <%= side === 'left' ? 'btn-primary' : 'btn-secondary' %>"><i class="fas fa-arrow-left"></i> ORG L</a>
+      <a href="/downline?side=right" class="btn <%= side === 'right' ? 'btn-primary' : 'btn-secondary' %>">ORG R <i class="fas fa-arrow-right"></i></a>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span><i class="fas fa-users" style="color:#667eea; margin-right:8px;"></i> Downline Members</span>
+      </div>
+      <div class="card-body" style="padding:0;">
+        <% if ((downline||[]).length > 0) { %>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>User ID</th>
+              <th>Name</th>
+              <th>Sponsor</th>
+              <th>Side</th>
+              <th>Rank</th>
+              <th>Status</th>
+              <th>Active</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% downline.forEach(function(u, i) { %>
+            <tr>
+              <td><%= i + 1 %></td>
+              <td><strong><%= u.user_code || u.username %></strong></td>
+              <td><%= u.member_name || '-' %></td>
+              <td><%= u.sponsor_code || '-' %></td>
+              <td><span class="badge <%= u.placement_side === 'left' ? 'badge-info' : 'badge-warning' %>"><%= u.placement_side || '-' %></span></td>
+              <td><% if (u.display_rank) { %><span class="badge badge-success"><i class="fas fa-crown"></i> <%= u.display_rank %></span><% } else { %><span style="color:#94a3b8;">-</span><% } %></td>
+              <td><span class="badge <%= u.status === 'active' ? 'badge-success' : 'badge-warning' %>"><%= u.status || 'inactive' %></span></td>
+              <td><% var actDate = u.activated_at || u.created_at; %><% if (actDate) { %><%= new Date(actDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' }) %><br><small style="color:#94a3b8"><%= new Date(actDate).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Kolkata' }) %></small><% } else { %>-<% } %></td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+        <% } else { %>
+        <div style="text-align:center; padding:60px; color:#94a3b8;">
+          <i class="fas fa-users" style="font-size:48px; margin-bottom:12px;"></i>
+          <p>No downline members found</p>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+<script>document.querySelectorAll('.side-link').forEach(function(l){var p=l.getAttribute('href');if(window.location.pathname===p||(p!=='/admin'&&window.location.pathname.startsWith(p)))l.classList.add('active')});</script>
+</body>
+</html>

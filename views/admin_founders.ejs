@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Founders Configuration | Nastige</title>
+  <style>
+    html{font-size:16px;-webkit-text-size-adjust:100%;scroll-padding-top:0}*{margin:0;padding:0;box-sizing:border-box}body{background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1e293b;font-size:14px;line-height:1.5}
+    .admin-header{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:white;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.1)}
+    .admin-header .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px}
+    .admin-header img{height:35px;width:auto}
+    .admin-header .user-menu details{position:relative}
+    .admin-header summary{background:rgba(255,255,255,0.2);padding:6px 14px;border-radius:20px;cursor:pointer;font-size:13px}
+    .admin-header .menu{position:absolute;right:0;top:100%;background:white;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.15);padding:8px 0;min-width:150px;margin-top:8px}
+    .admin-header .menu a{display:block;padding:10px 16px;color:#333;text-decoration:none;font-size:13px}
+    .admin-header .menu a:hover{background:#f5f5f5}
+    .admin-layout{display:flex;gap:20px}
+    .sidebar{width:220px;flex-shrink:0;background:white;border-radius:12px;padding:8px;box-shadow:0 2px 10px rgba(0,0,0,0.05);position:sticky;top:55px;height:calc(100vh - 55px);overflow-y:auto}
+    .sidebar::-webkit-scrollbar{width:4px}
+    .sidebar::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:4px}
+    .side-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;text-decoration:none;color:#475569;font-size:12px;font-weight:500;transition:all 0.1s}
+    .side-link:hover{background:#f1f5f9;color:#1e293b}
+    .side-link.active{background:#1e293b;color:white}
+    .side-link svg{width:16px;height:16px;flex-shrink:0;fill:currentColor}
+    .side-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;padding:12px 10px 4px}
+    .content{flex:1;min-width:0}
+    .container{max-width:1100px;margin:20px auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 6px 22px rgba(0,0,0,0.06)}
+    .pad{padding:16px}
+    @media(max-width:1024px){.admin-layout{flex-direction:column}.sidebar{width:260px;position:fixed;top:0;left:-280px;height:100vh;max-height:100vh;border-radius:0;padding:12px;transition:left 0.25s ease;z-index:1001;overflow-y:auto}.sidebar.open{left:0}.side-link{font-size:12px;padding:8px 10px}.side-section{display:none}}
+
+    .card{background:white;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.05);overflow:hidden;margin-bottom:16px}
+    .card-header{padding:14px 18px;border-bottom:1px solid #e2e8f0;font-weight:700;display:flex;justify-content:space-between;align-items:center;font-size:15px}
+    .card-body{padding:18px}
+    .form-group{margin-bottom:14px}
+    .form-group label{display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px}
+    .form-control{width:100%;padding:10px 12px;border:2px solid #e5e7eb;border-radius:8px;font-size:14px;box-sizing:border-box;transition:border-color 0.2s}
+    .form-control:focus{border-color:#667eea;outline:none;box-shadow:0 0 0 3px rgba(102,126,234,0.15)}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .btn{display:inline-block;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;border:none;cursor:pointer;text-decoration:none;transition:all 0.2s}
+    .btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:white}
+    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.15)}
+    .alert{background:#d1fae5;border:1px solid #6ee7b7;border-left:4px solid #10b981;border-radius:8px;padding:12px 16px;margin-bottom:16px;color:#065f46;font-weight:500;font-size:13px}
+    .alert-error{background:#fee2e2;border:1px solid #fca5a5;border-left:4px solid #ef4444;color:#991b1b}
+    .founder-card{background:#f8fafc;border-radius:12px;padding:20px;margin-bottom:16px;border:2px solid #e2e8f0}
+    .founder-card h4{margin:0 0 12px;font-size:16px;color:#1e293b;display:flex;align-items:center;gap:8px}
+    .founder-card h4 .num{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+    .photo-preview{max-width:120px;max-height:120px;border-radius:8px;margin-top:8px;object-fit:cover;border:2px solid #e5e7eb}
+    .toggle{position:relative;display:inline-block;width:36px;height:20px;vertical-align:middle}
+    .toggle input{opacity:0;width:0;height:0}
+    .toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#cbd5e1;border-radius:20px;transition:0.3s}
+    .toggle-slider:before{position:absolute;content:"";height:14px;width:14px;left:3px;bottom:3px;background:white;border-radius:50%;transition:0.3s}
+    .toggle input:checked+.toggle-slider{background:#10b981}
+    .toggle input:checked+.toggle-slider:before{transform:translateX(16px)}
+    @media(max-width:768px){.form-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <% if (typeof admin_backup !== 'undefined' && admin_backup) { %>
+  <div style="background:#dc2626; color:#fff; padding:10px 16px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:200; font-weight:600">
+    <span>Logged in as Franchise (Admin: <%= admin_backup.username %>)</span>
+    <form method="post" action="/admin/back-to-admin" style="margin:0"><button type="submit" style="background:#fff; color:#dc2626; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-weight:700">Back to Admin</button></form>
+  </div>
+  <% } %>
+  <header class="admin-header">
+    <div class="logo">
+      <img src="/brand/logo" alt="Logo" onerror="this.style.display='none'"/>
+      <span>Nastige Admin</span>
+    </div>
+    <div class="user-menu">
+      <details>
+        <summary>Admin</summary>
+        <div class="menu">
+          <a href="/admin">Dashboard</a>
+          <a href="/logout" style="color:#ef4444">Logout</a>
+        </div>
+      </details>
+    </div>
+  </header>
+  <div class="admin-layout">
+    <%- include('_admin_sidebar', { active: 'founders' }) %>
+    <div class="content">
+      <div class="container">
+        <div class="pad">
+
+        <% if (success) { %><div class="alert"><%= success %></div><% } %>
+        <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+
+        <h3 style="margin-bottom:4px">Founders Configuration</h3>
+        <p style="color:#6b7280;font-size:13px;margin-bottom:16px">Configure up to 3 founder profiles displayed on the website landing page.</p>
+
+        <form action="/admin/founders" method="POST" enctype="multipart/form-data">
+          <% for (var i = 1; i <= 3; i++) { %>
+          <% var f = founders[i - 1] || {}; %>
+          <div class="founder-card">
+            <h4><span class="num"><%= i %></span> Founder <%= i %></h4>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Name</label>
+                <input class="form-control" name="name_<%= i %>" value="<%= f.name || '' %>" placeholder="Founder name"/>
+              </div>
+              <div class="form-group">
+                <label>Title / Designation</label>
+                <input class="form-control" name="title_<%= i %>" value="<%= f.title || '' %>" placeholder="e.g. CEO & Founder"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Message / Bio</label>
+              <textarea class="form-control" name="message_<%= i %>" rows="3" style="resize:vertical" placeholder="Founder message or bio..."><%= f.message || '' %></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Photo</label>
+                <input class="form-control" name="photo_<%= i %>" type="file" accept="image/*"/>
+                <% if (f.photo) { %>
+                <div style="margin-top:8px;position:relative;display:inline-block">
+                  <img src="<%= f.photo %>" class="photo-preview" alt="Founder Photo"/>
+                  <label style="display:block;font-size:11px;color:#64748b;margin-top:4px">
+                    <input type="checkbox" name="remove_photo_<%= i %>" value="true"/> Remove photo
+                  </label>
+                </div>
+                <% } %>
+              </div>
+              <div class="form-group">
+                <label>Photo Position</label>
+                <select class="form-control" name="photo_position_<%= i %>">
+                  <option value="center" <%= (f.photo_position || 'center') === 'center' ? 'selected' : '' %>>Center</option>
+                  <option value="top" <%= f.photo_position === 'top' ? 'selected' : '' %>>Top</option>
+                  <option value="bottom" <%= f.photo_position === 'bottom' ? 'selected' : '' %>>Bottom</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group" style="display:flex;align-items:center;gap:10px">
+              <label class="toggle">
+                <input type="checkbox" name="hidden_<%= i %>" value="1" <%= f.hidden ? 'checked' : '' %>/>
+                <span class="toggle-slider"></span>
+              </label>
+              <span style="font-size:13px;color:#374151">Hidden (not displayed on site)</span>
+            </div>
+          </div>
+          <% } %>
+          <button type="submit" class="btn btn-primary">Save All Founders</button>
+        </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>document.querySelectorAll('.side-link').forEach(function(l){var p=l.getAttribute('href');if(window.location.pathname===p||(p!=='/admin'&&window.location.pathname.startsWith(p)))l.classList.add('active')});</script>
+<script>
+fetch('/admin/api/kyc-pending-count').then(function(r){return r.json()}).then(function(d){if(d.count>0){var b=document.getElementById('kyc-badge');if(b){b.textContent=d.count;b.style.display='inline';}}});
+</script>
+</body>
+</html>

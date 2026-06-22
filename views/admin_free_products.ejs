@@ -1,0 +1,234 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Free Products | Nastige</title>
+  <style>
+    html{font-size:16px;-webkit-text-size-adjust:100%;scroll-padding-top:0}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1e293b;font-size:14px;line-height:1.5}
+    .dashboard-wrapper{max-width:1600px;margin:0 auto;padding:20px}
+    .header{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:white;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;border-radius:16px;margin-bottom:18px}
+    .header-left{display:flex;align-items:center;gap:12px}
+    .header-logo{height:44px;border-radius:8px}
+    .header-right{display:flex;align-items:center;gap:10px}
+    .logout-btn{background:rgba(255,255,255,0.15);border:none;color:white;padding:6px 14px;border-radius:20px;cursor:pointer;text-decoration:none;font-size:13px}
+    
+    
+    
+    
+    .card{background:white;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.05);overflow:hidden;margin-bottom:18px}
+    .card-header{padding:14px 18px;border-bottom:1px solid #e2e8f0;font-weight:700;display:flex;justify-content:space-between;align-items:center;color:#1e293b}
+    .card-body{padding:18px}
+    .table-wrap{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{text-align:left;padding:10px 12px;border-bottom:2px solid #e2e8f0;color:#64748b;font-weight:600;white-space:nowrap}
+    td{padding:10px 12px;border-bottom:1px solid #f1f5f9;color:#1e293b;white-space:nowrap}
+    tr:hover td{background:#f8fafc}
+    .form-group{margin-bottom:16px}
+    .form-group label{display:block;font-size:13px;font-weight:600;color:#475569;margin-bottom:6px}
+    .form-group select,.form-group input,.form-group textarea{width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;font-family:inherit;box-sizing:border-box}
+    .form-group select:focus,.form-group input:focus,.form-group textarea:focus{outline:none;border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,0.15)}
+    .btn{padding:10px 20px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
+    .btn-primary{background:#1e293b;color:white}
+    .btn-primary:hover{background:#334155}
+    .btn-danger{background:#ef4444;color:white}
+    .btn-danger:hover{background:#dc2626}
+    .btn-success{background:#10b981;color:white}
+    .btn-success:hover{background:#059669}
+    .btn-secondary{background:#e2e8f0;color:#475569}
+    .btn-secondary:hover{background:#cbd5e1}
+    .alert{padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:13px;font-weight:500}
+    .alert-success{background:#d1fae5;border:1px solid #6ee7b7;border-left:4px solid #10b981;color:#065f46}
+    .alert-error{background:#fee2e2;border:1px solid #fca5a5;border-left:4px solid #ef4444;color:#991b1b}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+    .badge-star{background:#fef3c7;color:#92400e}
+    .badge-normal{background:#e2e8f0;color:#475569}
+    .marquee-toggle{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;margin-bottom:16px}
+    .toggle-switch{position:relative;width:44px;height:24px;background:#cbd5e1;border-radius:12px;cursor:pointer;transition:background 0.2s}
+    .toggle-switch.active{background:#10b981}
+    .toggle-switch:after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;background:white;border-radius:50%;transition:transform 0.2s}
+    .toggle-switch.active:after{transform:translateX(20px)}
+    @media(max-width:768px){.dashboard-wrapper{padding:12px}.header{flex-direction:row;align-items:center;padding:10px 14px;gap:8px;border-radius:12px;flex-wrap:wrap}.grid-2{grid-template-columns:1fr}}
+  
+    .admin-layout{display:flex;gap:20px}
+    .sidebar{width:220px;flex-shrink:0;background:white;border-radius:12px;padding:8px;box-shadow:0 2px 10px rgba(0,0,0,0.05);position:sticky;top:20px;height:fit-content;max-height:calc(100vh - 20px);overflow-y:auto}
+    .sidebar::-webkit-scrollbar{width:4px}
+    .sidebar::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:4px}
+    .side-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;text-decoration:none;color:#475569;font-size:12px;font-weight:500;transition:all 0.1s}
+    .side-link:hover{background:#f1f5f9;color:#1e293b}
+    .side-link.active{background:#1e293b;color:white}
+    .side-link svg{width:16px;height:16px;flex-shrink:0;fill:currentColor}
+    .side-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;padding:12px 10px 4px}
+    .content{flex:1;min-width:0}
+    @media(max-width:1024px){.admin-layout{flex-direction:column}.sidebar{width:260px;position:fixed;top:0;left:-280px;height:100vh;max-height:100vh;border-radius:0;padding:12px;transition:left 0.25s ease;z-index:1001;overflow-y:auto}.sidebar.open{left:0}.side-link{font-size:12px;padding:8px 10px}.side-section{display:none}}
+  </style>
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <div class="header">
+      <div class="header-left">
+        <img src="/brand/logo" class="header-logo" alt="Logo" onerror="this.style.display='none'"/>
+        <div>
+          <h2 style="margin:0;font-size:20px;">Admin Dashboard</h2>
+          <p style="margin:4px 0 0;opacity:0.9;font-size:13px;">Nastige Industries Admin Panel</p>
+        </div>
+      </div>
+      <div class="header-right">
+      </div>
+    </div>
+
+<div class="admin-layout">
+    <%- include('_admin_sidebar', { active: 'free-products' }) %>
+    <div class="content"><% if (success) { %>
+      <div class="alert alert-success"><%= success %></div>
+    <% } %>
+    <% if (error) { %>
+      <div class="alert alert-error"><%= error %></div>
+    <% } %>
+
+    <%
+      var starWinners = users.filter(function(u){ return u.is_star_winner; });
+      var pendingStarIssues = starWinners.filter(function(sw){
+        return !issues.some(function(iss){ return iss.user_id === sw.id && iss.is_star_winner; });
+      });
+    %>
+
+    <% if (pendingStarIssues.length > 0) { %>
+    <div class="card" style="border:2px solid #f59e0b">
+      <div class="card-header" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:white">
+        <span>Star Winners - Pending Free Product (<%= pendingStarIssues.length %>)</span>
+        <span style="font-size:12px;opacity:0.9;font-weight:400">Auto-eligible for free product</span>
+      </div>
+      <div class="card-body" style="padding:0">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>User Code</th>
+                <th>Name</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% pendingStarIssues.forEach(function(sw) { %>
+              <tr>
+                <td><strong><%= sw.user_code %></strong></td>
+                <td><%= sw.member_name %></td>
+                <td>
+                  <form action="/admin/free-products" method="POST" style="display:inline" onsubmit="return confirm('Issue free product to <%= sw.member_name %>?')">
+                    <input type="hidden" name="user_id" value="<%= sw.id %>"/>
+                    <input type="hidden" name="reason" value="Auto - Star Winner free product"/>
+                    <select name="product_id" style="padding:4px 8px;border:1px solid #d1d5db;border-radius:6px;font-size:11px;margin-right:6px">
+                      <option value="">-- Select Product --</option>
+                      <% products.forEach(function(p) { %>
+                        <option value="<%= p.id %>"><%= p.name %></option>
+                      <% }); %>
+                    </select>
+                    <input type="number" name="quantity" value="1" min="1" style="width:50px;padding:4px 6px;border:1px solid #d1d5db;border-radius:6px;font-size:11px;margin-right:6px"/>
+                    <button type="submit" class="btn btn-success" style="padding:4px 12px;font-size:11px">Issue</button>
+                  </form>
+                </td>
+              </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <% } %>
+
+    <div class="marquee-toggle">
+      <span style="font-size:13px;font-weight:600;color:#1e293b">Show Star Winners Marquee</span>
+      <form action="/admin/star-winners/toggle-marquee-show" method="POST" style="display:inline">
+        <input type="hidden" name="hide" value="<%= hideStarWinnersMarquee ? '0' : '1' %>"/>
+        <button type="submit" class="toggle-switch <%= hideStarWinnersMarquee ? '' : 'active' %>" style="border:none;outline:none"></button>
+      </form>
+      <span style="font-size:12px;color:#64748b"><%= hideStarWinnersMarquee ? 'Hidden' : 'Visible' %></span>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">Issue Free Product</div>
+        <div class="card-body">
+          <form action="/admin/free-products" method="POST">
+            <div class="form-group">
+              <label for="user_id">Select User</label>
+              <select name="user_id" id="user_id" required>
+                <option value="">-- Select User --</option>
+                <% users.forEach(function(u) { %>
+                  <option value="<%= u.id %>"<%= u.is_star_winner ? ' style="font-weight:700;color:#d97706"' : '' %>><%= u.user_code %> - <%= u.member_name %><%= u.is_star_winner ? ' ?' : '' %></option>
+                <% }); %>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="product_id">Product (optional)</label>
+              <select name="product_id" id="product_id">
+                <option value="">-- No Product --</option>
+                <% products.forEach(function(p) { %>
+                  <option value="<%= p.id %>"><%= p.name %> (<%= p.code || 'N/A' %>) - <%= p.price %></option>
+                <% }); %>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="quantity">Quantity</label>
+              <input type="number" name="quantity" id="quantity" min="1" value="1"/>
+            </div>
+            <div class="form-group">
+              <label for="reason">Reason / Notes</label>
+              <textarea name="reason" id="reason" rows="2" placeholder="Optional reason for issuing this product"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Issue Product</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Issue History (<%= issues.length %>)</div>
+        <div class="card-body" style="max-height:500px;overflow-y:auto">
+          <% if (issues.length === 0) { %>
+            <div style="text-align:center;color:#94a3b8;padding:20px;font-size:14px">No issues recorded yet.</div>
+          <% } %>
+          <% issues.forEach(function(issue) { %>
+            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin-bottom:8px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                <div>
+                  <strong style="font-size:13px;color:#1e293b"><%= issue.member_name || issue.user_code %></strong>
+                  <span style="font-size:12px;color:#64748b;margin-left:6px">(<%= issue.user_code %>)</span>
+                  <% if (issue.is_star_winner) { %>
+                    <span class="badge badge-star">STAR</span>
+                  <% } %>
+                </div>
+                <span style="font-size:11px;color:#94a3b8"><%= new Date(issue.issued_at).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', timeZone: 'Asia/Kolkata' }) %></span>
+              </div>
+              <% if (issue.product_name) { %>
+                <div style="font-size:12px;color:#475569;margin-top:4px">
+                  Product: <strong><%= issue.product_name %></strong> x <%= issue.quantity || 1 %>
+                </div>
+              <% } %>
+              <% if (issue.reason) { %>
+                <div style="font-size:12px;color:#64748b;margin-top:2px"><%= issue.reason %></div>
+              <% } %>
+              <form action="/admin/free-products/revert" method="POST" style="display:inline;margin-top:6px">
+                <input type="hidden" name="issue_id" value="<%= issue.id %>"/>
+                <button type="submit" class="btn btn-danger" style="padding:4px 10px;font-size:11px;margin-top:4px">Revert</button>
+              </form>
+            </div>
+          <% }); %>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+<script>document.querySelectorAll('.side-link').forEach(function(l){var p=l.getAttribute('href');if(window.location.pathname===p||(p!=='/admin'&&window.location.pathname.startsWith(p)))l.classList.add('active')});</script>
+  </div>
+
+
+<script>
+fetch('/admin/api/kyc-pending-count').then(function(r){return r.json()}).then(function(d){if(d.count>0){var b=document.getElementById('kyc-badge');if(b){b.textContent=d.count;b.style.display='inline';}}});
+</script>
+</body>
+</html>

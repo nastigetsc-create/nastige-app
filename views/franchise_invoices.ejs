@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Invoices | Franchise | Nastige</title>
+  <style>
+    html{font-size:16px;-webkit-text-size-adjust:100%}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1e293b;font-size:14px;line-height:1.5}
+    .admin-header{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:white;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.1)}
+    .admin-header .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px}
+    .admin-header img{height:35px;width:auto}
+    .admin-header .user-menu details{position:relative}
+    .admin-header summary{background:rgba(255,255,255,0.2);padding:6px 14px;border-radius:20px;cursor:pointer;font-size:13px}
+    .admin-header .menu{position:absolute;right:0;top:100%;background:white;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.15);padding:8px 0;min-width:150px;margin-top:8px}
+    .admin-header .menu a{display:block;padding:10px 16px;color:#333;text-decoration:none;font-size:13px}
+    .admin-header .menu a:hover{background:#f5f5f5}
+    .admin-layout{display:flex;gap:20px}
+    .sidebar{width:220px;flex-shrink:0;background:white;border-radius:12px;padding:8px;box-shadow:0 2px 10px rgba(0,0,0,0.05);position:sticky;top:55px;height:calc(100vh - 55px);overflow-y:auto}
+    .sidebar::-webkit-scrollbar{width:4px}
+    .sidebar::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:4px}
+    .side-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;text-decoration:none;color:#475569;font-size:12px;font-weight:500;transition:all 0.1s}
+    .side-link:hover{background:#f1f5f9;color:#1e293b}
+    .side-link.active{background:#1e293b;color:white}
+    .side-link svg{width:16px;height:16px;flex-shrink:0;fill:currentColor}
+    .side-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;padding:12px 10px 4px}
+    .content{flex:1;min-width:0}
+    .container{max-width:1100px;margin:20px auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 6px 22px rgba(0,0,0,0.06)}
+    .pad{padding:16px}
+    .btn{display:inline-block;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;border:none;transition:all 0.15s}
+    .btn-primary{background:#667eea;color:#fff}.btn-primary:hover{background:#5a6fd6}
+    .btn-secondary{background:#f1f5f9;color:#475569;border:1px solid #e2e8f0}.btn-secondary:hover{background:#e2e8f0}
+    @media(max-width:1024px){.admin-layout{flex-direction:column}.sidebar{width:260px;position:fixed;top:0;left:-280px;height:100vh;max-height:100vh;border-radius:0;padding:12px;transition:left 0.25s ease;z-index:1001;overflow-y:auto}.sidebar.open{left:0}.side-link{font-size:12px;padding:8px 10px}.side-section{display:none}}
+  </style>
+</head>
+<body>
+  <% if (admin_backup) { %>
+  <div style="background:#dc2626; color:#fff; padding:10px 16px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:200; font-weight:600">
+    <span>Logged in as Franchise (Admin: <%= admin_backup.username %>)</span>
+    <form method="post" action="/admin/back-to-admin" style="margin:0"><button type="submit" style="background:#fff; color:#dc2626; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-weight:700">Back to Admin</button></form>
+  </div>
+  <% } %>
+  <header class="admin-header">
+    <div class="logo">
+      <img src="/brand/logo" alt="Logo" onerror="this.style.display='none'"/>
+      <span>Nastige Franchise</span>
+    </div>
+    <div class="user-menu">
+      <details>
+        <summary><%= user.franchise_code %></summary>
+        <div class="menu">
+          <a href="/franchise/password">Change Password</a>
+          <a href="/logout" style="color:#ef4444">Logout</a>
+        </div>
+      </details>
+    </div>
+  </header>
+  <div class="admin-layout">
+    <%- include('_franchise_sidebar', { active: 'invoices' }) %>
+    <div class="content">
+      <div class="container">
+<div class="pad">
+      <h3>My Invoices / Bills</h3>
+      
+      <form method="get" action="/franchise/invoices" style="margin: 16px 0; padding: 16px; background: #f8f9fa; border-radius: 8px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <label style="font-weight: 500;">From:</label>
+          <input type="date" name="from_date" value="<%= from_date %>" style="padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px;"/>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <label style="font-weight: 500;">To:</label>
+          <input type="date" name="to_date" value="<%= to_date %>" style="padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px;"/>
+        </div>
+        <button type="submit" class="btn" style="padding: 8px 16px;">Filter</button>
+        <a href="/franchise/invoices" class="btn btn-secondary" style="padding: 8px 16px;">Clear</a>
+      </form>
+      
+      <% if (orders.length === 0) { %>
+        <p style="padding:40px; text-align:center; color:#6b7280">No invoices yet</p>
+      <% } else { %>
+      <table style="width:100%; border-collapse:collapse; margin-top:12px">
+        <thead>
+          <tr style="background:#f3f4f6">
+            <th style="padding:12px; text-align:left">Order No</th>
+            <th style="padding:12px; text-align:left">Customer</th>
+            <th style="padding:12px; text-align:left">Product</th>
+            <th style="padding:12px; text-align:right">Amount</th>
+            <th style="padding:12px; text-align:left">Date</th>
+            <th style="padding:12px; text-align:left">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% orders.forEach(o => { %>
+            <tr style="border-bottom:1px solid #e5e7eb">
+              <td style="padding:12px; font-family:monospace; font-size:13px; white-space:nowrap"><strong><%= o.order_no || o.invoice_no || ('F' + String(o.id).padStart(6, '0')) %></strong></td>
+              <td style="padding:12px">
+                <div><%= o.customer_name || '-' %></div>
+                <div style="font-size:12px; color:#6b7280"><%= o.customer_code || '-' %></div>
+              </td>
+              <td style="padding:12px; font-size:13px; color:#374151"><%= o.product_name || '-' %></td>
+              <td style="padding:12px; text-align:right; font-weight:600">₹<%= (o.total_inr || 0).toFixed(2) %></td>
+              <td style="padding:12px"><%= new Date(o.created_at).toLocaleString('en-IN', { timeZone:'Asia/Kolkata', hour12:true }) %></td>
+              <td style="padding:12px"><a href="/franchise/invoice/<%= o.order_no || o.invoice_no || o.id %>" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;transition:all 0.2s;box-shadow:0 2px 8px rgba(102,126,234,0.3)" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 12px rgba(102,126,234,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow='0 2px 8px rgba(102,126,234,0.3)'">&#128196; View</a></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <% } %>
+    </div>
+  </div>
+    </div>
+  </div>
+<script>document.querySelectorAll('.side-link').forEach(function(l){var p=l.getAttribute('href');if(window.location.pathname===p||(p!=='/franchise'&&window.location.pathname.startsWith(p)))l.classList.add('active')});</script>
+</body>
+</html>

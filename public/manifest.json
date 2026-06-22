@@ -1,0 +1,19 @@
+{
+  "name": "Nastige Industries Pvt. Ltd.",
+  "short_name": "Nastige",
+  "description": "Nastige Industries - Wellness | Personal Care | FMCG | Home Care",
+  "start_url": "/home",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#667eea",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/img/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

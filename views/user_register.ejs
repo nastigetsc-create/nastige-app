@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Register Direct</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    :root {
+      --primary: #5b21b6;
+      --primary-dark: #4c1d95;
+      --secondary: #10b981;
+      --accent: #f59e0b;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #3b82f6;
+      --light: #f8fafc;
+      --lighter: #f1f5f9;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+      --radius: 12px;
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 30px 20px;
+      position: relative;
+      overflow: auto;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(30, 64, 175, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.02);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .register-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 520px;
+      padding: 0;
+      position: relative;
+      z-index: 10;
+      animation: slideUp 0.6s ease-out;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .register-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 30px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .register-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    }
+
+    .register-logo {
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 16px;
+      background: white;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+      padding: 8px;
+    }
+
+    .register-logo img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .register-logo::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      z-index: -1;
+      opacity: 0.3;
+    }
+
+    .register-header h1 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+      color: white;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .register-header p {
+      font-size: 14px;
+      color: rgba(255,255,255,0.8);
+      font-weight: 500;
+      max-width: 280px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .register-body {
+      padding: 28px;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .top-nav a {
+      color: #667eea;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .top-nav a:hover {
+      text-decoration: underline;
+    }
+
+    .top-nav span {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-input {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      font-size: 15px;
+      color: #1f2937;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(91, 33, 182, 0.2);
+    }
+
+    .form-input::placeholder {
+      color: #9ca3af;
+    }
+
+    .form-input:read-only {
+      background: #e2e8f0;
+      color: #64748b;
+    }
+
+    select.form-input {
+      cursor: pointer;
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 16px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      width: 100%;
+      margin-top: 8px;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+    }
+
+    .btn-secondary {
+      background: #6b7280;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      background: #4b5563;
+    }
+
+    .card-section {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .card-section h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 4px;
+    }
+
+    .card-section .subhead {
+      font-size: 12px;
+      color: #64748b;
+      margin-bottom: 16px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .form-row.single {
+      grid-template-columns: 1fr;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .checkbox-group label {
+      font-size: 14px;
+      color: #4b5563;
+      cursor: pointer;
+    }
+
+    .checkbox-group a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .checkbox-group a:hover {
+      text-decoration: underline;
+    }
+
+    .error {
+      background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+      color: #dc2626;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      font-size: 14px;
+      border: 1px solid #fecaca;
+      font-weight: 500;
+    }
+
+    .success {
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      color: #16a34a;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      font-size: 14px;
+      border: 1px solid #bbf7d0;
+      font-weight: 500;
+    }
+
+    .success {
+      background: #f0fdf4;
+      color: #16a34a;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 14px;
+      border: 1px solid #bbf7d0;
+    }
+
+    .subhead {
+      color: #64748b;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .register-container {
+        padding: 24px 20px;
+        border-radius: 16px;
+        margin: 0 8px;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="register-container">
+    <div class="register-header">
+      <div class="register-logo">
+        <img src="/brand/logo" alt="Logo" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;font-size: 28px; font-weight: 800; color: #667eea;&quot;>N</div>'"/>
+      </div>
+      <h1>Register Direct Referral</h1>
+      <p>Add new member to your team</p>
+    </div>
+
+    <div class="register-body">
+    <% var q = (typeof q !== 'undefined' && q) ? q : {}; %>
+    <div class="top-nav">
+      <div>
+        <a href="/dashboard">Dashboard</a>
+        <span style="color: #d1d5db; margin: 0 8px;">|</span>
+        <a href="/logout">Logout</a>
+      </div>
+      <span>Register New Member</span>
+    </div>
+
+    <% if (error) { %><div class="error"><%= error %></div><% } %>
+    <% if (success) { %><div class="success"><%= success %></div><% } %>
+
+    <form method="post" action="/user/register">
+      <div class="card-section">
+        <h3>Sponsor & Position</h3>
+        <div class="subhead">Sponsor ID determines both sponsor and placement parent</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Sponsor ID</label>
+            <input class="form-input" name="sponsor_ref" id="sponsorRef" value="<%= q && q.sponsor_ref ? q.sponsor_ref : (me.user_code || me.username) %>" placeholder="e.g., NIPL123456 or username" style="flex: 1;" <%= (q && q.sponsor_ref) ? 'readonly' : '' %> />
+            <div id="sponsorPreview" class="subhead" style="margin-top: 4px;"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Position</label>
+            <input class="form-input" value="<%= (q && q.placement_side) ? q.placement_side.toUpperCase() : 'N/A' %>" readonly />
+            <input type="hidden" name="placement_side" value="<%= (q && q.placement_side) ? q.placement_side : '' %>" />
+            <input type="hidden" name="placement_parent_ref" id="parentRef" value="<%= (q && q.placement_parent_ref) ? q.placement_parent_ref : '' %>" />
+          </div>
+        </div>
+
+      </div>
+
+      <div class="card-section">
+        <h3>Account Details</h3>
+        <div class="form-group">
+          <label class="form-label">Member Name</label>
+          <input class="form-input" name="member_name" value="<%= q.member_name || '' %>" placeholder="member full name" required />
+        </div>
+      </div>
+
+      <div class="card-section">
+        <h3>Additional Details</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Leader ID (Optional)</label>
+            <input class="form-input" name="leader_ref" value="<%= q.leader_ref || '' %>" placeholder="e.g., NIPL123456 or username" />
+            <div id="leaderPreview" class="subhead" style="margin-top: 4px;"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-envelope" style="color:#667eea;margin-right:6px;"></i> Email ID (Optional)</label>
+            <input class="form-input" name="email" value="<%= q.email || '' %>" type="email" placeholder="name@example.com" />
+          </div>
+        </div>
+        <div class="form-row" style="margin-top: 12px;">
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-phone" style="color:#667eea;margin-right:6px;"></i> Mobile Number</label>
+            <input class="form-input" name="phone" value="<%= q.phone || '' %>" type="tel" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit mobile" title="Enter 10-digit mobile number" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input class="form-input" name="password" type="password" required placeholder="min 6 characters" />
+          </div>
+        </div>
+        <div class="form-group" style="margin-top: 12px;">
+          <label class="form-label">State</label>
+          <select class="form-input" name="state" required>
+            <option value="">-- Select State --</option>
+            <option value="Andhra Pradesh">Andhra Pradesh</option>
+            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+            <option value="Assam">Assam</option>
+            <option value="Bihar">Bihar</option>
+            <option value="Chhattisgarh">Chhattisgarh</option>
+            <option value="Goa">Goa</option>
+            <option value="Gujarat">Gujarat</option>
+            <option value="Haryana">Haryana</option>
+            <option value="Himachal Pradesh">Himachal Pradesh</option>
+            <option value="Jharkhand">Jharkhand</option>
+            <option value="Karnataka">Karnataka</option>
+            <option value="Kerala">Kerala</option>
+            <option value="Madhya Pradesh">Madhya Pradesh</option>
+            <option value="Maharashtra">Maharashtra</option>
+            <option value="Manipur">Manipur</option>
+            <option value="Meghalaya">Meghalaya</option>
+            <option value="Mizoram">Mizoram</option>
+            <option value="Nagaland">Nagaland</option>
+            <option value="Odisha">Odisha</option>
+            <option value="Punjab">Punjab</option>
+            <option value="Rajasthan">Rajasthan</option>
+            <option value="Sikkim">Sikkim</option>
+            <option value="Tamil Nadu">Tamil Nadu</option>
+            <option value="Telangana">Telangana</option>
+            <option value="Tripura">Tripura</option>
+            <option value="Uttar Pradesh">Uttar Pradesh</option>
+            <option value="Uttarakhand">Uttarakhand</option>
+            <option value="West Bengal">West Bengal</option>
+            <option value="Delhi">Delhi (NCT)</option>
+            <option value="Jammu & Kashmir">Jammu & Kashmir</option>
+            <option value="Ladakh">Ladakh</option>
+            <option value="Puducherry">Puducherry</option>
+            <option value="Chandigarh">Chandigarh</option>
+            <option value="Andaman & Nicobar">Andaman & Nicobar</option>
+            <option value="Dadra & Nagar Haveli">Dadra & Nagar Haveli</option>
+            <option value="Daman & Diu">Daman & Diu</option>
+            <option value="Lakshadweep">Lakshadweep</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-top: 12px;">
+          <label class="form-label">Activation Mode</label>
+          <select class="form-input" name="activation_mode" id="activationModeSel">
+            <option value="id_only" <%= q.activation_mode === 'pin' ? '' : 'selected' %>>ID Creation Only</option>
+            <option value="pin" <%= q.activation_mode === 'pin' ? 'selected' : '' %>>Pin-wise Activation</option>
+          </select>
+        </div>
+        <div id="pinFields" style="display: none; margin-top: 12px;">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Package PIN</label>
+              <input class="form-input" name="package_pin" placeholder="Voucher PIN" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Login PIN</label>
+              <input class="form-input" name="login_pin" placeholder="4-6 digit PIN" />
+            </div>
+          </div>
+          <div id="pinPreview" style="display:none; margin-top:8px; padding:10px; border:1px solid #e2e8f0; border-radius:8px; background:#f8fafc; font-size:13px;"></div>
+        </div>
+        <div class="checkbox-group">
+          <input id="agree" name="agree_terms" type="checkbox" required />
+          <label for="agree">I Agree with <a href="/pages/terms-and-conditions" target="_blank">Terms & Conditions</a></label>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit">
+        <i class="fas fa-user-plus"></i> Create Member
+      </button>
+    </form>
+    </div>
+  </div>
+
+  <script>
+    (function togglePins(){
+      var sel = document.getElementById('activationModeSel');
+      var box = document.getElementById('pinFields');
+      function apply(){
+        var v = (sel && sel.value) || 'id_only';
+        var show = v === 'pin';
+        if (box) box.style.display = show ? 'block' : 'none';
+        var pp = document.querySelector('input[name="package_pin"]');
+        var lp = document.querySelector('input[name="login_pin"]');
+        if (pp) pp.required = show;
+        if (lp) lp.required = show;
+        if (show) updatePinPreview();
+      }
+      if (sel) sel.addEventListener('change', apply);
+      apply();
+    })();
+
+    function updatePinPreview() {
+      var pkg = document.querySelector('input[name="package_pin"]').value.trim();
+      var lp = document.querySelector('input[name="login_pin"]').value.trim();
+      var el = document.getElementById('pinPreview');
+      if (!pkg || !lp) { if (el) el.style.display = 'none'; return; }
+      fetch('/api/signup-pin-preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ package_pin: pkg, login_pin: lp })
+      }).then(function(r) { return r.json(); }).then(function(data) {
+        if (data.ok && data.activation) {
+          var a = data.activation;
+          var html = '<div style="font-weight:600; margin-bottom:4px; color:#059669;">&#10003; PIN Valid</div>';
+          html += '<div>Plan: <strong>' + a.name + '</strong></div>';
+          if (a.items && a.items.length) {
+            html += '<div style="color:#64748b;">Products: ' + a.items.map(function(i) { return i.product_name; }).join(', ') + '</div>';
+          }
+          html += '<div style="font-weight:700; color:#0b5ed7; margin-top:4px;">Amount: &#8377;' + (a.amount_inr || 0).toLocaleString('en-IN') + '</div>';
+          if (a.is_matrix_pin) {
+            html += '<span style="display:inline-block; margin-top:4px; background:#7c3aed; color:#fff; padding:2px 8px; border-radius:4px; font-size:11px;">MATRIX</span>';
+          }
+          el.innerHTML = html;
+          el.style.display = 'block';
+        } else {
+          el.innerHTML = '<div style="color:#dc2626;">' + (data.error || 'Invalid PIN') + '</div>';
+          el.style.display = 'block';
+        }
+      }).catch(function() { if (el) el.style.display = 'none'; });
+    }
+
+    document.querySelector('input[name="package_pin"]').addEventListener('input', updatePinPreview);
+    document.querySelector('input[name="login_pin"]').addEventListener('input', updatePinPreview);
+
+    async function updateLeaderName() {
+      try {
+        var v = (document.querySelector('input[name="leader_ref"]') || {}).value || '';
+        v = v.trim();
+        var el = document.getElementById('leaderPreview');
+        if (!el) return;
+        if (!v) { el.textContent = ''; return; }
+        var r = await fetch('/lookup/ref?ref=' + encodeURIComponent(v));
+        var j = await r.json();
+        if (j && j.ok) {
+          el.textContent = 'User: ' + (j.member_name || j.username || j.user_code || '-');
+        } else {
+          el.textContent = 'Leader not found';
+        }
+      } catch (_) {}
+    }
+
+    async function checkSponsor() {
+      var v = (document.getElementById('sponsorRef') || {}).value || '';
+      var el = document.getElementById('sponsorPreview');
+      if (!v) { if (el) el.textContent = ''; return; }
+      try {
+        var r = await fetch('/check-user?ref=' + encodeURIComponent(v));
+        var j = await r.json();
+        if (j.found) { if (el) el.textContent = 'Sponsor: ' + (j.member_name || j.username); }
+        else { if (el) el.textContent = 'User not found'; }
+      } catch(e) { if (el) el.textContent = ''; }
+    }
+    var sr = document.getElementById('sponsorRef');
+    if (sr) {
+      sr.addEventListener('input', checkSponsor);
+      if (sr.value.trim()) checkSponsor();
+    }
+    var lr = document.querySelector('input[name="leader_ref"]');
+    if (lr) {
+      lr.addEventListener('input', updateLeaderName);
+      if (lr.value.trim()) updateLeaderName();
+    }
+  </script>
+</body>
+</html>

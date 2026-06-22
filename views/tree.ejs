@@ -1,0 +1,274 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Tree Builder | Admin | Nastige</title>
+  <style>
+    html{font-size:16px;-webkit-text-size-adjust:100%;scroll-padding-top:0}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1e293b;font-size:14px;line-height:1.5}
+    .dashboard-wrapper{max-width:1600px;margin:0 auto;padding:20px}
+    .header{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:white;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;border-radius:16px;margin-bottom:18px}
+    .header-left{display:flex;align-items:center;gap:12px}
+    .header-logo{height:44px;border-radius:8px}
+    .header-right{display:flex;align-items:center;gap:10px}
+    .user-chip{background:rgba(255,255,255,0.15);padding:6px 14px;border-radius:20px;font-size:13px}
+    .logout-btn{background:rgba(255,255,255,0.15);border:none;color:white;padding:6px 14px;border-radius:20px;cursor:pointer;text-decoration:none}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;border:none;cursor:pointer;text-decoration:none;transition:all 0.2s}
+    .btn-primary{background:#1e293b;color:white}
+    .btn-primary:hover{background:#334155}
+    .btn-secondary{background:#f1f5f9;color:#475569}
+    .btn-secondary:hover{background:#e2e8f0}
+    .admin-layout{display:flex;gap:20px}
+    .sidebar{width:220px;flex-shrink:0;background:white;border-radius:12px;padding:8px;box-shadow:0 2px 10px rgba(0,0,0,0.05);position:sticky;top:20px;height:fit-content;max-height:calc(100vh - 20px);overflow-y:auto}
+    .sidebar::-webkit-scrollbar{width:4px}
+    .sidebar::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:4px}
+    .side-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;text-decoration:none;color:#475569;font-size:12px;font-weight:500;transition:all 0.1s}
+    .side-link:hover{background:#f1f5f9;color:#1e293b}
+    .side-link.active{background:#1e293b;color:white}
+    .side-link svg{width:16px;height:16px;flex-shrink:0;fill:currentColor}
+    .side-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;padding:12px 10px 4px}
+    .content{flex:1;min-width:0}
+    @media(max-width:1024px){.admin-layout{flex-direction:column}.sidebar{width:260px;position:fixed;top:0;left:-280px;height:100vh;max-height:100vh;border-radius:0;padding:12px;transition:left 0.25s ease;z-index:1001;overflow-y:auto}.sidebar.open{left:0}.side-link{font-size:12px;padding:8px 10px}.side-section{display:none}}
+
+    .card{background:white;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.05);overflow:hidden;margin-bottom:18px}
+    .search-section{padding:20px;background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%);border-bottom:1px solid #e5e7eb}
+    .search-form{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
+    .search-group{flex:1;min-width:200px}
+    .search-group label{display:block;margin-bottom:6px;font-weight:600;color:#374151;font-size:13px}
+    .search-group input,.search-group select{width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;background:#fff}
+    .search-group input:focus,.search-group select:focus{outline:none;border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,0.1)}
+    .btn-back{background:#3b82f6;color:#fff;text-decoration:none;padding:10px 20px;border-radius:10px;font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:8px;transition:all 0.3s}
+    .btn-back:hover{background:#2563eb;transform:translateY(-2px)}
+
+    .tree-container{overflow:auto;padding:40px 20px;text-align:center}
+    .tree-inner{display:inline-flex;flex-direction:column;align-items:center;text-align:center}
+    .tn{display:inline-flex;flex-direction:column;align-items:center;cursor:pointer;padding:4px 8px}
+    .tn:hover{transform:translateY(-2px);transition:transform .2s}
+    .tn-icon{width:40px;height:40px;margin-top:4px}
+    .tn-icon svg{width:100%;height:100%}
+    .tn-code{font-size:13px;font-weight:800;color:#06b6d4;white-space:nowrap}
+    .tn-name{font-size:10px;font-weight:700;color:#06b6d4;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap}
+    .tree-tbl{border-collapse:collapse;border-spacing:0;margin:0 auto}
+    .tree-tbl td{padding:0;vertical-align:top;text-align:center}
+    .vline-short{width:2px;height:20px;background:#1e293b;margin:0 auto}
+    .tr-conn{height:20px;position:relative}
+    .tr-conn::after{content:'';position:absolute;bottom:0;left:25%;right:25%;height:2px;background:#1e293b}
+    .tr-conn td{width:50%;padding:0}
+    .td-conn-l{border-right:2px solid #1e293b}
+    .td-conn-r{border-left:2px solid #1e293b}
+    .td-child{width:50%;padding:8px 12px;text-align:center;vertical-align:top}
+    .vline-wrap{display:flex;justify-content:center;margin:0}
+    .tree-slot{display:inline-flex;align-items:center;justify-content:center;padding:8px 14px;border:2px dashed #f97316;border-radius:10px;background:#fff7ed;min-width:90px;text-align:center}
+    .tree-slot-btn{display:inline-block;padding:5px 14px;border:2px solid #f97316;border-radius:6px;background:#fff;color:#f97316;font-size:11px;font-weight:700;cursor:pointer;text-decoration:none;transition:all .2s;white-space:nowrap}
+    .tree-slot-btn:hover{background:#f97316;color:#fff}
+
+    #memberPopup{display:none;position:fixed;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.2);width:220px;z-index:99999999;text-align:left}
+    #memberPopup.show{display:block}
+    #memberPopup .popup-header{font-weight:700;font-size:11px;color:#fff;background:linear-gradient(135deg,#06b6d4,#0891b2);padding:8px 12px;border-radius:10px 10px 0 0}
+    #memberPopup .popup-body{padding:20px}
+    #memberPopup .popup-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #f1f5f9;font-size:11px}
+    #memberPopup .popup-row:last-child{border-bottom:none}
+    #memberPopup .popup-label{color:#94a3b8;font-weight:500}
+    #memberPopup .popup-value{color:#0f172a;font-weight:700}
+
+    @media(max-width:480px){
+      .dashboard-wrapper{padding:12px}
+      .header{flex-direction:column;text-align:center;padding:14px;gap:12px}
+      .search-section{padding:10px 12px}
+      .search-form{flex-direction:column;gap:8px}
+      .search-group{min-width:100%}
+      .tree-container{padding:16px 8px}
+      .tn-icon{width:32px;height:32px}
+      .tn-code{font-size:11px}
+      .tn-name{font-size:9px}
+      .vline-short{height:14px}
+      .tr-conn{height:14px}
+      .td-child{padding:6px 4px}
+      .tree-slot{padding:6px 8px;min-width:70px}
+      .tree-slot-btn{padding:3px 8px;font-size:9px}
+      #memberPopup{width:180px}
+    }
+    @media(min-width:769px){
+      .tn-icon{width:48px;height:48px}
+      .tn-code{font-size:15px}
+      .tn-name{font-size:12px}
+      .vline-short{height:24px}
+      .tr-conn{height:24px}
+      .td-child{padding:10px 20px}
+      .tree-slot{padding:10px 20px;min-width:110px}
+      .tree-slot-btn{padding:6px 18px;font-size:12px}
+      .tree-tbl{min-width:600px}
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <div class="header">
+      <div class="header-left">
+        <img src="/brand/logo" class="header-logo" alt="Logo" onerror="this.style.display='none'"/>
+        <div>
+          <h2 style="margin:0;font-size:20px;">Tree Builder</h2>
+          <p style="margin:4px 0 0;opacity:0.9;font-size:13px;">Nastige Industries Admin Panel</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <span class="user-chip">Admin</span>
+        <a href="/logout" class="logout-btn">Logout</a>
+      </div>
+    </div>
+
+<div class="admin-layout">
+    <%- include('_admin_sidebar', { active: 'tree' }) %>
+    <div class="content">
+    <div class="card">
+      <div class="search-section">
+        <form method="get" action="/admin/tree-ui" class="search-form">
+          <div class="search-group">
+            <label>Root Username</label>
+            <input type="text" name="root" value="<%= tree.username %>" placeholder="Enter Root Username"/>
+          </div>
+          <button type="submit" class="btn btn-primary">Load</button>
+          <a href="/admin/tree-ui?root=admin" class="btn btn-secondary">Reset</a>
+        </form>
+      </div>
+
+    <div class="tree-container">
+      <div class="tree-inner">
+        <%
+          function iconSvg(u) {
+            var st = String(u.status||'').toLowerCase();
+            var fill = st==='active' ? '#22c55e' : (st==='inactive' ? '#ef4444' : '#f59e0b');
+            var sc = st==='active' ? '#16a34a' : (st==='inactive' ? '#dc2626' : '#d97706');
+            return '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="20" r="14" fill="'+fill+'" stroke="'+sc+'" stroke-width="2"/><path d="M10 60 C10 40 18 30 32 30 C46 30 54 40 54 60 Z" fill="'+fill+'" stroke="'+sc+'" stroke-width="2"/></svg>';
+          }
+
+          function nodeHtml(n) {
+            if (!n) return '';
+            var uc = String(n.user_code || n.member_code || '').toUpperCase();
+            var nm = (n.member_name || '').toUpperCase();
+            var sp = n.sponsor_id ? getUserById(n.sponsor_id) : null;
+            if (!sp && n.placement_parent_id) sp = getUserById(n.placement_parent_id);
+            var spCode = sp ? (sp.user_code || sp.username || '-') : '-';
+            var leftBV = (n.org_bv_left||0)+(n.carry_left||0)+(n.org_rep_bv_left||0)+(n.repurchase_carry_left||0);
+            var rightBV = (n.org_bv_right||0)+(n.carry_right||0)+(n.org_rep_bv_right||0)+(n.repurchase_carry_right||0);
+            var joined = n.created_at ? new Date(n.created_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium' }) : '-';
+            return '<div class="tn" data-id="' + uc + '" data-name="' + nm + '" data-sponsor="' + spCode + '" data-lbv="' + leftBV + '" data-rbv="' + rightBV + '" data-status="' + (n.status||'') + '" data-joined="' + joined + '">' +
+              '<div class="tn-code">' + uc + '</div>' +
+              '<div class="tn-name">' + nm + '</div>' +
+              '<div class="tn-icon">' + iconSvg(n) + '</div>' +
+            '</div>';
+          }
+
+          function emptySlot(side, parentCode) {
+            var label = side === 'left' ? '+ Add Left' : '+ Add Right';
+            var href = '/register?placement_parent_ref=' + encodeURIComponent(parentCode) + '&placement_side=' + side;
+            return '<div class="tree-slot"><a class="tree-slot-btn" href="' + href + '">' + label + '</a></div>';
+          }
+
+          function branchHtml(u, d) {
+            if (!u || d <= 0) return '';
+            var lk = u.left_id ? getUserById(u.left_id) : null;
+            var rk = u.right_id ? getUserById(u.right_id) : null;
+            var pCode = u.user_code || u.username || '';
+
+            var leftContent = lk ? nodeHtml(lk) + branchHtml(lk, d-1) : emptySlot('left', pCode);
+            var rightContent = rk ? nodeHtml(rk) + branchHtml(rk, d-1) : emptySlot('right', pCode);
+
+            return '<table class="tree-tbl"><tr class="tr-conn"><td class="td-conn-l"></td><td class="td-conn-r"></td></tr><tr>' +
+              '<td class="td-child"><div class="vline-wrap"><div class="vline-short"></div></div>' + leftContent + '</td>' +
+              '<td class="td-child"><div class="vline-wrap"><div class="vline-short"></div></div>' + rightContent + '</td>' +
+              '</tr></table>';
+          }
+        %>
+
+        <%- nodeHtml(tree) %>
+        <div class="vline-wrap"><div class="vline-short"></div></div>
+        <%- branchHtml(tree, depth) %>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <div id="memberPopup">
+    <div class="popup-header"><i class="fas fa-user" style="margin-right:4px;"></i> Member Details</div>
+    <div class="popup-body">
+      <div class="popup-row"><span class="popup-label">User ID</span><span class="popup-value" id="popId">-</span></div>
+      <div class="popup-row"><span class="popup-label">Name</span><span class="popup-value" id="popName">-</span></div>
+      <div class="popup-row"><span class="popup-label">Sponsor</span><span class="popup-value" id="popSponsor">-</span></div>
+      <div class="popup-row"><span class="popup-label">Left BV</span><span class="popup-value" id="popLBV">-</span></div>
+      <div class="popup-row"><span class="popup-label">Right BV</span><span class="popup-value" id="popRBV">-</span></div>
+      <div class="popup-row"><span class="popup-label">Status</span><span class="popup-value" id="popStatus">-</span></div>
+      <div class="popup-row"><span class="popup-label">Joined</span><span class="popup-value" id="popJoined">-</span></div>
+    </div>
+  </div>
+
+  <script>
+    var popup = document.getElementById('memberPopup');
+    var activeNode = null;
+    var currentDepth = 2;
+
+    function showPopup(node) {
+      var d = node.dataset;
+      var rect = node.getBoundingClientRect();
+      document.getElementById('popId').textContent = d.id || '-';
+      document.getElementById('popName').textContent = d.name || '-';
+      document.getElementById('popSponsor').textContent = d.sponsor || '-';
+      document.getElementById('popLBV').textContent = Number(d.lbv||0).toLocaleString('en-IN');
+      document.getElementById('popRBV').textContent = Number(d.rbv||0).toLocaleString('en-IN');
+      var st = d.status === 'active' ? 'Active' : (d.status === 'inactive' ? 'Inactive' : 'Pending');
+      var sc = d.status === 'active' ? '#16a34a' : (d.status === 'inactive' ? '#dc2626' : '#d97706');
+      document.getElementById('popStatus').innerHTML = '<span style="color:' + sc + ';font-weight:700;">' + st + '</span>';
+      document.getElementById('popJoined').textContent = d.joined || '-';
+      var left = rect.left + rect.width / 2 - 110;
+      var top = rect.bottom + 10;
+      if (left + 230 > window.innerWidth) left = window.innerWidth - 230;
+      if (left < 10) left = 10;
+      if (top + 300 > window.innerHeight) top = rect.top - 300;
+      if (top < 10) top = 10;
+      popup.style.left = left + 'px';
+      popup.style.top = top + 'px';
+      popup.classList.add('show');
+      activeNode = node;
+    }
+
+    function hidePopup() {
+      popup.classList.remove('show');
+      activeNode = null;
+    }
+
+    document.querySelectorAll('.tn').forEach(function(node) {
+      node.addEventListener('click', function(e) {
+        var id = this.dataset.id;
+        if (!id) return;
+        e.preventDefault();
+        window.location.href = '/admin/tree-ui?root=' + encodeURIComponent(id) + '&depth=' + currentDepth;
+      });
+
+      node.addEventListener('mouseenter', function() {
+        if (window.matchMedia('(hover: hover)').matches) {
+          showPopup(this);
+        }
+      });
+      node.addEventListener('mouseleave', function() {
+        if (window.matchMedia('(hover: hover)').matches) {
+          hidePopup();
+        }
+      });
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!popup.contains(e.target) && !e.target.closest('.tn')) {
+        hidePopup();
+      }
+    });
+  </script>
+  </div>
+  </div>
+<script>document.querySelectorAll('.side-link').forEach(function(l){var p=l.getAttribute('href');if(window.location.pathname===p||(p!=='/admin'&&window.location.pathname.startsWith(p)))l.classList.add('active')});</script>
+<script>
+fetch('/admin/api/kyc-pending-count').then(function(r){return r.json()}).then(function(d){if(d.count>0){var b=document.getElementById('kyc-badge');if(b){b.textContent=d.count;b.style.display='inline';}}});
+</script>
+</body>
+</html>

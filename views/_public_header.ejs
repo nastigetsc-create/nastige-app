@@ -1,0 +1,22 @@
+<style>
+.pub-hd{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:#fff;padding:16px 20px;box-shadow:0 2px 10px rgba(0,0,0,0.1);margin:0;position:relative;z-index:100}
+.pub-hd-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+.pub-hd-brand{display:flex;align-items:center;gap:12px;font-size:22px;font-weight:700;color:#fff;text-decoration:none}
+.pub-hd-brand img{height:60px;width:auto}
+.pub-hd-back{color:#fff;text-decoration:none;font-weight:500;font-size:15px;white-space:nowrap}
+.pub-hd-back:hover{opacity:0.8}
+@media(max-width:768px){
+  .pub-hd{padding:12px 16px}
+  .pub-hd-brand{font-size:16px}
+  .pub-hd-brand img{height:45px}
+}
+</style>
+<header class="pub-hd">
+  <div class="pub-hd-inner">
+    <a href="/home" class="pub-hd-brand">
+      <img src="/brand/logo" alt="Logo"/>
+      <span><%= typeof company_name !== 'undefined' && company_name ? company_name : 'Nastige Industries Pvt. Ltd.' %></span>
+    </a>
+    <a href="javascript:history.back()" class="pub-hd-back">← Back</a>
+  </div>
+</header>

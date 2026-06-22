@@ -1,0 +1,305 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Invoice <%= invoice.invoice_no %></title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <style>
+    .logo { max-width: 150px; height: auto; object-fit: contain; }
+    .logo-lg { max-width: 180px; }
+    .container-print { max-width: 900px; margin: 10px auto; background: #fff; padding: 15px; font-size: 12px; }
+    .toolbar { display:flex; justify-content: space-between; align-items:center; margin-bottom:6px; }
+    .btn-print { padding:5px 10px; border:1px solid #999; border-radius:4px; background:#fafafa; cursor:pointer; font-size: 12px; }
+    .title { text-align:center; font-size:18px; font-weight:700; margin:4px 0 8px; }
+    .grid { display:grid; grid-template-columns: 1fr 1fr; gap:8px; }
+    .box { border:1px solid #000; padding:6px; min-height:50px; }
+    .box h4 { margin:0 0 4px 0; font-size:10px; font-weight:700; }
+    .box p { margin:1px 0; font-size:10px; }
+    .row { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px; margin-top:8px; }
+    .table { width:100%; border-collapse: collapse; margin-top:8px; }
+    .table th, .table td { border:1px solid #000; padding:4px 6px; font-size:10px; }
+    .right { text-align:right; }
+    .center { text-align:center; }
+    .summary { display:grid; grid-template-columns: 1fr 240px; gap:8px; margin-top:8px; }
+    .summary .totals td { border:none; padding:4px; font-size:11px; }
+    .foot-row { display:grid; grid-template-columns: 1fr 240px; gap:8px; margin-top:8px; }
+    @media (max-width: 768px) {
+      .container-print { padding: 10px; }
+      .toolbar { flex-direction: column; gap: 10px; }
+      .grid { grid-template-columns: 1fr; }
+      .row { grid-template-columns: 1fr; }
+      .summary { grid-template-columns: 1fr; }
+      .foot-row { grid-template-columns: 1fr; }
+      .table { display: block; overflow-x: auto; }
+      .title { font-size: 18px; }
+    }
+    @media print {
+      .toolbar, nav, header { display: none !important; }
+      .container-print { 
+        margin: 0 auto !important; 
+        max-width: 900px !important;
+        box-shadow: none !important;
+      }
+      @page { margin: 10mm; }
+      .table tr { page-break-inside: avoid; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+    
+    /* Screen optimization */
+    .container-print {
+      padding: 20px;
+      font-size: 13px;
+    }
+    
+    .box {
+      padding: 10px;
+    }
+    
+    .box h4 {
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+    
+    .box p {
+      font-size: 11px;
+      margin: 2px 0;
+    }
+    
+    .table th, .table td {
+      padding: 6px 8px;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+  <% if (typeof admin_backup !== 'undefined' && admin_backup) { %>
+  <div style="background:#dc3545;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:600;">
+    <span>You are viewing <strong><%= (user.member_name || user.username).toUpperCase() %></strong>'s account as Admin</span>
+    <form method="post" action="/admin/back-to-admin" style="margin:0">
+      <button type="submit" style="background:#fff;color:#dc3545;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;font-weight:700;">Back to Admin</button>
+    </form>
+  </div>
+  <% } %>
+  <div class="container">
+    <div class="container-print">
+      <div class="toolbar">
+        <a href="/invoices" class="btn-print" style="text-decoration:none; padding:6px 12px; border:1px solid #999; border-radius:4px; background:#fafafa; color:#333;">← Back</a>
+        <button class="btn-print" onclick="window.print()" style="background:#667eea; color:white; border:2px solid #667eea; font-weight:bold;">🖨 Print</button>
+      </div>
+      <div class="title">TAX INVOICE</div>
+      <div class="grid">
+        <div class="box">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <img src="/brand/logo" alt="Logo" class="logo logo-lg"/>
+          </div>
+          <% if (company_name) { %>
+            <p><strong><%= company_name %></strong></p>
+          <% } %>
+          <% if (company_address) { %>
+            <p><%= company_address %></p>
+          <% } %>
+          <% if (company_phone) { %>
+            <p>Phone: <%= company_phone %></p>
+          <% } %>
+          <% if (company_email) { %>
+            <p>Email: <%= company_email %></p>
+          <% } %>
+          <% if (company_gstin) { %>
+            <p>GSTIN: <%= company_gstin %></p>
+          <% } %>
+        </div>
+        <div class="box">
+          <div class="grid" style="grid-template-columns: 1fr 1fr; gap:6px;">
+            <div>
+              <h4>Invoice No</h4>
+              <p><%= invoice.invoice_no %></p>
+            </div>
+            <div>
+              <h4>Invoice Date</h4>
+              <p><%= new Date(invoice.created_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) %></p>
+            </div>
+            <div>
+              <h4>GST Type</h4>
+              <p><%= (gst_type || 'inclusive') === 'exclusive' ? 'GST Exclusive' : 'GST Inclusive' %></p>
+            </div>
+            <div>
+              <h4>Payment Mode</h4>
+              <p>-</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="box">
+          <h4>Customer Name (Billing Address)</h4>
+          <p><strong><%= (user && (user.member_name || user.username)) || 'Customer' %></strong></p>
+          <p><%= [user && user.address_line1, user && user.address_line2].filter(Boolean).join(', ') || '-' %></p>
+          <p><%= [user && user.city, user && user.state, user && user.pincode].filter(Boolean).join(', ') || '-' %></p>
+          <p>Mobile No: <%= (user && user.phone) || '-' %></p>
+          <p>GST No: -</p>
+        </div>
+        <div class="box">
+          <h4>Customer (Shipping Address)</h4>
+          <p><%= [user && user.address_line1, user && user.address_line2].filter(Boolean).join(', ') || '-' %></p>
+        </div>
+        <div class="box">
+          <h4>Order Notes</h4>
+          <p>-</p>
+        </div>
+      </div>
+      <%
+        var isLocal = (user && user.state && user.state.toLowerCase().includes('delhi')) || 
+                      (user && user.state && user.state.toLowerCase() === 'dl');
+      %>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Product Name</th>
+            <th>Product Code</th>
+            <th>Barcode</th>
+            <th>HSN Code</th>
+            <th>GST (%)</th>
+            <th class="center">Quantity</th>
+            <th class="right">Taxable Value</th>
+            <% if (isLocal) { %>
+              <th class="right">CGST</th>
+              <th class="right">SGST</th>
+            <% } else { %>
+              <th class="right">IGST</th>
+            <% } %>
+            <th class="right">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% function getProductCode(pid) { 
+         const p = (products||[]).find(x => x.id === pid);
+         return p ? (p.product_code || p.code || '') : '';
+       }
+       function getHSNCode(pid) {
+         const p = (products||[]).find(x => x.id === pid);
+         return p ? (p.hsn_code || '') : '';
+       } %>
+          <% if (invoice.items && Array.isArray(invoice.items)) { %>
+            <% invoice.items.forEach(function(item) {
+              var pcode = item.product_code || getProductCode(item.product_id) || (item.product_id ? 'PROD' + item.product_id : '-');
+            %>
+              <tr>
+                <td><%= item.product_name %></td>
+                <td><%= pcode %></td>
+                <td style="text-align:center;"><img src="/api/products/barcode/<%= encodeURIComponent(pcode) %>" style="height:30px; max-width:80px;" alt="Barcode"/></td>
+                <td><%= item.hsn_code || getHSNCode(item.product_id) || '-' %></td>
+                <td class="center"><%= item.gst_percent %>%</td>
+                <td class="center"><%= item.quantity || 1 %></td>
+                <td class="right"><%= rupee.format(item.price_inr) %></td>
+                <% if (isLocal) { %>
+                  <td class="right"><%= rupee.format((item.gst_inr || 0) / 2) %></td>
+                  <td class="right"><%= rupee.format((item.gst_inr || 0) / 2) %></td>
+                <% } else { %>
+                  <td class="right"><%= rupee.format(item.gst_inr || 0) %></td>
+                <% } %>
+                <td class="right"><%= rupee.format(item.total_inr) %></td>
+              </tr>
+            <% }); %>
+          <% } else { %>
+            <tr>
+              <td><%= invoice.product_name %></td>
+              <td><%= getProductCode(invoice.product_id) || (invoice.product_id ? 'PROD' + invoice.product_id : '-') %></td>
+              <td><%= getHSNCode(invoice.product_id) || '-' %></td>
+              <td class="center"><%= invoice.gst_percent %>%</td>
+              <td class="center">1</td>
+              <td class="right"><%= rupee.format(invoice.price_inr) %></td>
+              <% if (isLocal) { %>
+                <td class="right"><%= rupee.format((invoice.gst_inr || 0) / 2) %></td>
+                <td class="right"><%= rupee.format((invoice.gst_inr || 0) / 2) %></td>
+              <% } else { %>
+                <td class="right"><%= rupee.format(invoice.gst_inr || 0) %></td>
+              <% } %>
+              <td class="right"><%= rupee.format(invoice.total_inr) %></td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+      <div class="summary">
+        <div class="box">
+          <h4>Bank Details</h4>
+          <p>Account Name: <%= String(user.bank_account_name || '-').toUpperCase() %></p>
+          <p>Account No: <%= user.bank_account_number || '-' %></p>
+          <p>IFSC Code: <%= String(user.bank_ifsc || '-').toUpperCase() %></p>
+          <p>Bank Name: <%= String(user.bank_name || '-').toUpperCase() %></p>
+          <p>Branch: <%= String(user.bank_branch || '-').toUpperCase() %></p>
+        </div>
+        <div>
+          <table class="totals">
+            <% if (invoice.items && Array.isArray(invoice.items)) { 
+               const subtotal = invoice.items.reduce((sum, item) => sum + (item.price_inr || 0), 0);
+               const gstTotal = invoice.items.reduce((sum, item) => sum + (item.gst_inr || 0), 0);
+               const halfGst = gstTotal / 2;
+            %>
+              <tr>
+                <td>Taxable Value</td>
+                <td class="right"><%= rupee.format(subtotal) %></td>
+              </tr>
+              <% if (isLocal) { %>
+                <tr>
+                  <td>CGST</td>
+                  <td class="right"><%= rupee.format(halfGst) %></td>
+                </tr>
+                <tr>
+                  <td>SGST</td>
+                  <td class="right"><%= rupee.format(halfGst) %></td>
+                </tr>
+              <% } else { %>
+                <tr>
+                  <td>IGST</td>
+                  <td class="right"><%= rupee.format(gstTotal) %></td>
+                </tr>
+              <% } %>
+              <tr style="font-weight:700; font-size:14px;">
+                <td>Total</td>
+                <td class="right"><%= rupee.format(invoice.total_inr || subtotal + gstTotal) %></td>
+              </tr>
+            <% } else { %>
+              <tr>
+                <td>Taxable Value</td>
+                <td class="right"><%= rupee.format(invoice.price_inr) %></td>
+              </tr>
+              <% if (isLocal) { %>
+                <tr>
+                  <td>CGST (<%= (invoice.gst_percent || 0) / 2 %>%)</td>
+                  <td class="right"><%= rupee.format((invoice.gst_inr || 0) / 2) %></td>
+                </tr>
+                <tr>
+                  <td>SGST (<%= (invoice.gst_percent || 0) / 2 %>%)</td>
+                  <td class="right"><%= rupee.format((invoice.gst_inr || 0) / 2) %></td>
+                </tr>
+              <% } else { %>
+                <tr>
+                  <td>IGST (<%= invoice.gst_percent %>%)</td>
+                  <td class="right"><%= rupee.format(invoice.gst_inr || 0) %></td>
+                </tr>
+              <% } %>
+              <tr style="font-weight:700; font-size:14px;">
+                <td>Total</td>
+                <td class="right"><%= rupee.format(invoice.total_inr) %></td>
+              </tr>
+            <% } %>
+          </table>
+          <p style="margin-top:10px; font-size:12px;">Amount in words: <strong><%= amount_words %></strong></p>
+        </div>
+      </div>
+      <div class="foot-row">
+        <div class="box">
+          <h4>Terms & Conditions</h4>
+          <p>1. Goods once sold will not be taken back.</p>
+          <p>2. All disputes subject to Delhi jurisdiction.</p>
+        </div>
+        <div class="box" style="text-align:center">
+          <p>Authorized Signature</p>
+          <p style="margin-top:40px;">_________________</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

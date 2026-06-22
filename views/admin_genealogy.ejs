@@ -1,0 +1,208 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Genealogy | Admin | Nastige</title>
+  <style>
+    html{font-size:16px;-webkit-text-size-adjust:100%;scroll-padding-top:0}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1e293b;font-size:14px;line-height:1.5}
+    .wrapper{max-width:1600px;margin:0 auto;padding:20px}
+    .header{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:white;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;border-radius:16px;margin-bottom:18px}
+    .header-left{display:flex;align-items:center;gap:12px}
+    .header-logo{height:44px;border-radius:8px}
+    .header-right{display:flex;align-items:center;gap:10px}
+    .user-chip{background:rgba(255,255,255,0.15);padding:6px 14px;border-radius:20px;font-size:13px}
+    .logout-btn{background:rgba(255,255,255,0.15);border:none;color:white;padding:6px 14px;border-radius:20px;cursor:pointer;text-decoration:none}
+    
+    
+    
+    
+    .card{background:white;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.05);overflow:hidden}
+    .card-header{padding:14px 18px;border-bottom:1px solid #e2e8f0;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+    .card-body{padding:18px}
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:18px}
+    .stat-card{background:white;border-radius:12px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,0.05)}
+    .stat-value{font-size:22px;font-weight:800}
+    .stat-label{font-size:12px;color:#64748b;margin-top:2px}
+    .tree-node{display:inline-block;background:white;border:2px solid #e2e8f0;border-radius:12px;padding:12px 16px;min-width:140px;text-align:center;margin:6px;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+    .tree-node.root{border-color:#667eea;background:#eef2ff}
+    .tree-node .name{font-weight:700;font-size:13px;color:#1e293b}
+    .tree-node .code{font-size:11px;color:#64748b;margin:2px 0}
+    .tree-node .status{font-size:11px;padding:2px 8px;border-radius:8px;display:inline-block}
+    .tree-node .status.active{background:#d1fae5;color:#065f46}
+    .tree-node .status.inactive{background:#fee2e2;color:#991b1b}
+    .tree-level{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:8px 0}
+    .tree-level-label{text-align:center;font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin:16px 0 4px}
+    .tree-branch{display:flex;justify-content:center;gap:40px;flex-wrap:wrap}
+    .tree-column{display:flex;flex-direction:column;align-items:center;min-width:160px}
+    .breadcrumb{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;font-size:13px}
+    .breadcrumb a{color:#667eea;text-decoration:none}
+    .breadcrumb a:hover{text-decoration:underline}
+    .breadcrumb span{color:#94a3b8}
+    .search-form{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+    .search-form input{padding:8px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;flex:1;min-width:200px}
+    .search-form select{padding:8px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px}
+    .btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;font-size:13px;font-weight:500}
+    .btn-primary{background:#1e293b;color:white}
+    .btn-primary:hover{background:#334155}
+    .btn-sm{padding:4px 10px;font-size:12px}
+    .alert{background:#d1fae5;border:1px solid #6ee7b7;border-left:4px solid #10b981;border-radius:8px;padding:12px 16px;margin-bottom:16px;color:#065f46;font-weight:500}
+    .alert-error{background:#fee2e2;border:1px solid #fca5a5;border-left:4px solid #ef4444;color:#991b1b}
+    .empty{text-align:center;color:#94a3b8;padding:40px 20px;font-size:14px}
+    .user-info{background:#f8fafc;border-radius:12px;padding:12px 16px;margin-bottom:16px;font-size:13px;line-height:1.8}
+    .user-info strong{color:#1e293b}
+    @media(max-width:768px){.wrapper{padding:12px}.header{flex-direction:row;align-items:center;padding:10px 14px;gap:8px;border-radius:12px;flex-wrap:wrap}.tree-branch{gap:12px}.tree-column{min-width:120px}}
+  
+    .admin-layout{display:flex;gap:20px}
+    .sidebar{width:220px;flex-shrink:0;background:white;border-radius:12px;padding:8px;box-shadow:0 2px 10px rgba(0,0,0,0.05);position:sticky;top:20px;height:fit-content;max-height:calc(100vh - 20px);overflow-y:auto}
+    .sidebar::-webkit-scrollbar{width:4px}
+    .sidebar::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:4px}
+    .side-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;text-decoration:none;color:#475569;font-size:12px;font-weight:500;transition:all 0.1s}
+    .side-link:hover{background:#f1f5f9;color:#1e293b}
+    .side-link.active{background:#1e293b;color:white}
+    .side-link svg{width:16px;height:16px;flex-shrink:0;fill:currentColor}
+    .side-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;padding:12px 10px 4px}
+    .content{flex:1;min-width:0}
+    @media(max-width:1024px){.admin-layout{flex-direction:column}.sidebar{width:260px;position:fixed;top:0;left:-280px;height:100vh;max-height:100vh;border-radius:0;padding:12px;transition:left 0.25s ease;z-index:1001;overflow-y:auto}.sidebar.open{left:0}.side-link{font-size:12px;padding:8px 10px}.side-section{display:none}}
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="header">
+      <div class="header-left">
+        <img src="/brand/logo" class="header-logo" alt="Logo" onerror="this.style.display='none'"/>
+        <div>
+          <h2 style="margin:0;font-size:20px;">Admin Dashboard</h2>
+          <p style="margin:4px 0 0;opacity:0.9;font-size:13px;">Nastige Industries Admin Panel</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div style="position:relative;">
+          <span id="adminMenuChip" class="user-chip" onclick="var d=document.getElementById('adminMenuDrop');d.style.display=d.style.display==='block'?'none':'block'" style="cursor:pointer;user-select:none;">Admin ▾</span>
+          <div id="adminMenuDrop" style="display:none;position:absolute;right:0;top:110%;background:white;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.15);min-width:180px;z-index:9999;overflow:hidden;">
+            <a href="/admin/password" style="display:flex;align-items:center;gap:8px;padding:12px 16px;text-decoration:none;color:#1e293b;font-size:13px;font-weight:500;border-bottom:1px solid #f1f5f9;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Change Password
+            </a>
+            <a href="/logout" onclick="sessionStorage.removeItem('broadcastsShown');" style="display:flex;align-items:center;gap:8px;padding:12px 16px;text-decoration:none;color:#dc2626;font-size:13px;font-weight:600;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Logout
+            </a>
+          </div>
+        </div>
+        <script>
+        document.addEventListener('click',function(e){var d=document.getElementById('adminMenuDrop');if(d&&d.style.display==='block'&&!e.target.closest('#adminMenuDrop')&&e.target.id!=='adminMenuChip')d.style.display='none'});
+        </script>
+      </div>
+    </div>
+
+<div class="admin-layout">
+    <%- include('_admin_sidebar', { active: 'genealogy' }) %>
+    <div class="content"><% if (error) { %>
+    <div class="alert alert-error"><%= error %></div>
+    <% } %>
+
+    <form class="search-form" method="GET" action="/admin/genealogy">
+      <input type="text" name="user" placeholder="Search by username, user code, or ID..." value="<%= searchUser %>"/>
+      <select name="depth">
+        <% for (var d = 1; d <= 5; d++) { %>
+        <option value="<%= d %>" <%= depth == d ? 'selected' : '' %>>Depth <%= d %></option>
+        <% } %>
+      </select>
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    <% if (currentUser) { %>
+    <div class="user-info">
+      <strong><%= currentUser.member_name || currentUser.username %></strong> - <%= currentUser.user_code || '' %>
+      | Sponsor: <%= currentUser.sponsor_id ? (getUserById(currentUser.sponsor_id) ? getUserById(currentUser.sponsor_id).user_code : '#' + currentUser.sponsor_id) : 'N/A' %>
+      | SBV: <%= currentUser.pv || 0 %>
+      | Status: <%= (currentUser.status || 'active').charAt(0).toUpperCase() + (currentUser.status || 'active').slice(1) %>
+    </div>
+
+    <% if (breadcrumb.length > 1) { %>
+    <div class="breadcrumb">
+      <% breadcrumb.forEach(function(b, i) { %>
+      <% if (i < breadcrumb.length - 1) { %>
+      <a href="/admin/genealogy?user=<%= b.id %>"><%= b.id %></a>
+      <span>/</span>
+      <% } else { %>
+      <strong><%= b.id %></strong>
+      <% } %>
+      <% }); %>
+    </div>
+    <% } %>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" style="color:#667eea;"><%= stats.total %></div>
+        <div class="stat-label">Total Members</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" style="color:#10b981;"><%= stats.active %></div>
+        <div class="stat-label">Active</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" style="color:#ef4444;"><%= stats.inactive %></div>
+        <div class="stat-label">Inactive</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" style="color:#f59e0b;"><%= stats.totalBV.toLocaleString('en-IN') %></div>
+        <div class="stat-label">Total BV</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">Genealogy Tree</div>
+      <div class="card-body">
+        <% function renderTree(userId, currentDepth, maxDepth) { %>
+          <% if (!userId || currentDepth > maxDepth) return; %>
+          <% var user = getUserById(userId); %>
+          <% if (!user) return; %>
+          <div class="tree-node <%= userId === currentUser.id ? 'root' : '' %>">
+            <div class="name"><%= user.member_name || user.username %></div>
+            <div class="code"><%= user.user_code || '' %></div>
+            <div class="<%= (user.status || 'active') === 'active' ? 'status active' : 'status inactive' %>"><%= (user.status || 'active').charAt(0).toUpperCase() + (user.status || 'active').slice(1) %></div>
+            <div style="font-size:11px;color:#64748b;margin-top:4px">BV: <%= user.pv || 0 %></div>
+            <a href="/admin/genealogy?user=<%= user.user_code || user.username %>&depth=<%= depth %>" style="font-size:11px;color:#667eea;text-decoration:none">View</a>
+          </div>
+          <% if (currentDepth < maxDepth && (user.left_id || user.right_id)) { %>
+          <div class="tree-level-label">Children</div>
+          <div class="tree-branch">
+            <% if (user.left_id) { %>
+            <div class="tree-column">
+              <div style="font-size:11px;color:#10b981;font-weight:600;margin-bottom:4px">LEFT</div>
+              <% renderTree(user.left_id, currentDepth + 1, maxDepth); %>
+            </div>
+            <% } %>
+            <% if (user.right_id) { %>
+            <div class="tree-column">
+              <div style="font-size:11px;color:#667eea;font-weight:600;margin-bottom:4px">RIGHT</div>
+              <% renderTree(user.right_id, currentDepth + 1, maxDepth); %>
+            </div>
+            <% } %>
+          </div>
+          <% } %>
+        <% } %>
+        <div style="text-align:center">
+          <% renderTree(currentUser.id, 1, depth); %>
+        </div>
+      </div>
+    </div>
+    <% } else if (!error) { %>
+    <div class="empty">Search for a user to view their genealogy tree.</div>
+    <% } %>
+  </div>
+  </div>
+
+<script>document.querySelectorAll('.side-link').forEach(function(l){var p=l.getAttribute('href');if(window.location.pathname===p||(p!=='/admin'&&window.location.pathname.startsWith(p)))l.classList.add('active')});</script>
+  </div>
+
+
+<script>
+fetch('/admin/api/kyc-pending-count').then(function(r){return r.json()}).then(function(d){if(d.count>0){var b=document.getElementById('kyc-badge');if(b){b.textContent=d.count;b.style.display='inline';}}});
+</script>
+</body>
+</html>

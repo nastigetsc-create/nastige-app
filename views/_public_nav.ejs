@@ -1,0 +1,52 @@
+<style>
+.pub-nav{width:100%;margin:0;padding:6px 0;background:#1a1a1a;position:relative;z-index:9999;border-radius:0}
+.pub-nav-inner{max-width:1400px;margin:0 auto;padding:0 16px 0 24px;display:flex;align-items:center;gap:8px;justify-content:space-between}
+.pub-nav-logo{flex-shrink:0}
+.pub-nav-logo img{height:30px;width:auto}
+.pub-nav-toggle{display:none;cursor:pointer;padding:4px;flex-direction:column;gap:5px}
+.pub-nav-toggle span{display:block;width:22px;height:2px;background:#e5e7eb;border-radius:2px}
+.pub-nav-menu{display:flex;flex:1;justify-content:center;align-items:center;gap:4px;flex-wrap:nowrap;overflow-x:auto}
+.pub-nav-menu::-webkit-scrollbar{display:none}
+.pub-nav-menu .nav-link{display:inline-flex;align-items:center;padding:8px 16px;border-radius:20px;color:#e5e7eb;text-decoration:none;font-size:13px;font-weight:500;white-space:nowrap;border:1px solid transparent;transition:all 0.2s;background:transparent}
+.pub-nav-menu .nav-link:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.15);color:#fff}
+.pub-nav-menu .nav-link.active{background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.2);color:#fff}
+.pub-nav-menu a:nth-last-of-type(3){color:#10b981;border-color:#10b981;background:rgba(16,185,129,0.1)}
+.pub-nav-menu a:nth-last-of-type(2){color:#3b82f6;border-color:#3b82f6;background:rgba(59,130,246,0.1)}
+.pub-nav-menu a:nth-last-of-type(1){color:#f59e0b;border-color:#f59e0b;background:rgba(245,158,11,0.1)}
+.pub-nav-menu a:nth-last-of-type(3):hover{background:#10b981;color:#fff}
+.pub-nav-menu a:nth-last-of-type(2):hover{background:#3b82f6;color:#fff}
+.pub-nav-menu a:nth-last-of-type(1):hover{background:#f59e0b;color:#fff}
+.pub-nav-sep{width:1px;height:24px;background:#555;margin:0 8px;flex-shrink:0}
+@media(max-width:768px){
+  .pub-nav-toggle{display:flex}
+  .pub-nav-menu{display:none;flex-direction:column;background:#1a1a1a;padding:4px 0;width:100%}
+  .pub-nav-menu.show{display:flex}
+  .pub-nav-sep{display:none}
+  .pub-nav-menu .nav-link{width:100%;text-align:center;padding:10px 16px}
+}
+</style>
+<nav class="pub-nav">
+  <div class="pub-nav-inner">
+    <div class="pub-nav-logo">
+      <a href="/home" style="text-decoration:none;display:flex;align-items:center;">
+        <img src="/brand/logo" alt="Logo"/>
+      </a>
+    </div>
+    <div class="pub-nav-toggle" onclick="document.getElementById('pubNavMenu').classList.toggle('show')">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+  <div class="pub-nav-menu" id="pubNavMenu">
+    <a href="/home" class="nav-link">Home</a>
+    <a href="/pages/company-account" class="nav-link">Company Account</a>
+    <a href="/products" class="nav-link">Products</a>
+    <a href="/pages/documents" class="nav-link">Documents</a>
+    <a href="/gallery" class="nav-link">Gallery</a>
+    <a href="/franchise-public" class="nav-link">Our Franchise</a>
+    <a href="/contact" class="nav-link">Contact</a>
+    <span class="pub-nav-sep"></span>
+    <a href="/login" class="nav-link">Login</a>
+    <a href="/signup" class="nav-link">Register</a>
+    <a href="/franchise/login" class="nav-link">Franchise</a>
+  </div>
+</nav>

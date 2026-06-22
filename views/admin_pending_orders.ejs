@@ -1,0 +1,253 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Pending Orders | Nastige</title>
+  <style>
+    html{font-size:16px;-webkit-text-size-adjust:100%;scroll-padding-top:0}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1e293b;font-size:14px;line-height:1.5}
+    .dashboard-wrapper{max-width:1600px;margin:0 auto;padding:20px}
+    .header{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:white;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;border-radius:16px;margin-bottom:18px}
+    .header-left{display:flex;align-items:center;gap:12px}
+    .header-logo{height:44px;border-radius:8px}
+    .header-right{display:flex;align-items:center;gap:10px}
+    .logout-btn{background:rgba(255,255,255,0.15);border:none;color:white;padding:6px 14px;border-radius:20px;cursor:pointer;text-decoration:none;font-size:13px}
+    
+    
+    
+    
+    .card{background:white;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.05);overflow:hidden;margin-bottom:18px}
+    .card-header{padding:14px 18px;border-bottom:1px solid #e2e8f0;font-weight:700;display:flex;justify-content:space-between;align-items:center;color:#1e293b}
+    .card-body{padding:18px}
+    .table-wrap{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{text-align:left;padding:10px 12px;border-bottom:2px solid #e2e8f0;color:#64748b;font-weight:600;white-space:nowrap}
+    td{padding:10px 12px;border-bottom:1px solid #f1f5f9;color:#1e293b;white-space:nowrap}
+    tr:hover td{background:#f8fafc}
+    .btn{padding:8px 16px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
+    .btn-primary{background:#1e293b;color:white}
+    .btn-primary:hover{background:#334155}
+    .btn-success{background:#10b981;color:white}
+    .btn-success:hover{background:#059669}
+    .btn-danger{background:#ef4444;color:white}
+    .btn-danger:hover{background:#dc2626}
+    .alert{padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:13px;font-weight:500}
+    .alert-success{background:#d1fae5;border:1px solid #6ee7b7;border-left:4px solid #10b981;color:#065f46}
+    .alert-error{background:#fee2e2;border:1px solid #fca5a5;border-left:4px solid #ef4444;color:#991b1b}
+    .tabs{display:flex;gap:8px;margin-bottom:16px;border-bottom:2px solid #e2e8f0;padding-bottom:8px}
+    .tab{padding:8px 20px;border-radius:8px 8px 0 0;text-decoration:none;font-size:13px;font-weight:600;color:#64748b;cursor:pointer}
+    .tab.active{background:#1e293b;color:white}
+    .tab:hover:not(.active){background:#f1f5f9}
+    .order-detail{font-size:12px;color:#64748b;margin-top:2px}
+    @media(max-width:768px){.dashboard-wrapper{padding:12px}.header{flex-direction:row;align-items:center;padding:10px 14px;gap:8px;border-radius:12px;flex-wrap:wrap}.tabs{overflow-x:auto;flex-wrap:nowrap;gap:4px}.tab{white-space:nowrap;padding:6px 14px;font-size:12px}}
+  
+    .admin-layout{display:flex;gap:20px}
+    .sidebar{width:220px;flex-shrink:0;background:white;border-radius:12px;padding:8px;box-shadow:0 2px 10px rgba(0,0,0,0.05);position:sticky;top:20px;height:fit-content;max-height:calc(100vh - 20px);overflow-y:auto}
+    .sidebar::-webkit-scrollbar{width:4px}
+    .sidebar::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:4px}
+    .side-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;text-decoration:none;color:#475569;font-size:12px;font-weight:500;transition:all 0.1s}
+    .side-link:hover{background:#f1f5f9;color:#1e293b}
+    .side-link.active{background:#1e293b;color:white}
+    .side-link svg{width:16px;height:16px;flex-shrink:0;fill:currentColor}
+    .side-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;padding:12px 10px 4px}
+    .content{flex:1;min-width:0}
+    @media(max-width:1024px){.admin-layout{flex-direction:column}.sidebar{width:260px;position:fixed;top:0;left:-280px;height:100vh;max-height:100vh;border-radius:0;padding:12px;transition:left 0.25s ease;z-index:1001;overflow-y:auto}.sidebar.open{left:0}.side-link{font-size:12px;padding:8px 10px}.side-section{display:none}}
+  </style>
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <div class="header">
+      <div class="header-left">
+        <img src="/brand/logo" class="header-logo" alt="Logo" onerror="this.style.display='none'"/>
+        <div>
+          <h2 style="margin:0;font-size:20px;">Admin Dashboard</h2>
+          <p style="margin:4px 0 0;opacity:0.9;font-size:13px;">Nastige Industries Admin Panel</p>
+        </div>
+      </div>
+      <div class="header-right">
+      </div>
+    </div>
+
+<div class="admin-layout">
+    <%- include('_admin_sidebar', { active: 'pending-orders' }) %>
+    <div class="content"><% if (success) { %>
+      <div class="alert alert-success"><%= success %></div>
+    <% } %>
+    <% if (error) { %>
+      <div class="alert alert-error"><%= error %></div>
+    <% } %>
+
+    <div class="tabs">
+      <a class="tab active" href="#pending" onclick="showTab('pending')">Pending (<%= orders.length %>)</a>
+      <a class="tab" href="#approved" onclick="showTab('approved')">Approved (<%= approvedOrders.length %>)</a>
+      <a class="tab" href="#rejected" onclick="showTab('rejected')">Rejected (<%= rejectedOrders.length %>)</a>
+    </div>
+
+    <!-- Pending -->
+    <div id="tab-pending" class="card">
+      <div class="card-header">
+        <span>Pending Orders (<%= orders.length %>)</span>
+      </div>
+      <div class="card-body">
+        <% if (orders.length === 0) { %>
+          <div style="text-align:center;color:#94a3b8;padding:30px;font-size:14px">No pending orders.</div>
+        <% } else { %>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Order</th>
+                  <th>User</th>
+                  <th>Code</th>
+                  <th>Product</th>
+                  <th>Qty</th>
+                  <th>Total</th>
+                  <th>BV</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% orders.forEach(function(o) { %>
+                  <tr>
+                    <td>#<%= o.id %></td>
+                    <td><strong><%= o.user_name %></strong></td>
+                    <td><%= o.user_code %></td>
+                    <td><%= o.product_name %></td>
+                    <td><%= o.quantity %></td>
+                    <td><%= rupee.format(o.total_inr || 0) %></td>
+                    <td><%= (o.total_bv || 0).toLocaleString('en-IN') %></td>
+                    <td style="font-size:12px;color:#64748b"><%= new Date(o.created_at).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', timeZone: 'Asia/Kolkata' }) %></td>
+                    <td>
+                      <form action="/admin/pending-orders/approve" method="POST" style="display:inline">
+                        <input type="hidden" name="order_id" value="<%= o.id %>"/>
+                        <button type="submit" class="btn btn-success" style="padding:6px 12px;font-size:11px">Approve</button>
+                      </form>
+                      <form action="/admin/pending-orders/reject" method="POST" style="display:inline">
+                        <input type="hidden" name="order_id" value="<%= o.id %>"/>
+                        <button type="submit" class="btn btn-danger" style="padding:6px 12px;font-size:11px">Reject</button>
+                      </form>
+                    </td>
+                  </tr>
+                  <% if (o.is_cart_order && o.items && o.items.length > 0) { %>
+                    <tr style="background:#f8fafc">
+                      <td colspan="9" style="padding:4px 12px">
+                        <div class="order-detail">Items: <% o.items.forEach(function(item) { %><%= item.product_name || 'Unknown' %> x<%= item.quantity || 1 %>, <% }); %></div>
+                      </td>
+                    </tr>
+                  <% } %>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Approved -->
+    <div id="tab-approved" class="card" style="display:none">
+      <div class="card-header">
+        <span>Approved Orders (<%= approvedOrders.length %>)</span>
+      </div>
+      <div class="card-body">
+        <% if (approvedOrders.length === 0) { %>
+          <div style="text-align:center;color:#94a3b8;padding:30px;font-size:14px">No approved orders.</div>
+        <% } else { %>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Order</th>
+                  <th>User</th>
+                  <th>Code</th>
+                  <th>Product</th>
+                  <th>Qty</th>
+                  <th>Total</th>
+                  <th>BV</th>
+                  <th>Approved</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% approvedOrders.forEach(function(o) { %>
+                  <tr>
+                    <td>#<%= o.id %></td>
+                    <td><strong><%= o.user_name %></strong></td>
+                    <td><%= o.user_code %></td>
+                    <td><%= o.product_name %></td>
+                    <td><%= o.quantity %></td>
+                    <td><%= rupee.format(o.total_inr || 0) %></td>
+                    <td><%= (o.total_bv || 0).toLocaleString('en-IN') %></td>
+                    <td style="font-size:12px;color:#64748b"><%= new Date(o.updated_at || o.created_at).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', timeZone: 'Asia/Kolkata' }) %></td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Rejected -->
+    <div id="tab-rejected" class="card" style="display:none">
+      <div class="card-header">
+        <span>Rejected Orders (<%= rejectedOrders.length %>)</span>
+      </div>
+      <div class="card-body">
+        <% if (rejectedOrders.length === 0) { %>
+          <div style="text-align:center;color:#94a3b8;padding:30px;font-size:14px">No rejected orders.</div>
+        <% } else { %>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Order</th>
+                  <th>User</th>
+                  <th>Code</th>
+                  <th>Product</th>
+                  <th>Qty</th>
+                  <th>Total</th>
+                  <th>Rejected</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% rejectedOrders.forEach(function(o) { %>
+                  <tr>
+                    <td>#<%= o.id %></td>
+                    <td><strong><%= o.user_name %></strong></td>
+                    <td><%= o.user_code %></td>
+                    <td><%= o.product_name %></td>
+                    <td><%= o.quantity %></td>
+                    <td><%= rupee.format(o.total_inr || 0) %></td>
+                    <td style="font-size:12px;color:#64748b"><%= new Date(o.updated_at || o.created_at).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', timeZone: 'Asia/Kolkata' }) %></td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showTab(name) {
+      document.querySelectorAll('.card[id^="tab-"]').forEach(function(el) { el.style.display = 'none'; });
+      document.getElementById('tab-' + name).style.display = '';
+      document.querySelectorAll('.tab').forEach(function(el) { el.classList.remove('active'); });
+      document.querySelector('.tab[href="#' + name + '"]').classList.add('active');
+    }
+    var hash = window.location.hash.replace('#', '');
+    if (hash && ['pending','approved','rejected'].indexOf(hash) !== -1) showTab(hash);
+  </script>
+<script>document.querySelectorAll('.side-link').forEach(function(l){var p=l.getAttribute('href');if(window.location.pathname===p||(p!=='/admin'&&window.location.pathname.startsWith(p)))l.classList.add('active')});</script>
+  </div>
+  </div>
+
+
+<script>
+fetch('/admin/api/kyc-pending-count').then(function(r){return r.json()}).then(function(d){if(d.count>0){var b=document.getElementById('kyc-badge');if(b){b.textContent=d.count;b.style.display='inline';}}});
+</script>
+</body>
+</html>

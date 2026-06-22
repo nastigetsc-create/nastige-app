@@ -1,0 +1,187 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Repurchase Report | Admin | Nastige</title>
+  <style>
+    html{font-size:16px;-webkit-text-size-adjust:100%;scroll-padding-top:0}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1e293b;font-size:14px;line-height:1.5}
+.admin-header .logo span { display: none; }
+      .admin-header img { height: 30px; }
+    }
+    @media (max-width: 1024px) {
+      .container { padding: 16px; }
+    }
+    @media (max-width: 768px) {
+      body { padding: 10px; }
+      .container { padding: 10px; }
+      .nav-bar { 
+        width: 100% !important; 
+        flex-direction: row !important; 
+        overflow-x: auto !important;
+        white-space: nowrap !important;
+      }
+      .nav-link { padding: 10px 12px; font-size: 12px; }
+      table { display: block; overflow-x: auto; white-space: nowrap; }
+      th, td { padding: 8px 4px; font-size: 11px; }
+      .brand img { max-height: 40px; max-width: 100px; }
+    }
+  
+    .admin-layout{display:flex;gap:20px}
+    .sidebar{width:220px;flex-shrink:0;background:white;border-radius:12px;padding:8px;box-shadow:0 2px 10px rgba(0,0,0,0.05);position:sticky;top:20px;height:fit-content;max-height:calc(100vh - 20px);overflow-y:auto}
+    .sidebar::-webkit-scrollbar{width:4px}
+    .sidebar::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:4px}
+    .side-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;text-decoration:none;color:#475569;font-size:12px;font-weight:500;transition:all 0.1s}
+    .side-link:hover{background:#f1f5f9;color:#1e293b}
+    .side-link.active{background:#1e293b;color:white}
+    .side-link svg{width:16px;height:16px;flex-shrink:0;fill:currentColor}
+    .side-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;padding:12px 10px 4px}
+    .content{flex:1;min-width:0}
+    @media(max-width:1024px){.admin-layout{flex-direction:column}.sidebar{width:260px;position:fixed;top:0;left:-280px;height:100vh;max-height:100vh;border-radius:0;padding:12px;transition:left 0.25s ease;z-index:1001;overflow-y:auto}.sidebar.open{left:0}.side-link{font-size:12px;padding:8px 10px}.side-section{display:none}}
+  
+    .header{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:white;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;border-radius:16px;margin-bottom:18px}
+    .header-left{display:flex;align-items:center;gap:12px}
+    .header-logo{height:44px;border-radius:8px}
+    .header-right{display:flex;align-items:center;gap:10px}
+    .user-chip{background:rgba(255,255,255,0.15);padding:6px 14px;border-radius:20px;font-size:13px}
+    .logout-btn{background:rgba(255,255,255,0.15);border:none;color:white;padding:6px 14px;border-radius:20px;cursor:pointer;text-decoration:none}
+    .dashboard-wrapper{max-width:1600px;margin:0 auto;padding:20px}
+    .admin-layout{display:flex;gap:20px}
+    .sidebar{width:220px;flex-shrink:0;background:white;border-radius:12px;padding:8px;box-shadow:0 2px 10px rgba(0,0,0,0.05);position:sticky;top:20px;height:fit-content;max-height:calc(100vh - 20px);overflow-y:auto}
+    .sidebar::-webkit-scrollbar{width:4px}
+    .sidebar::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:4px}
+    .side-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;text-decoration:none;color:#475569;font-size:12px;font-weight:500;transition:all 0.1s}
+    .side-link:hover{background:#f1f5f9;color:#1e293b}
+    .side-link.active{background:#1e293b;color:white}
+    .side-link svg{width:16px;height:16px;flex-shrink:0;fill:currentColor}
+    .side-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;padding:12px 10px 4px}
+    .content{flex:1;min-width:0}
+    @media(max-width:1024px){.admin-layout{flex-direction:column}.sidebar{width:260px;position:fixed;top:0;left:-280px;height:100vh;max-height:100vh;border-radius:0;padding:12px;transition:left 0.25s ease;z-index:1001;overflow-y:auto}.sidebar.open{left:0}.side-link{font-size:12px;padding:8px 10px}.side-section{display:none}}
+  </style>
+</head>
+<body>
+      <div class="header">
+      <div class="header-left">
+        <img src="/brand/logo" class="header-logo" alt="Logo" onerror="this.style.display='none'"/>
+        <div>
+          <h2 style="margin:0;font-size:20px;">Admin Dashboard</h2>
+          <p style="margin:4px 0 0;opacity:0.9;font-size:13px;">Nastige Industries Admin Panel</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div style="position:relative;">
+          <span id="adminMenuChip" class="user-chip" onclick="var d=document.getElementById('adminMenuDrop');d.style.display=d.style.display==='block'?'none':'block'" style="cursor:pointer;user-select:none;">Admin ▾</span>
+          <div id="adminMenuDrop" style="display:none;position:absolute;right:0;top:110%;background:white;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.15);min-width:180px;z-index:9999;overflow:hidden;">
+            <a href="/admin/password" style="display:flex;align-items:center;gap:8px;padding:12px 16px;text-decoration:none;color:#1e293b;font-size:13px;font-weight:500;border-bottom:1px solid #f1f5f9;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Change Password
+            </a>
+            <a href="/logout" onclick="sessionStorage.removeItem('broadcastsShown');" style="display:flex;align-items:center;gap:8px;padding:12px 16px;text-decoration:none;color:#dc2626;font-size:13px;font-weight:600;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Logout
+            </a>
+          </div>
+        </div>
+        <script>
+        document.addEventListener('click',function(e){var d=document.getElementById('adminMenuDrop');if(d&&d.style.display==='block'&&!e.target.closest('#adminMenuDrop')&&e.target.id!=='adminMenuChip')d.style.display='none'});
+        </script>
+      </div>
+    </div>
+  <div class="dashboard-wrapper">
+    <div class="admin-layout">
+    <%- include('_admin_sidebar', { active: 'income-reports' }) %>
+    <div class="content">
+    <div style="margin-bottom:16px"><a href="/admin" style="color:#667eea;text-decoration:none;font-weight:500;">? Back to Dashboard</a> &nbsp;|&nbsp; <a href="/admin/reports/income?type=repurchase" style="color:#667eea;text-decoration:none;font-weight:500;">View in Combined Report ?</a></div>
+    <div class="table-card">
+      <h3>All Repurchase Orders (User + Franchise)</h3>
+      <div class="pad">
+        <form method="GET" action="/admin/reports/repurchase" style="margin-bottom:12px">
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+            <label>From: <input type="date" name="from" value="<%= from || '' %>" style="padding:6px; border:1px solid #ccc; border-radius:4px"/></label>
+            <label>To: <input type="date" name="to" value="<%= to || '' %>" style="padding:6px; border:1px solid #ccc; border-radius:4px"/></label>
+            <button type="submit" class="btn" style="background:#1976d2; color:white; border:none; padding:8px 16px; border-radius:4px; cursor:pointer">Filter</button>
+            <a href="/admin/reports/repurchase" class="btn" style="background:#6c757d; color:white; padding:8px 16px; border-radius:4px; text-decoration:none">Clear</a>
+          </div>
+        </form>
+        <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:12px">
+          <div class="card" style="flex:1; min-width:180px">
+            <div class="pad">
+              <div class="subhead">Total Orders</div>
+              <div style="font-size:20px; font-weight:700"><%= total_orders || 0 %></div>
+            </div>
+          </div>
+          <div class="card" style="flex:1; min-width:180px">
+            <div class="pad">
+              <div class="subhead">Total BV</div>
+              <div style="font-size:20px; font-weight:700"><%= rupee.format(total_bv || 0) %></div>
+            </div>
+          </div>
+          <div class="card" style="flex:1; min-width:180px">
+            <div class="pad">
+              <div class="subhead">Total INR</div>
+              <div style="font-size:20px; font-weight:700"><%= rupee.format(total_inr || 0) %></div>
+            </div>
+          </div>
+        </div>
+        <table class="table-compact">
+          <thead>
+            <tr>
+              <th>Order No</th>
+              <th>Date</th>
+              <th>User</th>
+              <th>Franchise</th>
+              <th>Product</th>
+              <th class="right">Qty</th>
+              <th class="right">BV</th>
+              <th class="right">INR</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (!(rows||[]).length) { %>
+              <tr><td colspan="9" style="text-align:center; padding:20px; color:#666">No repurchase orders found.</td></tr>
+            <% } %>
+            <% (rows||[]).forEach(function(r){ %>
+              <tr>
+                <td><strong><%= r.order_no %></strong></td>
+                <td><%= r.date ? new Date(r.date).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) : '-' %></td>
+                <td>
+                  <% if (r.user_code) { %>
+                    <div><strong><%= r.user_code %></strong></div>
+                    <% if (r.member_name) { %><div class="idline"><%= r.member_name %></div><% } %>
+                  <% } else { %>
+                    -
+                  <% } %>
+                </td>
+                <td><%= r.franchise_code || '-' %></td>
+                <td>
+                  <% if (r.product_name) { %>
+                    <div><%= r.product_name %></div>
+                  <% } else { %>
+                    -
+                  <% } %>
+                </td>
+                <td class="right"><%= r.quantity || 0 %></td>
+                <td class="right"><%= rupee.format(r.total_bv || 0) %></td>
+                <td class="right"><%= rupee.format(r.total_inr || 0) %></td>
+                <td>
+                  <% if (r.source === 'Direct') { %>
+                    <span class="pill" style="background:#dbeafe; color:#1e40af">Direct</span>
+                  <% } else { %>
+                    <span class="pill" style="background:#d1fae5; color:#065f46">Franchise</span>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+<script>document.querySelectorAll('.side-link').forEach(function(l){var p=l.getAttribute('href');if(window.location.pathname===p||(p!=='/admin'&&window.location.pathname.startsWith(p)))l.classList.add('active')});</script>
+<script>
+fetch('/admin/api/kyc-pending-count').then(function(r){return r.json()}).then(function(d){if(d.count>0){var b=document.getElementById('kyc-badge');if(b){b.textContent=d.count;b.style.display='inline';}}});
+</script>

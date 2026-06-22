@@ -1,0 +1,173 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Ticket #<%= ticket | id %> | Nastige</title>
+  <style>
+    html{font-size:16px;-webkit-text-size-adjust:100%;scroll-padding-top:0}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1e293b;font-size:14px;line-height:1.5}
+    .dashboard-wrapper{max-width:1600px;margin:0 auto;padding:20px}
+    .header{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:white;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;border-radius:16px;margin-bottom:18px}
+    .header-left{display:flex;align-items:center;gap:12px}
+    .header-logo{height:44px;border-radius:8px}
+    .header-right{display:flex;align-items:center;gap:10px}
+    .logout-btn{background:rgba(255,255,255,0.15);border:none;color:white;padding:6px 14px;border-radius:20px;cursor:pointer;text-decoration:none;font-size:13px}
+    
+    
+    
+    
+    .card{background:white;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.05);overflow:hidden;margin-bottom:18px}
+    .card-header{padding:14px 18px;border-bottom:1px solid #e2e8f0;font-weight:700;display:flex;justify-content:space-between;align-items:center;color:#1e293b}
+    .card-body{padding:18px}
+    .badge{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;text-transform:uppercase}
+    .badge-open{background:#fef3c7;color:#92400e}
+    .badge-closed{background:#d1fae5;color:#065f46}
+    .badge-in-progress{background:#dbeafe;color:#1e40af}
+    .badge-resolved{background:#e0e7ff;color:#3730a3}
+    .reply-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:20px}
+    .reply-box textarea{width:100%;border:1px solid #e2e8f0;border-radius:8px;padding:12px;font-family:inherit;font-size:14px;resize:vertical;min-height:120px;box-sizing:border-box}
+    .reply-box textarea:focus{outline:none;border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,0.15)}
+    .reply-actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+    .btn{padding:10px 20px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
+    .btn-primary{background:#1e293b;color:white}
+    .btn-primary:hover{background:#334155}
+    .btn-success{background:#10b981;color:white}
+    .btn-success:hover{background:#059669}
+    .btn-warning{background:#f59e0b;color:white}
+    .btn-warning:hover{background:#d97706}
+    .btn-secondary{background:#e2e8f0;color:#475569}
+    .btn-secondary:hover{background:#cbd5e1}
+    .btn-danger{background:#ef4444;color:white}
+    .btn-danger:hover{background:#dc2626}
+    .info-row{display:flex;gap:12px;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:14px}
+    .info-row:last-child{border-bottom:none}
+    .info-label{color:#64748b;min-width:100px;flex-shrink:0}
+    .info-value{color:#1e293b;font-weight:500}
+    .attachment-link{color:#667eea;text-decoration:none;font-weight:500}
+    .attachment-link:hover{text-decoration:underline}
+    @media(max-width:768px){.dashboard-wrapper{padding:12px}.header{flex-direction:row;align-items:center;padding:10px 14px;gap:8px;border-radius:12px;flex-wrap:wrap}}
+  
+    .admin-layout{display:flex;gap:20px}
+    .sidebar{width:220px;flex-shrink:0;background:white;border-radius:12px;padding:8px;box-shadow:0 2px 10px rgba(0,0,0,0.05);position:sticky;top:20px;height:fit-content;max-height:calc(100vh - 20px);overflow-y:auto}
+    .sidebar::-webkit-scrollbar{width:4px}
+    .sidebar::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:4px}
+    .side-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;text-decoration:none;color:#475569;font-size:12px;font-weight:500;transition:all 0.1s}
+    .side-link:hover{background:#f1f5f9;color:#1e293b}
+    .side-link.active{background:#1e293b;color:white}
+    .side-link svg{width:16px;height:16px;flex-shrink:0;fill:currentColor}
+    .side-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;padding:12px 10px 4px}
+    .content{flex:1;min-width:0}
+    @media(max-width:1024px){.admin-layout{flex-direction:column}.sidebar{width:260px;position:fixed;top:0;left:-280px;height:100vh;max-height:100vh;border-radius:0;padding:12px;transition:left 0.25s ease;z-index:1001;overflow-y:auto}.sidebar.open{left:0}.side-link{font-size:12px;padding:8px 10px}.side-section{display:none}}
+  </style>
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <div class="header">
+      <div class="header-left">
+        <img src="/brand/logo" class="header-logo" alt="Logo" onerror="this.style.display='none'"/>
+        <div>
+          <h2 style="margin:0;font-size:20px;">Admin Dashboard</h2>
+          <p style="margin:4px 0 0;opacity:0.9;font-size:13px;">Nastige Industries Admin Panel</p>
+        </div>
+      </div>
+      <div class="header-right">
+      </div>
+    </div>
+
+<div class="admin-layout">
+    <%- include('_admin_sidebar', { active: 'tickets' }) %>
+    <div class="content"><a href="/admin/tickets" style="display:inline-block;margin-bottom:16px;color:#667eea;text-decoration:none;font-size:14px">&larr; Back to Tickets</a>
+
+    <div class="card">
+      <div class="card-header">
+        <span>Ticket #<%= ticket.id %> - <%= ticket.subject %></span>
+        <% var statusClass = 'badge-open'; %>
+        <% if (ticket.status === 'closed') statusClass = 'badge-closed'; %>
+        <% if (ticket.status === 'in-progress') statusClass = 'badge-in-progress'; %>
+        <% if (ticket.status === 'resolved') statusClass = 'badge-resolved'; %>
+        <span class="badge <%= statusClass %>"><%= (ticket.status || 'open').toUpperCase() %></span>
+      </div>
+      <div class="card-body">
+        <div class="info-row">
+          <span class="info-label">User</span>
+          <span class="info-value"><%= user ? (user.member_name || user.username || user.user_code || 'Unknown') : 'Unknown' %></span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">User Code</span>
+          <span class="info-value"><%= user ? (user.user_code || user.username) : 'Unknown' %></span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Submitted</span>
+          <span class="info-value"><%= new Date(ticket.created_at).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', timeZone: 'Asia/Kolkata' }) %></span>
+        </div>
+        <% if (ticket.file_url) { %>
+        <div class="info-row">
+          <span class="info-label">Attachment</span>
+          <span class="info-value"><a href="<%= ticket.file_url %>" target="_blank" class="attachment-link">View Attachment</a></span>
+        </div>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">Message</div>
+      <div class="card-body">
+        <p style="font-size:14px;line-height:1.8;color:#1e293b;margin:0;white-space:pre-wrap"><%= ticket.message %></p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">Replies</div>
+      <div class="card-body">
+        <% if (!ticket.replies || ticket.replies.length === 0) { %>
+          <div style="text-align:center;color:#94a3b8;padding:20px;font-size:14px">No replies yet.</div>
+        <% } %>
+        <% (ticket.replies || []).forEach(function(r) { %>
+          <div style="background:<%= r.is_admin ? '#f1f5f9' : '#f8fafc' %>;border-radius:8px;padding:12px 16px;margin-bottom:10px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <strong style="font-size:13px;color:<%= r.is_admin ? '#667eea' : '#1e293b' %>;"><%= r.is_admin ? 'Admin' : 'User' %></strong>
+              <span style="font-size:11px;color:#94a3b8"><%= new Date(r.created_at).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', timeZone: 'Asia/Kolkata' }) %></span>
+            </div>
+            <p style="font-size:13px;line-height:1.6;color:#475569;margin:0;white-space:pre-wrap"><%= r.message %></p>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">Reply to Ticket</div>
+      <div class="card-body">
+        <form action="/admin/tickets/<%= ticket.id %>/reply" method="POST" class="reply-box">
+          <textarea name="message" placeholder="Type your reply here..." required></textarea>
+          <div class="reply-actions">
+            <button type="submit" class="btn btn-primary">Send Reply</button>
+            <form action="/admin/tickets/<%= ticket.id %>/status" method="POST" style="display:inline">
+              <input type="hidden" name="status" value="in-progress"/>
+              <button type="submit" class="btn btn-warning">Mark In Progress</button>
+            </form>
+            <form action="/admin/tickets/<%= ticket.id %>/status" method="POST" style="display:inline">
+              <input type="hidden" name="status" value="resolved"/>
+              <button type="submit" class="btn btn-success">Mark Resolved</button>
+            </form>
+            <form action="/admin/tickets/<%= ticket.id %>/status" method="POST" style="display:inline">
+              <input type="hidden" name="status" value="closed"/>
+              <button type="submit" class="btn btn-danger">Close Ticket</button>
+            </form>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  </div>
+
+<script>document.querySelectorAll('.side-link').forEach(function(l){var p=l.getAttribute('href');if(window.location.pathname===p||(p!=='/admin'&&window.location.pathname.startsWith(p)))l.classList.add('active')});</script>
+  </div>
+
+
+<script>
+fetch('/admin/api/kyc-pending-count').then(function(r){return r.json()}).then(function(d){if(d.count>0){var b=document.getElementById('kyc-badge');if(b){b.textContent=d.count;b.style.display='inline';}}});
+</script>
+</body>
+</html>

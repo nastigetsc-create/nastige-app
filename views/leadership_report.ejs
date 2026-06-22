@@ -1,0 +1,109 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Leadership Report | Nastige</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <link rel="stylesheet" href="/css/user-panel.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+  <% if (typeof admin_backup !== 'undefined' && admin_backup) { %>
+  <div style="background:#dc3545;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:600;">
+    <span>You are viewing <strong><%= (user.member_name || user.username).toUpperCase() %></strong>'s account as Admin</span>
+    <form method="post" action="/admin/back-to-admin" style="margin:0">
+      <button type="submit" style="background:#fff;color:#dc3545;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;font-weight:700;">Back to Admin</button>
+    </form>
+  </div>
+  <% } %>
+  <div class="page-wrapper">
+    <div class="page-header">
+      <div class="page-header-left">
+        <img src="/brand/logo" class="page-header-logo" alt="Logo" onerror="this.style.display='none'"/>
+        <div>
+          <h2 style="margin:0; font-size:20px;">Leadership Report</h2>
+          <p style="margin:4px 0 0; opacity:0.9; font-size:13px;">Leadership Bonus Income</p>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <a href="/dashboard" class="back-btn"><i class="fas fa-arrow-left"></i> Dashboard</a>
+      </div>
+    </div>
+<div class="nav-bar">
+  <a href="/dashboard" class="nav-link">Dashboard</a>
+  <a href="/my-offers" class="nav-link">Offers</a>
+  <a href="/products" class="nav-link">Products</a>
+  <a href="/pins" class="nav-link">My Pins</a>
+  <a href="/my-tree" class="nav-link">Tree</a>
+  <a href="/downline" class="nav-link">Downline</a>
+  <a href="/transactions" class="nav-link">Transactions</a>
+  <a href="/my-ranks" class="nav-link">Ranks</a>
+  <a href="/invoices" class="nav-link">Invoices</a>
+  <a href="/tickets" class="nav-link">Support</a>
+  <a href="/kyc" class="nav-link">KYC</a>
+  <a href="/profile" class="nav-link">Profile</a>
+  <a href="/my-id-card" class="nav-link">ID Card</a>
+</div>
+<div class="content"><!-- Quick Links -->
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;">
+      <a href="/reports/binary" class="btn btn-secondary"><i class="fas fa-chart-bar"></i> Binary</a>
+      <a href="/reports/repurchase" class="btn btn-secondary"><i class="fas fa-sync-alt"></i> Repurchase</a>
+      <a href="/reports/leadership" class="btn btn-warning"><i class="fas fa-crown"></i> Leadership</a>
+    </div>
+
+
+
+    <!-- Weekly Earnings -->
+    <% if (typeof groupedEarnings !== 'undefined' && (groupedEarnings||[]).length > 0) { %>
+      <% groupedEarnings.forEach(function(week) { %>
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-header" style="background:#fffbeb;">
+          <span><i class="fas fa-calendar-week" style="color:#f59e0b; margin-right:8px;"></i> Week <%= week.weekNumber %> <%= week.year %> (<%= week.dateRange || '' %>)</span>
+          <span style="color:#f59e0b; font-weight:700;"><%= typeof rupee !== 'undefined' ? rupee.format(week.totals.net || 0) : '₹' + (week.totals.net || 0) %></span>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>From User</th>
+                <th>Plan</th>
+                <th>Gross</th>
+                <th>TDS</th>
+                <th>PRF</th>
+                <th style="text-align:right;">Net</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% week.earnings.forEach(function(e) { %>
+              <tr>
+                <td><%= new Date(e.created_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) %></td>
+                <td><%= e.source_user_code || '-' %></td>
+                <td><%= e.plan_name || '-' %></td>
+                <td><%= typeof rupee !== 'undefined' ? rupee.format(e.gross_inr || 0) : '₹' + (e.gross_inr || 0) %></td>
+                <td style="color:#ef4444;">-<%= typeof rupee !== 'undefined' ? rupee.format(e.tds_inr || 0) : '₹' + (e.tds_inr || 0) %></td>
+                <td style="color:#ef4444;">-<%= typeof rupee !== 'undefined' ? rupee.format(e.admin_charge_inr || 0) : '₹' + (e.admin_charge_inr || 0) %></td>
+                <td style="text-align:right; color:#f59e0b; font-weight:700;"><%= typeof rupee !== 'undefined' ? rupee.format(e.net_inr || e.amount_inr || 0) : '₹' + (e.net_inr || e.amount_inr || 0) %></td>
+              </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <% }); %>
+    <% } else { %>
+      <div class="card">
+        <div class="card-body" style="text-align:center; padding:60px; color:#94a3b8;">
+          <i class="fas fa-crown" style="font-size:48px; margin-bottom:12px;"></i>
+          <p>No leadership bonus yet</p>
+        </div>
+      </div>
+    <% } %>
+  </div>
+  </div>
+  </div>
+<script>document.querySelectorAll('.side-link').forEach(function(l){var p=l.getAttribute('href');if(window.location.pathname===p||(p!=='/admin'&&window.location.pathname.startsWith(p)))l.classList.add('active')});</script>
+</body>
+</html>

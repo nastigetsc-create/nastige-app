@@ -1,0 +1,254 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Invoice <%= invoice.invoice_no %> | Nastige</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 8mm;
+    }
+    @media print {
+      .no-print { display: none !important; }
+      .container { margin: 0 !important; padding: 0 !important; }
+      .invoice-box {
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+        page-break-inside: avoid;
+      }
+      .invoice-box table { page-break-inside: auto; }
+      .invoice-box table tr { page-break-inside: avoid; page-break-after: auto; }
+      .invoice-box table thead { display: table-header-group; }
+      .invoice-box table tfoot { display: table-footer-group; }
+    }
+    .invoice-box {
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #eee;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+      font-size: 12px;
+      line-height: 18px;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      color: #555;
+    }
+    .invoice-box table {
+      width: 100%;
+      line-height: inherit;
+      text-align: left;
+    }
+    .invoice-box table td {
+      padding: 4px;
+      vertical-align: top;
+    }
+    .invoice-box table tr.heading td {
+      background: #eee;
+      border-bottom: 1px solid #ddd;
+      font-weight: bold;
+    }
+    .invoice-box table tr.item td {
+      border-bottom: 1px solid #eee;
+    }
+    .invoice-box table tr.total td {
+      border-top: 2px solid #333;
+      font-weight: bold;
+    }
+    .invoice-box h1 { font-size: 18px; margin: 0 !important; }
+    .invoice-box h2 { font-size: 14px; margin: 3px 0 0 0 !important; }
+  </style>
+</head>
+<body>
+  <% if (admin_backup) { %>
+  <div style="background:#dc2626; color:#fff; padding:10px 16px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:200; font-weight:600">
+    <span>Logged in as Franchise (Admin: <%= admin_backup.username %>)</span>
+    <form method="post" action="/admin/back-to-admin" style="margin:0"><button type="submit" style="background:#fff; color:#dc2626; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-weight:700">Back to Admin</button></form>
+  </div>
+  <% } %>
+  <div class="container no-print" style="padding:20px">
+    <button onclick="window.print()" class="btn">Print Invoice</button>
+    <a href="/franchise/invoices" class="btn secondary">Back to Invoices</a>
+  </div>
+  
+  <div class="invoice-box">
+    <table cellpadding="0" cellspacing="0">
+      <tr>
+        <td colspan="2" style="text-align:center">
+          <h1 style="margin:0; color:#333">TAX INVOICE</h1>
+          <% if (company_name) { %>
+            <h2 style="margin:2px 0 0 0; color:#0b5ed7"><%= company_name %></h2>
+          <% } %>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding-top:8px; vertical-align:top; font-size:11px">
+          <strong>From:</strong><br/>
+          <% if (company_name) { %><%= company_name %><br/><% } %>
+          <% if (company_address) { %><%= company_address %><br/><% } %>
+          <% if (company_phone) { %>Phone: <%= company_phone %><br/><% } %>
+          <% if (company_email) { %>Email: <%= company_email %><br/><% } %>
+          <% if (company_gstin) { %>GSTIN: <%= company_gstin %><% } %>
+        </td>
+        <td style="padding-top:8px; vertical-align:top; text-align:right; font-size:11px">
+          <div style="font-size:18px; font-weight:700; color:#0b5ed7; font-family:monospace; margin-bottom:4px"><%= invoice.order_no || invoice.invoice_no %></div>
+          <strong>Date:</strong> <%= new Date(invoice.created_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) %><br/>
+          <strong style="font-size:10px; color:#666;">Prices: GST <%= (gst_type || 'inclusive') === 'exclusive' ? 'Exclusive' : 'Inclusive' %></strong>
+        </td>
+      </tr>
+    </table>
+    
+    <table style="margin-top:8px">
+      <tr>
+        <td style="padding-top:6px; width:50%; vertical-align:top; font-size:11px">
+          <strong>Billed To (Franchise):</strong><br/>
+          <%= invoice.franchise_name || 'N/A' %><br/>
+          <%= invoice.franchise_address || 'Address not available' %><br/>
+          <% if (invoice.franchise_phone) { %>
+          Phone: <%= invoice.franchise_phone %>
+          <% } %>
+        </td>
+        <td style="padding-top:6px; width:50%; vertical-align:top; text-align:right; font-size:11px">
+          <strong>Customer (BV Credit):</strong><br/>
+          <% if (customer) { %>
+          <%= customer.member_name || customer.username %><br/>
+          (<%= customer.user_code %>)
+          <% } else { %>
+          -
+          <% } %>
+        </td>
+      </tr>
+    </table>
+    
+      <% 
+      const hasItems = invoice.items && Array.isArray(invoice.items) && invoice.items.length > 0;
+      let invoiceItems = [];
+      let total = invoice.total_inr || 0;
+      let totalSgst = 0;
+      let totalCgst = 0;
+      let totalIgst = 0;
+      let totalTaxable = 0;
+      
+      // Check if customer is in Delhi (same state as company)
+      const isLocal = customer && customer.state && 
+        (customer.state.toLowerCase().includes('delhi') || customer.state.toLowerCase() === 'dl');
+      
+      if (hasItems) {
+        invoiceItems = invoice.items;
+        totalSgst = invoiceItems.reduce((sum, i) => sum + (i.sgst || 0), 0);
+        totalCgst = invoiceItems.reduce((sum, i) => sum + (i.cgst || 0), 0);
+        totalIgst = invoiceItems.reduce((sum, i) => sum + (i.igst || i.gst_inr || 0), 0);
+        total = invoiceItems.reduce((sum, i) => sum + (i.total_inr || 0), 0);
+        totalTaxable = invoiceItems.reduce((sum, i) => sum + (i.price_inr || 0), 0);
+      } else {
+        invoiceItems = [{
+          product_name: invoice.product_name || '',
+          product_code: invoice.product_code || '',
+          hsn_code: invoice.hsn_code || '',
+          quantity: invoice.quantity || 1,
+          rate: invoice.rate || 0,
+          price_inr: invoice.price_inr || 0,
+          gst_percent: invoice.gst_percent || 0,
+          gst_inr: invoice.gst_inr || 0,
+          sgst: invoice.sgst || 0,
+          cgst: invoice.cgst || 0,
+          igst: invoice.igst || 0,
+          total_inr: invoice.total_inr || 0
+        }];
+        totalSgst = invoice.sgst || 0;
+        totalCgst = invoice.cgst || 0;
+        totalIgst = invoice.igst || 0;
+        totalTaxable = invoice.price_inr || 0;
+        if (!total) total = invoice.total_inr || 0;
+      }
+      
+      // Group by GST rate for proper display
+      const gstGroups = {};
+      invoiceItems.forEach(item => {
+        const rate = item.gst_percent || 0;
+        if (!gstGroups[rate]) {
+          gstGroups[rate] = { taxable: 0, sgst: 0, cgst: 0, igst: 0 };
+        }
+        gstGroups[rate].taxable += item.price_inr || 0;
+        gstGroups[rate].sgst += item.sgst || 0;
+        gstGroups[rate].cgst += item.cgst || 0;
+        gstGroups[rate].igst += item.igst || 0;
+      });
+      const gstRates = Object.keys(gstGroups).map(Number).sort((a,b) => a-b);
+      %>
+      
+      <table style="margin-top:10px">
+        <tr class="heading">
+          <td style="width:5%; font-size:10px">S.No</td>
+          <td style="width:28%; font-size:10px">Product</td>
+          <td style="width:10%; text-align:center; font-size:10px">HSN Code</td>
+          <td style="width:8%; text-align:right; font-size:10px">Qty</td>
+          <td style="width:14%; text-align:right; font-size:10px">Rate</td>
+          <td style="width:14%; text-align:right; font-size:10px">Taxable</td>
+          <td style="width:8%; text-align:center; font-size:10px">GST %</td>
+          <td style="width:13%; text-align:right; font-size:10px">Amount</td>
+        </tr>
+        <% invoiceItems.forEach((item, idx) => { %>
+        <tr class="item">
+          <td style="padding:4px; font-size:11px"><%= idx + 1 %></td>
+          <td style="font-size:11px">
+            <%= item.product_name %><br/>
+            <span style="color:#888; font-size:10px">Code: <%= item.product_code || '-' %></span>
+          </td>
+          <td style="text-align:center; font-size:11px"><%= item.hsn_code || '-' %></td>
+          <td style="text-align:right; font-size:11px"><%= item.quantity %></td>
+          <td style="text-align:right; font-size:11px">₹<%= (item.rate || 0).toFixed(2) %></td>
+          <td style="text-align:right; font-size:11px">₹<%= (item.price_inr || 0).toFixed(2) %></td>
+          <td style="text-align:center; font-size:11px"><%= item.gst_percent || 0 %>%</td>
+          <td style="text-align:right; font-weight:600; font-size:11px">₹<%= (item.total_inr || 0).toFixed(2) %></td>
+        </tr>
+        <% }) %>
+        <tr class="total">
+          <td colspan="6" style="text-align:right; font-size:12px">Total Taxable:</td>
+          <td colspan="2" style="text-align:right; font-size:12px">₹<%= totalTaxable.toFixed(2) %></td>
+        </tr>
+        <% if (isLocal) { %>
+          <% gstRates.forEach(rate => { 
+            const grp = gstGroups[rate];
+          %>
+          <tr>
+            <td colspan="6" style="text-align:right; font-size:11px">CGST (<%= rate/2 %>%):</td>
+            <td colspan="2" style="text-align:right; font-size:11px">₹<%= (grp.cgst || grp.igst/2 || 0).toFixed(2) %></td>
+          </tr>
+          <tr>
+            <td colspan="6" style="text-align:right; font-size:11px">SGST (<%= rate/2 %>%):</td>
+            <td colspan="2" style="text-align:right; font-size:11px">₹<%= (grp.sgst || grp.igst/2 || 0).toFixed(2) %></td>
+          </tr>
+          <% }) %>
+        <% } else { %>
+          <% gstRates.forEach(rate => { 
+            const grp = gstGroups[rate];
+            const igstAmount = grp.igst || (grp.cgst + grp.sgst) || 0;
+          %>
+          <tr>
+            <td colspan="6" style="text-align:right; font-size:11px">IGST (<%= rate %>%):</td>
+            <td colspan="2" style="text-align:right; font-size:11px">₹<%= igstAmount.toFixed(2) %></td>
+          </tr>
+          <% }) %>
+        <% } %>
+        <tr class="total">
+          <td colspan="6" style="text-align:right; font-size:16px">Total:</td>
+          <td colspan="2" style="text-align:right; font-size:16px">₹<%= total.toFixed(2) %></td>
+        </tr>
+      </table>
+    
+    <% if (customer) { %>
+    <div style="margin-top:10px; padding:8px; background:#f9f9f9; border-radius:5px; font-size:11px">
+      <strong>BV Credit:</strong> <%= customer.member_name || customer.username %> (<%= customer.user_code %>) — BV: <%= invoice.total_bv || 0 %>
+    </div>
+    <% } %>
+    
+    <div style="margin-top:15px; text-align:center; font-size:10px; color:#888">
+      <p>Thank you for your business! | Generated: <%= new Date().toLocaleString('en-IN', { timeZone:'Asia/Kolkata' }) %></p>
+    </div>
+  </div>
+</body>
+</html>

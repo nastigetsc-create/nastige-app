@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body style="font-family: 'Inter', sans-serif; margin:0; padding:0; background: linear-gradient(135deg, #475569 0%, #334155 100%); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:10px">
+  <header style="display:none"></header>
+
+  <% if (error) { %>
+    <div style="position:fixed; top:20px; left:50%; transform:translateX(-50%); max-width:400px; width:100%; z-index:1000">
+      <div class="error" style="padding:12px 16px; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15); animation: slideDown 0.3s ease"><%= error %></div>
+    </div>
+  <% } %>
+
+  <% if (success) { %>
+    <div style="position:fixed; top:20px; left:50%; transform:translateX(-50%); max-width:400px; width:90%; z-index:1000">
+      <div class="success" style="padding:12px 16px; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15); animation: slideDown 0.3s ease"><%- success %></div>
+    </div>
+  <% } %>
+
+  <style>
+    @keyframes slideDown {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .signup-wrapper {
+      max-width: 420px;
+      width: 100%;
+      animation: fadeInUp 0.6s ease;
+    }
+
+    @keyframes fadeInUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .signup-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .signup-header {
+      background: linear-gradient(135deg, #475569 0%, #334155 100%);
+      padding: 20px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .signup-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .signup-header img, .logo-lg {
+      position: relative;
+      z-index: 1;
+      height: auto;
+      max-height: 60px;
+      width: auto;
+      max-width: 180px;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+    }
+
+    .signup-header h1 {
+      position: relative;
+      z-index: 1;
+      color: white;
+      margin: 6px 0 0 0;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+    }
+
+    .signup-header p {
+      position: relative;
+      z-index: 1;
+      color: rgba(255, 255, 255, 0.9);
+      margin: 4px 0 0 0;
+      font-size: 12px;
+      font-weight: 300;
+    }
+
+    .signup-body {
+      padding: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: #4a5568;
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .form-input,
+    .form-select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: all 0.3s ease;
+      background: #fff;
+      color: #2d3748;
+      box-sizing: border-box;
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+      outline: none;
+      border-color: #475569;
+      box-shadow: 0 0 0 3px rgba(71, 85, 105, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: #a0aec0;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+    }
+
+    .form-row > * {
+      flex: 1;
+    }
+
+    .form-row .tight {
+      flex: 0;
+    }
+
+    .btn-check {
+      background: linear-gradient(135deg, #475569 0%, #334155 100%);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .btn-check:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(71, 85, 105, 0.4);
+    }
+
+    .helper-text {
+      font-size: 11px;
+      color: #718096;
+      margin-top: 4px;
+      padding: 5px 8px;
+      background: #f7fafc;
+      border-radius: 4px;
+      border-left: 2px solid #475569;
+    }
+
+    .helper-text.error {
+      color: #e53e3e;
+      border-left-color: #e53e3e;
+      background: #fff5f5;
+    }
+
+    .helper-text.success {
+      color: #38a169;
+      border-left-color: #38a169;
+      background: #f0fff4;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #475569;
+    }
+
+    .checkbox-group label {
+      margin: 0;
+      font-size: 13px;
+      color: #4a5568;
+      cursor: pointer;
+    }
+
+    .checkbox-group a {
+      color: #475569;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .checkbox-group a:hover {
+      text-decoration: underline;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #475569 0%, #334155 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      letter-spacing: 0.5px;
+      margin-top: 6px;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(71, 85, 105, 0.4);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    .divider {
+      text-align: center;
+      margin: 18px 0;
+      position: relative;
+    }
+
+    .divider::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: #e2e8f0;
+    }
+
+    .divider span {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 0 12px;
+      color: #a0aec0;
+      font-size: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-login {
+      padding: 12px;
+      background: transparent;
+      color: #475569;
+      border: 2px solid #475569;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      text-align: center;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-login:hover {
+      background: #475569;
+      color: white;
+      box-shadow: 0 8px 25px rgba(71, 85, 105, 0.4);
+    }
+
+    .feature-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      margin-top: 12px;
+    }
+
+    .feature-tag {
+      background: rgba(71, 85, 105, 0.1);
+      color: #475569;
+      padding: 4px 10px;
+      border-radius: 16px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    @media (max-width: 520px) {
+      .signup-body {
+        padding: 24px;
+      }
+
+      .form-row {
+        flex-direction: column;
+      }
+
+      .form-row > * {
+        width: 100%;
+      }
+
+      .btn-check {
+        width: 100%;
+      }
+    }
+  </style>
+
+  <div class="signup-wrapper">
+    <div class="signup-card">
+      <div class="signup-header">
+        <a href="/home"><img src="/brand/logo-file" alt="Logo" class="logo-lg"/></a>
+        <h1>Create Account</h1>
+        <p>Join our community and start earning</p>
+      </div>
+
+      <div class="signup-body">
+        <form method="post" action="/signup">
+          <div class="form-group">
+            <label class="form-label">Sponsor ID & Position</label>
+            <div class="form-row">
+              <input
+                type="text"
+                name="sponsor_ref"
+                class="form-input"
+                placeholder="Enter Sponsor ID"
+                required
+                autocomplete="off"
+              />
+              <select name="placement_side" id="sideSel" class="form-select" style="max-width:120px">
+                <option value="left">Left</option>
+                <option value="right">Right</option>
+              </select>
+              <button type="button" class="btn-check tight" onclick="updateSponsorName();updateCode()">Check</button>
+            </div>
+            <div id="sponsorPreview" class="helper-text"></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Leader ID <span style="font-weight:400; color:#718096">(Optional)</span></label>
+            <div class="form-row">
+              <input
+                type="text"
+                name="leader_ref"
+                class="form-input"
+                placeholder="Enter Leader ID"
+                autocomplete="off"
+              />
+              <button type="button" class="btn-check tight" onclick="updateLeaderName()">Check</button>
+            </div>
+            <div id="leaderPreview" class="helper-text"></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input
+              type="text"
+              name="member_name"
+              class="form-input"
+              placeholder="Enter your full name"
+              required
+              autocomplete="name"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-envelope" style="color:#475569;margin-right:6px;"></i> Email Address <span style="font-weight:400; color:#718096">(Optional)</span></label>
+            <input
+              type="email"
+              name="email"
+              class="form-input"
+              placeholder="Enter your email"
+              autocomplete="email"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-phone" style="color:#475569;margin-right:6px;"></i> Mobile Number *</label>
+            <input
+              type="tel"
+              name="phone"
+              class="form-input"
+              placeholder="Enter 10-digit mobile number"
+              required
+              autocomplete="tel"
+              maxlength="10"
+              pattern="[0-9]{10}"
+              inputmode="numeric"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">State *</label>
+            <select name="state" class="form-select" required>
+              <option value="">-- Select State --</option>
+              <option value="Andhra Pradesh">Andhra Pradesh</option>
+              <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+              <option value="Assam">Assam</option>
+              <option value="Bihar">Bihar</option>
+              <option value="Chhattisgarh">Chhattisgarh</option>
+              <option value="Goa">Goa</option>
+              <option value="Gujarat">Gujarat</option>
+              <option value="Haryana">Haryana</option>
+              <option value="Himachal Pradesh">Himachal Pradesh</option>
+              <option value="Jharkhand">Jharkhand</option>
+              <option value="Karnataka">Karnataka</option>
+              <option value="Kerala">Kerala</option>
+              <option value="Madhya Pradesh">Madhya Pradesh</option>
+              <option value="Maharashtra">Maharashtra</option>
+              <option value="Manipur">Manipur</option>
+              <option value="Meghalaya">Meghalaya</option>
+              <option value="Mizoram">Mizoram</option>
+              <option value="Nagaland">Nagaland</option>
+              <option value="Odisha">Odisha</option>
+              <option value="Punjab">Punjab</option>
+              <option value="Rajasthan">Rajasthan</option>
+              <option value="Sikkim">Sikkim</option>
+              <option value="Tamil Nadu">Tamil Nadu</option>
+              <option value="Telangana">Telangana</option>
+              <option value="Tripura">Tripura</option>
+              <option value="Uttar Pradesh">Uttar Pradesh</option>
+              <option value="Uttarakhand">Uttarakhand</option>
+              <option value="West Bengal">West Bengal</option>
+              <option value="Delhi">Delhi (NCT)</option>
+              <option value="Jammu & Kashmir">Jammu & Kashmir</option>
+              <option value="Ladakh">Ladakh</option>
+              <option value="Puducherry">Puducherry</option>
+              <option value="Chandigarh">Chandigarh</option>
+              <option value="Andaman & Nicobar">Andaman & Nicobar</option>
+              <option value="Dadra & Nagar Haveli">Dadra & Nagar Haveli</option>
+              <option value="Daman & Diu">Daman & Diu</option>
+              <option value="Lakshadweep">Lakshadweep</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input
+              type="password"
+              name="password"
+              class="form-input"
+              placeholder="Create a strong password"
+              required
+              autocomplete="new-password"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Activation Mode</label>
+            <select name="activation_mode" id="activationModeSel" class="form-select">
+              <option value="id_only">ID Creation Only</option>
+              <option value="pin">Pin-wise Activation</option>
+            </select>
+          </div>
+
+          <div id="pinFields" style="display:none">
+            <div class="form-group">
+              <label class="form-label">Package PIN</label>
+              <input
+                type="text"
+                name="package_pin"
+                class="form-input"
+                placeholder="Enter voucher PIN"
+                autocomplete="off"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Login PIN</label>
+              <input
+                type="text"
+                name="login_pin"
+                class="form-input"
+                placeholder="4-6 digit PIN"
+                maxlength="6"
+                autocomplete="off"
+              />
+            </div>
+          </div>
+
+          <div id="pinPreview" style="display:none; margin-top:12px; padding:12px; border:1px solid #e2e8f0; border-radius:8px; background:#f8fafc;"></div>
+
+          <div id="codePreview" class="helper-text"></div>
+
+          <div class="form-group" style="margin-top:24px">
+            <div class="checkbox-group">
+              <input type="checkbox" name="agree_terms" id="agreeTerms" required />
+              <label for="agreeTerms">I agree with <a href="/pages/terms-and-conditions" target="_blank">Terms & Conditions</a></label>
+            </div>
+          </div>
+
+          <div style="margin-top:6px">
+            <button type="submit" class="btn-submit">Create Account</button>
+            <a href="/login" class="btn-login" style="margin-top:12px; display:block; text-align:center">Sign In</a>
+          </div>
+
+          <div class="feature-list">
+            <span class="feature-tag">✓ Instant Registration</span>
+            <span class="feature-tag">✓ Secure</span>
+            <span class="feature-tag">✓ 24/7 Support</span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function updateCode() {
+      const parent = document.querySelector('input[name="sponsor_ref"]').value;
+      const side = document.getElementById('sideSel').value;
+      const el = document.getElementById('codePreview');
+
+      if (!parent || !side) {
+        el.textContent = '';
+        el.className = 'helper-text';
+        return;
+      }
+
+      try {
+        const res = await fetch('/next-code?parent_username=' + encodeURIComponent(parent) + '&side=' + encodeURIComponent(side));
+        const data = await res.json();
+        if (data && data.member_code) {
+          el.textContent = '✓ Your member code: ' + data.member_code + ' (' + data.side + ' side)';
+          el.className = 'helper-text success';
+        } else if (data && data.taken) {
+          el.textContent = '⚠ This side is already occupied. Try the other side.';
+          el.className = 'helper-text error';
+        } else {
+          el.textContent = '';
+        }
+      } catch (e) {
+        el.textContent = '';
+      }
+    }
+
+    async function updateSponsorName() {
+      const v = document.querySelector('input[name="sponsor_ref"]').value.trim();
+      const el = document.getElementById('sponsorPreview');
+      if (!v) {
+        el.textContent = '';
+        el.className = 'helper-text';
+        return;
+      }
+      try {
+        const r = await fetch('/lookup/ref?ref=' + encodeURIComponent(v));
+        const j = await r.json();
+        if (j.ok) {
+          el.textContent = 'Sponsor: ' + (j.member_name || j.username || j.user_code || '-');
+          el.className = 'helper-text success';
+        } else {
+          el.textContent = 'Sponsor not found';
+          el.className = 'helper-text error';
+        }
+      } catch (e) {
+        el.textContent = '';
+      }
+    }
+
+    async function updateLeaderName() {
+      const v = document.querySelector('input[name="leader_ref"]').value.trim();
+      const el = document.getElementById('leaderPreview');
+      if (!v) {
+        el.textContent = '';
+        el.className = 'helper-text';
+        return;
+      }
+      try {
+        const r = await fetch('/lookup/ref?ref=' + encodeURIComponent(v));
+        const j = await r.json();
+        if (j.ok) {
+          el.textContent = 'User: ' + (j.member_name || j.username || j.user_code || '-');
+          el.className = 'helper-text success';
+        } else {
+          el.textContent = 'User not found';
+          el.className = 'helper-text error';
+        }
+      } catch (e) {
+        el.textContent = '';
+      }
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      const sponsorInput = document.querySelector('input[name="sponsor_ref"]');
+      const leaderInput = document.querySelector('input[name="leader_ref"]');
+      const sideSel = document.getElementById('sideSel');
+      const activationSel = document.getElementById('activationModeSel');
+
+      if (sponsorInput) {
+        sponsorInput.addEventListener('input', function() {
+          updateSponsorName();
+          updateCode();
+        });
+      }
+
+      if (leaderInput) {
+        leaderInput.addEventListener('input', updateLeaderName);
+      }
+
+      if (sideSel) {
+        sideSel.addEventListener('change', updateCode);
+      }
+
+      if (activationSel) {
+        activationSel.addEventListener('change', function() {
+          const pinFields = document.getElementById('pinFields');
+          const show = this.value === 'pin';
+          pinFields.style.display = show ? 'block' : 'none';
+          pinFields.style.animation = show ? 'fadeInUp 0.3s ease' : '';
+
+          const pins = pinFields.querySelectorAll('input');
+          pins.forEach(input => {
+            input.required = show;
+          });
+        });
+      }
+
+      // PIN preview on input
+      function updatePinPreview() {
+        const pkg = document.querySelector('input[name="package_pin"]').value.trim();
+        const lp = document.querySelector('input[name="login_pin"]').value.trim();
+        const el = document.getElementById('pinPreview');
+        if (!pkg || !lp) { el.style.display = 'none'; return; }
+        fetch('/api/signup-pin-preview', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ package_pin: pkg, login_pin: lp })
+        }).then(r => r.json()).then(data => {
+          if (data.ok && data.activation) {
+            const a = data.activation;
+            let html = '<div style="font-weight:600; margin-bottom:6px; color:#059669;"><i class="fas fa-check-circle"></i> PIN Valid</div>';
+            html += '<div style="font-size:13px; color:#334155;">Plan: <strong>' + a.name + '</strong></div>';
+            if (a.items && a.items.length) {
+              html += '<div style="font-size:12px; color:#64748b; margin-top:4px;">Products: ';
+              html += a.items.map(i => i.product_name).join(', ');
+              html += '</div>';
+            }
+            html += '<div style="font-size:14px; margin-top:6px; font-weight:700; color:#0b5ed7;">Amount: ₹' + (a.amount_inr || 0).toLocaleString('en-IN') + '</div>';
+            if (a.is_matrix_pin) {
+              html += '<span style="display:inline-block; margin-top:4px; background:#7c3aed; color:#fff; padding:2px 8px; border-radius:4px; font-size:11px;">MATRIX</span>';
+            }
+            el.innerHTML = html;
+            el.style.display = 'block';
+          } else {
+            el.innerHTML = '<div style="color:#dc2626; font-size:13px;">' + (data.error || 'Invalid PIN') + '</div>';
+            el.style.display = 'block';
+          }
+        }).catch(() => { el.style.display = 'none'; });
+      }
+
+      document.querySelector('input[name="package_pin"]').addEventListener('input', updatePinPreview);
+      document.querySelector('input[name="login_pin"]').addEventListener('input', updatePinPreview);
+
+      // Prefill from URL params
+      try {
+        const params = new URLSearchParams(location.search);
+        const pkg = params.get('pkg');
+        const lp = params.get('lp');
+        if (pkg) {
+          const pp = document.querySelector('input[name="package_pin"]');
+          if (pp) pp.value = pkg;
+        }
+        if (lp) {
+          const lpEl = document.querySelector('input[name="login_pin"]');
+          if (lpEl) lpEl.value = lp;
+        }
+        // Trigger preview if pre-filled
+        setTimeout(updatePinPreview, 100);
+      } catch(e) {}
+
+      // Also trigger preview when activation mode changes to pin
+      document.getElementById('activationModeSel').addEventListener('change', function() {
+        if (this.value === 'pin') setTimeout(updatePinPreview, 50);
+      });
+
+      // Initial state
+      updateCode();
+      updateSponsorName();
+      updateLeaderName();
+    });
+  </script>
+</body>

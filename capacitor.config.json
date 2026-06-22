@@ -1,0 +1,17 @@
+{
+  "appId": "com.nastige.industries",
+  "appName": "Nastige",
+  "webDir": "public",
+  "server": {
+    "url": "http://10.138.68.133:3002",
+    "androidScheme": "https",
+    "allowNavigation": ["*"],
+    "cleartext": true
+  },
+  "android": {
+    "buildOptions": {
+      "keystorePath": null,
+      "keystoreAlias": null
+    }
+  }
+}

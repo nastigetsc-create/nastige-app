@@ -1,0 +1,264 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Binary Payout | Nastige</title>
+  <style>
+    html{font-size:16px;-webkit-text-size-adjust:100%;scroll-padding-top:0}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1e293b;font-size:14px;line-height:1.5}
+    .dashboard-wrapper{max-width:1600px;margin:0 auto;padding:20px}
+    .header{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:white;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;border-radius:16px;margin-bottom:18px}
+    .header-left{display:flex;align-items:center;gap:12px}
+    .header-logo{height:44px;border-radius:8px}
+    .header-right{display:flex;align-items:center;gap:10px}
+    .logout-btn{background:rgba(255,255,255,0.15);border:none;color:white;padding:6px 14px;border-radius:20px;cursor:pointer;text-decoration:none;font-size:13px}
+    
+    
+    
+    
+    .card{background:white;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.05);overflow:hidden;margin-bottom:18px}
+    .card-header{padding:14px 18px;border-bottom:1px solid #e2e8f0;font-weight:700;display:flex;justify-content:space-between;align-items:center;color:#1e293b}
+    .card-body{padding:18px}
+    .table-wrap{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{text-align:left;padding:10px 12px;border-bottom:2px solid #e2e8f0;color:#64748b;font-weight:600;white-space:nowrap}
+    td{padding:10px 12px;border-bottom:1px solid #f1f5f9;color:#1e293b;white-space:nowrap}
+    tr:hover td{background:#f8fafc}
+    .btn{padding:8px 16px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
+    .btn-primary{background:#1e293b;color:white}
+    .btn-primary:hover{background:#334155}
+    .btn-success{background:#10b981;color:white}
+    .btn-success:hover{background:#059669}
+    .btn-danger{background:#ef4444;color:white}
+    .btn-danger:hover{background:#dc2626}
+    .btn-secondary{background:#e2e8f0;color:#475569}
+    .btn-secondary:hover{background:#cbd5e1}
+    .badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+    .badge-pending{background:#fef3c7;color:#92400e}
+    .badge-paid{background:#d1fae5;color:#065f46}
+    .alert{padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:13px;font-weight:500}
+    .alert-success{background:#d1fae5;border:1px solid #6ee7b7;border-left:4px solid #10b981;color:#065f46}
+    .alert-error{background:#fee2e2;border:1px solid #fca5a5;border-left:4px solid #ef4444;color:#991b1b}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:18px}
+    .stat-card{background:white;border-radius:10px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+    .stat-value{font-size:22px;font-weight:800}
+    .stat-label{font-size:11px;color:#64748b;margin-top:4px}
+    .history-item{background:#f8fafc;border-radius:8px;padding:12px 16px;margin-bottom:8px;border:1px solid #e2e8f0}
+    .history-item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+    .history-date{font-weight:600;font-size:14px;color:#1e293b}
+    .history-total{font-size:13px;color:#64748b}
+    .matrix-pin-option{background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:12px 16px;margin-bottom:8px;font-size:13px}
+    @media(max-width:768px){.dashboard-wrapper{padding:12px}.header{flex-direction:row;align-items:center;padding:10px 14px;gap:8px;border-radius:12px;flex-wrap:wrap}}
+  
+    .admin-layout{display:flex;gap:20px}
+    .sidebar{width:220px;flex-shrink:0;background:white;border-radius:12px;padding:8px;box-shadow:0 2px 10px rgba(0,0,0,0.05);position:sticky;top:20px;height:fit-content;max-height:calc(100vh - 20px);overflow-y:auto}
+    .sidebar::-webkit-scrollbar{width:4px}
+    .sidebar::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:4px}
+    .side-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;text-decoration:none;color:#475569;font-size:12px;font-weight:500;transition:all 0.1s}
+    .side-link:hover{background:#f1f5f9;color:#1e293b}
+    .side-link.active{background:#1e293b;color:white}
+    .side-link svg{width:16px;height:16px;flex-shrink:0;fill:currentColor}
+    .side-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;padding:12px 10px 4px}
+    .content{flex:1;min-width:0}
+    @media(max-width:1024px){.admin-layout{flex-direction:column}.sidebar{width:260px;position:fixed;top:0;left:-280px;height:100vh;max-height:100vh;border-radius:0;padding:12px;transition:left 0.25s ease;z-index:1001;overflow-y:auto}.sidebar.open{left:0}.side-link{font-size:12px;padding:8px 10px}.side-section{display:none}}
+  </style>
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <div class="header">
+      <div class="header-left">
+        <img src="/brand/logo" class="header-logo" alt="Logo" onerror="this.style.display='none'"/>
+        <div>
+          <h2 style="margin:0;font-size:20px;">Binary Payout</h2>
+          <p style="margin:4px 0 0;opacity:0.9;font-size:13px;">Nastige Industries Admin Panel</p>
+        </div>
+      </div>
+      <div class="header-right">
+      </div>
+    </div>
+
+<div class="admin-layout">
+    <%- include('_admin_sidebar', { active: 'binary-payout' }) %>
+    <div class="content"><% if (success) { %>
+      <div class="alert alert-success"><%= success %></div>
+    <% } %>
+    <% if (error) { %>
+      <div class="alert alert-error"><%= error %></div>
+    <% } %>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-value" style="color:#667eea;"><%= list.length %></div>
+        <div class="stat-label">Pending Payouts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" style="color:#10b981;"><%= history.length %></div>
+        <div class="stat-label">History Entries</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" style="color:#f59e0b;font-size:14px;"><%= last_run ? new Date(last_run).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', timeZone: 'Asia/Kolkata' }) : 'Never' %></div>
+        <div class="stat-label">Last Run</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" style="color:#8b5cf6;font-size:14px;"><%= next_run ? new Date(next_run).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric', timeZone: 'Asia/Kolkata' }) + ', 2:00 am' : 'Not set' %></div>
+        <div class="stat-label">Next Run</div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:18px">
+      <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap">
+        <div style="min-width:120px">
+          <div style="font-weight:700;font-size:14px;color:#1e293b">Weekly Binary Payout</div>
+          <div style="font-size:11px;color:#64748b;margin-top:4px">Next auto-run: <%= next_run ? new Date(next_run).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric', timeZone: 'Asia/Kolkata' }) + ', 2:00 am' : 'Not scheduled' %></div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <form action="/admin/payout/binary/manual" method="POST" style="display:inline">
+            <button type="submit" class="btn" style="background:#64748b;color:white;padding:8px 14px;font-size:11px">Manual Binary Generate</button>
+          </form>
+          <form action="/admin/earnings/rollback-today" method="POST" style="display:inline">
+            <input type="text" name="user_code" placeholder="User Code" style="padding:7px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:11px;width:120px"/>
+            <button type="submit" class="btn" style="background:#ef4444;color:white;padding:8px 14px;font-size:11px">Rollback Today</button>
+          </form>
+          <form action="/admin/fix-sponsors" method="POST" style="display:inline">
+            <button type="submit" class="btn" style="background:#8b5cf6;color:white;padding:8px 14px;font-size:11px">Fix Sponsors</button>
+          </form>
+          <form action="/admin/payout/binary/matrix-invoices/pin" method="POST" style="display:inline;display:flex;gap:6px;align-items:center">
+            <select name="pin_code" style="padding:7px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:11px">
+              <option value="">-- Select Matrix PIN --</option>
+              <% (matrixPinOptions || []).forEach(function(mp) { %>
+                <option value="<%= mp.code %>"><%= mp.code %> - <%= mp.parent_name %> (<%= mp.count %> users)</option>
+              <% }); %>
+            </select>
+            <button type="submit" class="btn" style="background:#10b981;color:white;padding:8px 14px;font-size:11px">Generate Invoice for PIN</button>
+          </form>
+        </div>
+      </div>
+      <div style="margin-top:12px;font-size:12px;color:#475569">
+        Binary Pair BV Size: <strong><%= (settings.pair_bv_size || settings.pv_on_join || 100).toLocaleString('en-IN') %></strong> | Repurchase Pair BV Size: <strong><%= (settings.repurchase_pair_bv_size || settings.pair_bv_size || settings.pv_on_join || 100).toLocaleString('en-IN') %></strong>
+        <br/>Binary Weekly Cap: <strong><%= settings.weekly_cap_pairs || 120 %> pairs</strong> | Repurchase Weekly Cap: <strong><%= settings.repurchase_weekly_cap_pairs || settings.weekly_cap_pairs || 120 %> pairs</strong>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span>Pending Payouts (Preview)</span>
+        <div style="display:flex;gap:8px">
+          <form action="/admin/payout/binary" method="POST" style="display:inline">
+            <button type="submit" class="btn btn-primary">Process All Payouts</button>
+          </form>
+        </div>
+      </div>
+      <div class="card-body">
+        <% if (list.length === 0) { %>
+          <div style="text-align:center;color:#94a3b8;padding:30px;font-size:14px">No pending payouts. All users are up to date.</div>
+        <% } else { %>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Code</th>
+                  <th>Left BV</th>
+                  <th>Right BV</th>
+                  <th>Matched BV</th>
+                  <th>Pairs</th>
+                  <th>Pair Amount</th>
+                  <th>LB</th>
+                  <th>Gross</th>
+                  <th>TDS (2%)</th>
+                  <th>Admin (10%)</th>
+                  <th>Net Payable</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% list.forEach(function(p) { %>
+                  <tr>
+                    <td><strong><%= p.user.member_name || p.user.username %></strong></td>
+                    <td><%= p.user.user_code || p.user.username %></td>
+                    <td><%= (p.total_left_bv || 0).toLocaleString('en-IN') %></td>
+                    <td><%= (p.total_right_bv || 0).toLocaleString('en-IN') %></td>
+                    <td><%= (p.matched_bv || 0).toLocaleString('en-IN') %></td>
+                    <td><%= p.pairs || 0 %></td>
+                    <td><%= rupee.format(p.per_pair_amount || 0) %></td>
+                    <td><%= rupee.format(p.lb_gross || 0) %></td>
+                    <td><%= rupee.format(p.gross || 0) %></td>
+                    <td><%= rupee.format(p.tds || 0) %></td>
+                    <td><%= rupee.format(p.admin || 0) %></td>
+                    <td><strong style="color:#10b981"><%= rupee.format(p.net || 0) %></strong></td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span>Payout History (<%= history.length %> entries)</span>
+      </div>
+      <div class="card-body">
+        <% if (history.length === 0) { %>
+          <div style="text-align:center;color:#94a3b8;padding:30px;font-size:14px">No payout history yet.</div>
+        <% } %>
+        <% history.forEach(function(h) { %>
+          <div class="history-item">
+            <div class="history-item-header">
+              <div>
+                <span class="history-date"><%= new Date(h.date).toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric', timeZone: 'Asia/Kolkata' }) %></span>
+                <span class="history-total" style="margin-left:12px"><%= h.count %> payments</span>
+              </div>
+              <div style="text-align:right;font-size:13px">
+                <div style="color:#64748b">Gross: <strong><%= rupee.format(h.total_gross) %></strong></div>
+                <div style="color:#10b981">Net: <strong><%= rupee.format(h.total_net) %></strong></div>
+              </div>
+            </div>
+            <% if (h.items && h.items.length > 0) { %>
+              <div class="table-wrap" style="margin-top:8px">
+                <table style="font-size:12px">
+                  <thead>
+                    <tr>
+                      <th>User</th>
+                      <th>Pairs</th>
+                      <th>Gross</th>
+                      <th>TDS</th>
+                      <th>Admin</th>
+                      <th>Net</th>
+                      <th>Note</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% h.items.forEach(function(item) { %>
+                      <tr>
+                        <td><%= item.user_code %><%= item.member_name ? ' (' + item.member_name + ')' : '' %></td>
+                        <td><%= item.pairs || 0 %></td>
+                        <td><%= rupee.format(item.gross_inr || 0) %></td>
+                        <td><%= rupee.format(item.tds_inr || 0) %></td>
+                        <td><%= rupee.format(item.admin_charge_inr || 0) %></td>
+                        <td><strong style="color:#10b981"><%= rupee.format(item.net_inr || 0) %></strong></td>
+                        <td><%= item.note || '' %></td>
+                      </tr>
+                    <% }); %>
+                  </tbody>
+                </table>
+              </div>
+            <% } %>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  </div>
+  </div>
+
+<script>document.querySelectorAll('.side-link').forEach(function(l){var p=l.getAttribute('href');if(window.location.pathname===p||(p!=='/admin'&&window.location.pathname.startsWith(p)))l.classList.add('active')});</script>
+  </div>
+
+
+<script>
+fetch('/admin/api/kyc-pending-count').then(function(r){return r.json()}).then(function(d){if(d.count>0){var b=document.getElementById('kyc-badge');if(b){b.textContent=d.count;b.style.display='inline';}}});
+</script>
+</body>
+</html>

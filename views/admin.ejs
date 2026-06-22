@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Dashboard | Admin | Nastige</title>
+  <style>
+    html{font-size:16px;-webkit-text-size-adjust:100%;scroll-padding-top:0}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1e293b;font-size:14px;line-height:1.5}
+    .dashboard-wrapper{max-width:1600px;margin:0 auto;padding:20px}
+    .header{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:white;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;border-radius:16px;margin-bottom:18px;position:sticky;top:0;z-index:100}
+    .header-left{display:flex;align-items:center;gap:12px}
+    .header-logo{height:44px;border-radius:8px}
+    .header-right{display:flex;align-items:center;gap:10px}
+    .user-chip{background:rgba(255,255,255,0.15);padding:6px 14px;border-radius:20px;font-size:13px}
+    .logout-btn{background:rgba(255,255,255,0.15);border:none;color:white;padding:6px 14px;border-radius:20px;cursor:pointer;text-decoration:none}
+    .admin-layout{display:flex;gap:20px}
+    .sidebar{width:220px;flex-shrink:0;background:white;border-radius:12px;padding:8px;box-shadow:0 2px 10px rgba(0,0,0,0.05);position:sticky;top:20px;height:fit-content;max-height:calc(100vh - 20px);overflow-y:auto}
+    .sidebar::-webkit-scrollbar{width:4px}
+    .sidebar::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:4px}
+    .side-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;text-decoration:none;color:#475569;font-size:12px;font-weight:500;transition:all 0.1s}
+    .side-link:hover{background:#f1f5f9;color:#1e293b}
+    .side-link.active{background:#1e293b;color:white}
+    .side-link svg{width:16px;height:16px;flex-shrink:0;fill:currentColor}
+    .side-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;padding:12px 10px 4px}
+    .content{flex:1;min-width:0}
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:18px}
+    .stat-card{background:white;border-radius:12px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,0.05)}
+    .stat-value{font-size:26px;font-weight:800}
+    .stat-label{font-size:11px;color:#64748b;margin-top:3px}
+    .card{background:white;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.05);overflow:hidden;margin-bottom:18px}
+    .card-header{padding:14px 18px;border-bottom:1px solid #e2e8f0;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+    .card-body{padding:18px}
+    .data-table{width:100%;border-collapse:collapse;font-size:12px}
+    .data-table th{padding:10px 8px;text-align:left;background:#f8fafc;color:#64748b;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid #e2e8f0}
+    .data-table td{padding:10px 8px;border-bottom:1px solid #f1f5f9}
+    .data-table tr:hover{background:#f8fafc}
+    .badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600}
+    .badge-new{background:#d1fae5;color:#065f46}
+    .badge-used{background:#dbeafe;color:#1e40af}
+    .badge-expired{background:#fee2e2;color:#991b1b}
+    .badge-pending{background:#fef3c7;color:#92400e}
+    .msg-success{background:#d1fae5;border:1px solid #6ee7b7;border-left:4px solid #10b981;border-radius:8px;padding:12px 16px;margin-bottom:16px;color:#065f46;font-weight:500}
+    .msg-error{background:#fee2e2;border:1px solid #fca5a5;border-left:4px solid #ef4444;border-radius:8px;padding:12px 16px;margin-bottom:16px;color:#991b1b;font-weight:500}
+    .empty-state{text-align:center;padding:40px 20px;color:#94a3b8;font-size:14px}
+    .alert-low{background:#fef3c7;border:1px solid #fde68a;border-left:4px solid #f59e0b;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px}
+    .alert-low p{margin:4px 0 0;color:#92400e;font-size:12px}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    @media(max-width:1024px){.admin-layout{flex-direction:column}.sidebar{width:260px;position:fixed;top:0;left:-280px;height:100vh;max-height:100vh;border-radius:0;padding:12px;transition:left 0.25s ease;z-index:1001;overflow-y:auto}.sidebar.open{left:0}.side-link{font-size:12px;padding:8px 10px}.side-section{display:none}.sidebar .side-section{display:none}}
+    @media(max-width:768px){.dashboard-wrapper{padding:10px}.header{flex-direction:row;align-items:center;padding:10px 14px;gap:8px;border-radius:12px;margin-bottom:12px;flex-wrap:wrap}.header-logo{height:32px}.header h2{font-size:14px;margin:0}.header p{font-size:10px;margin:1px 0 0;opacity:0.8}.user-chip{font-size:11px;padding:4px 10px}.logout-btn{font-size:11px;padding:4px 10px}.stats-grid{grid-template-columns:1fr 1fr;gap:8px}.stat-card{padding:12px}.stat-value{font-size:18px}.stat-label{font-size:10px}.grid-2{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <div class="header">
+      <div class="header-left">
+        <img src="/brand/logo" class="header-logo" alt="Logo" onerror="this.style.display='none'"/>
+        <div>
+          <h2 style="margin:0;font-size:18px;">Admin Dashboard</h2>
+          <p style="margin:2px 0 0;opacity:0.8;font-size:12px;">Nastige Industries</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div style="position:relative;">
+          <span id="adminMenuChip" class="user-chip" onclick="var d=document.getElementById('adminMenuDrop');d.style.display=d.style.display==='block'?'none':'block'" style="cursor:pointer;user-select:none;">Admin ▾</span>
+          <div id="adminMenuDrop" style="position:absolute;right:0;top:110%;background:white;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.15);min-width:180px;z-index:9999;overflow:hidden;display:none;">
+            <a href="/admin/password" style="display:flex;align-items:center;gap:8px;padding:12px 16px;text-decoration:none;color:#1e293b;font-size:13px;font-weight:500;border-bottom:1px solid #f1f5f9;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Change Password
+            </a>
+            <a href="/logout" onclick="sessionStorage.removeItem('broadcastsShown');" style="display:flex;align-items:center;gap:8px;padding:12px 16px;text-decoration:none;color:#dc2626;font-size:13px;font-weight:600;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Logout
+            </a>
+          </div>
+        </div>
+      </div>
+      <script>
+      document.addEventListener('click',function(e){var d=document.getElementById('adminMenuDrop');if(d&&d.style.display==='block'&&!e.target.closest('#adminMenuDrop')&&e.target.id!=='adminMenuChip')d.style.display='none'});
+      </script>
+    </div>
+
+    <div class="admin-layout">
+      <%- include('_admin_sidebar', { active: 'dashboard' }) %>
+
+      <div class="content">
+        <% if (message) { %><div class="msg-success"><%= message %></div><% } %>
+        <% if (error) { %><div class="msg-error"><%= error %></div><% } %>
+
+        <% if (pendingKycCount && pendingKycCount > 0) { %>
+        <a href="/admin/kyc-pending" style="display:block;padding:14px 20px;background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:12px;border-left:4px solid #f59e0b;text-decoration:none;color:#92400e;margin-bottom:18px;transition:transform 0.15s;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div>
+              <strong style="font-size:15px;">&#128247; KYC Pending Review</strong>
+              <p style="margin:4px 0 0;font-size:13px;opacity:0.8;"><%= pendingKycCount %> user<%= pendingKycCount !== 1 ? 's have' : ' has' %> submitted KYC documents — review now</p>
+            </div>
+            <span style="background:#f59e0b;color:white;padding:6px 16px;border-radius:20px;font-weight:700;font-size:14px;"><%= pendingKycCount %></span>
+          </div>
+        </a>
+        <% } %>
+
+        <div class="stats-grid">
+          <div class="stat-card" style="border-left:4px solid #667eea">
+            <div class="stat-value" style="color:#667eea"><%= stats.usersCount %></div>
+            <div class="stat-label">Total Users</div>
+          </div>
+          <div class="stat-card" style="border-left:4px solid #10b981">
+            <div class="stat-value" style="color:#10b981"><%= rupee.format(stats.totalPaid) %></div>
+            <div class="stat-label">Total Payout Paid</div>
+          </div>
+          <div class="stat-card" style="border-left:4px solid #ef4444">
+            <div class="stat-value" style="color:#ef4444"><%= rupee.format(stats.totalTDS || 0) %></div>
+            <div class="stat-label">Total TDS Deducted</div>
+          </div>
+          <div class="stat-card" style="border-left:4px solid #f59e0b">
+            <div class="stat-value" style="color:#f59e0b"><%= rupee.format(stats.totalAdminCharge || 0) %></div>
+            <div class="stat-label">Total Admin Charges</div>
+          </div>
+          <div class="stat-card" style="border-left:4px solid #8b5cf6">
+            <div class="stat-value" style="color:#8b5cf6"><%= pendingOrdersCount %></div>
+            <div class="stat-label">Pending Orders</div>
+          </div>
+          <div class="stat-card" style="border-left:4px solid #f59e0b; cursor:pointer;" onclick="location.href='/admin/kyc-pending'">
+            <div class="stat-value" style="color:#f59e0b"><%= pendingKycCount || 0 %></div>
+            <div class="stat-label">Pending KYC</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">PIN Summary</div>
+            <div class="card-body">
+              <table class="data-table">
+                <tr><th>Status</th><th>Count</th></tr>
+                <tr><td>Total PINs</td><td><strong><%= pin_stats.total || 0 %></strong></td></tr>
+                <tr><td>Used</td><td><strong style="color:#1e40af"><%= pin_stats.used || 0 %></strong></td></tr>
+                <tr><td>Unused</td><td><strong style="color:#065f46"><%= pin_stats.unused || 0 %></strong></td></tr>
+                <tr><td>Expired</td><td><strong style="color:#991b1b"><%= pin_stats.expired || 0 %></strong></td></tr>
+                <tr><td>Used Today</td><td><strong style="color:#8b5cf6"><%= pin_stats.used_today || 0 %></strong></td></tr>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">Low Stock Products</div>
+            <div class="card-body">
+              <% if (lowStockProducts && lowStockProducts.length > 0) { %>
+              <table class="data-table">
+                <tr><th>Product</th><th>Stock</th></tr>
+                <% lowStockProducts.forEach(function(p) { %>
+                <tr><td><%= p.name %></td><td><span class="badge <%= p.total_stock === 0 ? 'badge-expired' : 'badge-pending' %>"><%= p.total_stock === 0 ? 'OUT' : p.total_stock + ' left' %></span></td></tr>
+                <% }) %>
+              </table>
+              <% } else { %>
+              <div class="empty-state">All products are well stocked</div>
+              <% } %>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">Last 7 Days Registrations & Earnings</div>
+          <div class="card-body">
+            <table class="data-table">
+              <tr><th>Date</th><th>Users</th><th>Earnings</th></tr>
+              <% (charts.userRegistrations || []).forEach(function(r, i) { %>
+              <tr><td><%= r.date %></td><td><%= r.count %></td><td><%= rupee.format(((charts.earningsTrend||[])[i]||{}).amount||0) %></td></tr>
+              <% }) %>
+            </table>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">Top Earners</div>
+            <div class="card-body">
+              <% if (charts.topEarners && charts.topEarners.length > 0) { %>
+              <table class="data-table">
+                <tr><th>#</th><th>Username</th><th>Total</th></tr>
+                <% charts.topEarners.forEach(function(e, i) { %>
+                <tr><td><%= i+1 %></td><td><%= e.username %></td><td><%= rupee.format(e.total_earnings) %></td></tr>
+                <% }) %>
+              </table>
+              <% } else { %><div class="empty-state">No data</div><% } %>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">Payout by Rank</div>
+            <div class="card-body">
+              <% if (charts.payoutByRank && charts.payoutByRank.length > 0) { %>
+              <table class="data-table">
+                <tr><th>Rank</th><th>Total</th></tr>
+                <% charts.payoutByRank.forEach(function(r) { %>
+                <tr><td><%= r.rank_name %></td><td><%= rupee.format(r.total) %></td></tr>
+                <% }) %>
+              </table>
+              <% } else { %><div class="empty-state">No data</div><% } %>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">Recent PIN Packages</div>
+          <div class="card-body">
+            <% if (pin_packages && pin_packages.length > 0) { %>
+            <table class="data-table">
+              <tr><th>Code</th><th>Product</th><th>BV</th><th>Status</th><th>Date</th></tr>
+              <% pin_packages.forEach(function(p) { %>
+              <tr><td style="font-family:monospace"><%= p.code %></td><td><%= p.product_name %></td><td><%= p.bv %></td><td><span class="badge badge-<%= p.status %>"><%= p.status %></span></td><td><%= p.created_at ? new Date(p.created_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : '-' %></td></tr>
+              <% }) %>
+            </table>
+            <% } else { %><div class="empty-state">No PIN packages yet</div><% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

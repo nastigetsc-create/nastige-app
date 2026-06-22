@@ -1,0 +1,510 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>PIN Management | Admin | Nastige</title>
+  <style>
+    html{font-size:16px;-webkit-text-size-adjust:100%;scroll-padding-top:0}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1e293b;font-size:14px;line-height:1.5}
+    .dashboard-wrapper{max-width:1600px;margin:0 auto;padding:20px}
+    .header{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:white;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;border-radius:16px;margin-bottom:18px}
+    .header-left{display:flex;align-items:center;gap:12px}
+    .header-logo{height:44px;border-radius:8px}
+    .header-right{display:flex;align-items:center;gap:10px}
+    .user-chip{background:rgba(255,255,255,0.15);padding:6px 14px;border-radius:20px;font-size:13px}
+    .logout-btn{background:rgba(255,255,255,0.15);border:none;color:white;padding:6px 14px;border-radius:20px;cursor:pointer;text-decoration:none}
+    
+    
+    
+    
+    .card{background:white;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.05);overflow:hidden;margin-bottom:18px}
+    .card-header{padding:14px 18px;border-bottom:1px solid #e2e8f0;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+    .card-body{padding:18px}
+    .filter-bar{display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+    .filter-bar a{padding:6px 14px;border-radius:20px;text-decoration:none;font-size:13px;font-weight:500;color:#64748b;background:#f1f5f9;transition:all 0.2s}
+    .filter-bar a:hover{background:#e2e8f0}
+    .filter-bar a.active{background:#1e293b;color:white}
+    .form-row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+    .form-group{flex:1;min-width:180px}
+    .form-group label{display:block;font-size:12px;font-weight:600;color:#64748b;margin-bottom:4px}
+    .form-group select,.form-group input{padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;width:100%;box-sizing:border-box}
+    .btn{background:#1e293b;color:white;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;text-decoration:none;display:inline-block}
+    .btn:hover{background:#334155}
+    .btn-sm{padding:4px 10px;font-size:11px}
+    .btn-warning{background:#f59e0b;color:white}
+    .btn-warning:hover{background:#d97706}
+    .tab-btn{background:#f1f5f9;color:#64748b;font-weight:500}
+    .tab-btn.active{background:#1e293b;color:white}
+    .btn-danger{background:#ef4444;color:white}
+    .btn-danger:hover{background:#dc2626}
+    .badge{display:inline-block;font-size:11px;padding:3px 10px;border-radius:999px;font-weight:600}
+    .badge-success{background:#d1fae5;color:#065f46}
+    .badge-warning{background:#fef3c7;color:#92400e}
+    .badge-danger{background:#fee2e2;color:#991b1b}
+    .badge-info{background:#dbeafe;color:#1e40af}
+    table{width:100%;border-collapse:collapse}
+    th{background:#f1fbf4;font-weight:700;padding:10px 12px;text-align:left;font-size:12px;white-space:nowrap}
+    td{border-bottom:1px solid #f1f5f9;padding:10px 12px;font-size:13px}
+    tbody tr:nth-child(even){background:#fafcff}
+    tbody tr:hover{background:#f4f8ff}
+    .action-cell{display:flex;gap:6px;flex-wrap:wrap}
+    .alert{padding:12px 16px;border-radius:8px;margin-bottom:16px;font-weight:500;font-size:13px}
+    .alert-success{background:#d1fae5;border:1px solid #6ee7b7;border-left:4px solid #10b981;color:#065f46}
+    .alert-error{background:#fee2e2;border:1px solid #fca5a5;border-left:4px solid #ef4444;color:#991b1b}
+    .empty-state{text-align:center;padding:40px 20px;color:#94a3b8;font-size:14px}
+    @media(max-width:768px){.dashboard-wrapper{padding:12px}.header{flex-direction:row;align-items:center;padding:10px 14px;gap:8px;border-radius:12px;flex-wrap:wrap}.form-row{flex-direction:column}.form-group{min-width:100%}.table-responsive{overflow-x:auto}}
+  
+    .admin-layout{display:flex;gap:20px}
+    .sidebar{width:220px;flex-shrink:0;background:white;border-radius:12px;padding:8px;box-shadow:0 2px 10px rgba(0,0,0,0.05);position:sticky;top:20px;height:fit-content;max-height:calc(100vh - 20px);overflow-y:auto}
+    .sidebar::-webkit-scrollbar{width:4px}
+    .sidebar::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:4px}
+    .side-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;text-decoration:none;color:#475569;font-size:12px;font-weight:500;transition:all 0.1s}
+    .side-link:hover{background:#f1f5f9;color:#1e293b}
+    .side-link.active{background:#1e293b;color:white}
+    .side-link svg{width:16px;height:16px;flex-shrink:0;fill:currentColor}
+    .side-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;padding:12px 10px 4px}
+    .content{flex:1;min-width:0}
+    @media(max-width:1024px){.admin-layout{flex-direction:column}.sidebar{width:260px;position:fixed;top:0;left:-280px;height:100vh;max-height:100vh;border-radius:0;padding:12px;transition:left 0.25s ease;z-index:1001;overflow-y:auto}.sidebar.open{left:0}.side-link{font-size:12px;padding:8px 10px}.side-section{display:none}}
+  </style>
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <div class="header">
+      <div class="header-left">
+        <img src="/brand/logo" class="header-logo" alt="Logo" onerror="this.style.display='none'"/>
+        <div>
+          <h2 style="margin:0;font-size:20px;">PIN Management</h2>
+          <p style="margin:4px 0 0;opacity:0.9;font-size:13px;">Generate and manage activation PINs</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div style="position:relative;">
+          <span id="adminMenuChip" class="user-chip" onclick="var d=document.getElementById('adminMenuDrop');d.style.display=d.style.display==='block'?'none':'block'" style="cursor:pointer;user-select:none;">Admin ▾</span>
+          <div id="adminMenuDrop" style="display:none;position:absolute;right:0;top:110%;background:white;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.15);min-width:180px;z-index:9999;overflow:hidden;">
+            <a href="/admin/password" style="display:flex;align-items:center;gap:8px;padding:12px 16px;text-decoration:none;color:#1e293b;font-size:13px;font-weight:500;border-bottom:1px solid #f1f5f9;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Change Password
+            </a>
+            <a href="/logout" onclick="sessionStorage.removeItem('broadcastsShown');" style="display:flex;align-items:center;gap:8px;padding:12px 16px;text-decoration:none;color:#dc2626;font-size:13px;font-weight:600;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Logout
+            </a>
+          </div>
+        </div>
+        <script>
+        document.addEventListener('click',function(e){var d=document.getElementById('adminMenuDrop');if(d&&d.style.display==='block'&&!e.target.closest('#adminMenuDrop')&&e.target.id!=='adminMenuChip')d.style.display='none'});
+        </script>
+      </div>
+    </div>
+
+<div class="admin-layout">
+    <%- include('_admin_sidebar', { active: 'pins' }) %>
+    <div class="content">    <div class="card">
+      <div class="card-header">Generate PIN</div>
+      <div class="card-body">
+        <div id="pin-tabs" style="display:flex;gap:8px;margin-bottom:16px">
+          <button type="button" class="btn tab-btn active" onclick="showTab('plan')">Plan PIN</button>
+          <button type="button" class="btn tab-btn" onclick="showTab('product')">Product PIN</button>
+          <button type="button" class="btn tab-btn" onclick="showTab('matrix')">Matrix PIN</button>
+        </div>
+
+        <div id="tab-plan">
+          <form id="planPinForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Plan</label>
+                <select name="plan_id" id="plan_select" required onchange="showPlanDetails(this)">
+                  <option value="">-- Select Plan --</option>
+                  <% (plans || []).forEach(function(pl){ %>
+                  <option value="<%= pl.id %>" data-product-ids="<%= JSON.stringify(pl.product_ids) %>"><%= pl.name %> (&#8377;<%= pl.amount_inr %>)</option>
+                  <% }) %>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Quantity</label>
+                <input type="number" name="quantity" value="1" min="1" max="100" required/>
+              </div>
+              <div class="form-group" style="display:flex;align-items:flex-end">
+                <button type="submit" class="btn">Generate Plan PINs</button>
+              </div>
+            </div>
+          </form>
+          <div id="plan-details" style="display:none;margin-top:12px;padding:12px 16px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;font-size:13px"></div>
+        </div>
+
+        <div id="tab-product" style="display:none">
+          <form id="productPinForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Product</label>
+                <select name="product_id" required>
+                  <option value="">-- Select Product --</option>
+                  <% (products || []).forEach(function(p){ %>
+                  <option value="<%= p.id %>"><%= p.name %> (BV: <%= p.bv %>)</option>
+                  <% }) %>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Quantity</label>
+                <input type="number" name="quantity" value="1" min="1" max="100" required/>
+              </div>
+              <div class="form-group" style="display:flex;align-items:flex-end">
+                <button type="submit" class="btn">Generate Product PINs</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div id="tab-matrix" style="display:none">
+          <form id="matrixPinForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Plan</label>
+                <select name="plan_id" required onchange="showPlanDetails(this)">
+                  <option value="">-- Select Plan --</option>
+                  <% (plans || []).forEach(function(pl){ %>
+                  <option value="<%= pl.id %>" data-product-ids="<%= JSON.stringify(pl.product_ids) %>"><%= pl.name %> (&#8377;<%= pl.amount_inr %>)</option>
+                  <% }) %>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Left Count</label>
+                <input type="number" name="left_count" value="10" min="1" max="50" required/>
+              </div>
+              <div class="form-group">
+                <label>Right Count</label>
+                <input type="number" name="right_count" value="10" min="1" max="50" required/>
+              </div>
+              <div class="form-group" style="display:flex;align-items:flex-end">
+                <button type="submit" class="btn btn-warning">Generate Matrix PIN</button>
+              </div>
+            </div>
+          </form>
+          <div id="plan-details-matrix" style="display:none;margin-top:12px;padding:12px 16px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;font-size:13px"></div>
+        </div>
+
+        <div id="pin-result" style="display:none;margin-top:16px;padding:12px 16px;border-radius:8px;font-size:13px;font-weight:500"></div>
+      </div>
+    </div>
+
+    <% if (typeof success !== 'undefined' && success) { %>
+    <div class="alert alert-success"><%= success %></div>
+    <% } %>
+    <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert alert-error"><%= error %></div>
+    <% } %>
+
+    <div class="card">
+      <div class="card-header">
+        <span>Assign PINs (Bulk)</span>
+      </div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Assign To (User Code / Username / Franchise Code)</label>
+            <input type="text" id="bulk-assign-ref" placeholder="e.g. NIPL0000123 or FRN001"/>
+          </div>
+          <div class="form-group" style="max-width:200px">
+            <label>Or select Franchise</label>
+            <select id="bulk-assign-franchise" onchange="document.getElementById('bulk-assign-ref').value=this.value">
+              <option value="">-- Franchise --</option>
+              <% (franchises || []).forEach(function(f){ %>
+              <option value="<%= f.code %>"><%= f.code %> - <%= f.name %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="form-group" style="display:flex;gap:8px;align-items:flex-end">
+            <button type="button" class="btn" style="background:#3b82f6;color:white" onclick="assignAllPins()">Assign All Unused</button>
+            <button type="button" class="btn btn-warning" onclick="assignSelectedPins()">Assign Selected</button>
+          </div>
+        </div>
+        <div id="bulk-assign-result" style="display:none;margin-top:12px;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:500"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span>PIN Records</span>
+        <span style="font-size:12px;color:#64748b;font-weight:400">
+          <% var f = filter || 'all' %>
+          <a href="/admin/pins?filter=all" style="color:<%= f === 'all' ? '#1e293b' : '#64748b' %>;font-weight:<%= f === 'all' ? '700' : '400' %>;text-decoration:none">All</a> |
+          <a href="/admin/pins?filter=used" style="color:<%= f === 'used' ? '#1e293b' : '#64748b' %>;font-weight:<%= f === 'used' ? '700' : '400' %>;text-decoration:none">Used</a> |
+          <a href="/admin/pins?filter=unused" style="color:<%= f === 'unused' ? '#1e293b' : '#64748b' %>;font-weight:<%= f === 'unused' ? '700' : '400' %>;text-decoration:none">Unused</a>
+        </span>
+      </div>
+      <div class="card-body" style="padding:0">
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:30px"><input type="checkbox" id="select-all-pins" onchange="toggleAllPins(this)"/></th>
+                <th>Package PIN</th>
+                <th>Login PIN</th>
+                <th>Product / Plan</th>
+                <th>BV</th>
+                <th>Status</th>
+                <th>Used By</th>
+                <th>Assigned To</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (!pins || pins.length === 0) { %>
+              <tr><td colspan="10" class="empty-state">No PINs found</td></tr>
+              <% } else { %>
+                <% pins.forEach(function(pin){ %>
+                <tr>
+                  <td><input type="checkbox" class="pin-check" value="<%= pin.code %>"/></td>
+                  <td style="font-family:monospace;font-weight:700"><%= pin.code %></td>
+                  <td style="font-family:monospace;font-weight:700;color:#059669"><%= pin.login_pin || '-' %></td>
+                  <td><%= pin.product_name || 'N/A' %><% if (pin.is_matrix_pin) { %> <span style="display:inline-block;padding:2px 6px;background:#7c3aed;color:#fff;border-radius:8px;font-size:10px;font-weight:600;margin-left:4px">MATRIX</span><% } %></td>
+                  <td><%= pin.bv || 0 %></td>
+                  <td>
+                    <% if (pin.status === 'used') { %>
+                    <span class="badge badge-success">Used</span>
+                    <% } else if (pin.status === 'assigned') { %>
+                    <span class="badge badge-info">Assigned</span>
+                    <% } else if (pin.status === 'expired') { %>
+                    <span class="badge badge-danger">Expired</span>
+                    <% } else { %>
+                    <span class="badge badge-warning">Unused</span>
+                    <% } %>
+                  </td>
+                  <td><%= pin.used_by || '-' %></td>
+                  <td><%= pin.assigned_to || '-' %></td>
+                  <td style="white-space:nowrap"><%= pin.created_at ? new Date(pin.created_at).toLocaleDateString() : '-' %></td>
+                  <td>
+                    <div class="action-cell">
+                      <% if (pin.status !== 'used' && pin.status !== 'expired') { %>
+                      <button type="button" class="btn btn-sm" style="background:#3b82f6;color:white" onclick="showAssignModal('<%= pin.code %>')">Assign</button>
+                      <button type="button" class="btn btn-sm btn-warning" onclick="expirePin('<%= pin.code %>', this)">Expire</button>
+                      <% } %>
+                      <button type="button" class="btn btn-sm btn-danger" onclick="deletePin('<%= pin.code %>', this)">Delete</button>
+                    </div>
+                  </td>
+                </tr>
+                <% }) %>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  </div>
+
+<script>
+var allProducts = <%- JSON.stringify(products || []) %>;
+document.querySelectorAll('.side-link').forEach(function(l){var p=l.getAttribute('href');if(window.location.pathname===p||(p!=='/admin'&&window.location.pathname.startsWith(p)))l.classList.add('active')});
+
+function showTab(tab) {
+  document.querySelectorAll('[id^="tab-"]').forEach(function(el){ el.style.display = 'none' });
+  document.getElementById('tab-' + tab).style.display = 'block';
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active') });
+  event.target.classList.add('active');
+}
+
+function showPlanDetails(sel) {
+  var isMatrix = sel.closest('#tab-matrix');
+  var elId = isMatrix ? 'plan-details-matrix' : 'plan-details';
+  var el = document.getElementById(elId);
+  var opt = sel.options[sel.selectedIndex];
+  if (!opt.value) { el.style.display = 'none'; return; }
+  var name = opt.text;
+  var pids = JSON.parse(opt.getAttribute('data-product-ids') || '[]');
+  var totalBV = 0;
+  var prodList = [];
+  pids.forEach(function(id) {
+    var p = allProducts.find(function(x){ return x.id === id });
+    if (p) { totalBV += p.bv || 0; prodList.push(p.name + ' (BV: ' + (p.bv||0) + ')'); }
+  });
+  var html = '<strong>' + name + '</strong><br>';
+  html += 'Products: ' + (prodList.length ? prodList.join(', ') : 'None linked') + '<br>';
+  html += '<strong>Total BV: ' + totalBV + '</strong>';
+  el.innerHTML = html;
+  el.style.display = 'block';
+}
+
+function showResult(msg, ok) {
+  var el = document.getElementById('pin-result');
+  el.style.display = 'block';
+  el.style.background = ok ? '#d1fae5' : '#fee2e2';
+  el.style.color = ok ? '#065f46' : '#991b1b';
+  el.style.border = ok ? '1px solid #6ee7b7' : '1px solid #fca5a5';
+  el.innerHTML = msg;
+}
+
+document.getElementById('planPinForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var fd = new URLSearchParams(new FormData(this));
+  fetch('/admin/plan-pin/bulk', { method: 'POST', body: fd, headers:{'Content-Type':'application/x-www-form-urlencoded'} })
+    .then(function(r){ return r.json() })
+    .then(function(d) {
+      if (d.ok) {
+        var lines = d.items.map(function(i){ return 'Package: ' + i.package_pin + ' | Login: ' + i.login_pin }).join('<br>');
+        showResult('Generated ' + d.count + ' Plan PINs:<br>' + lines, true);
+        setTimeout(function(){ location.reload() }, 2000);
+      } else { showResult(d.error || 'Failed', false) }
+    })
+    .catch(function(){ showResult('Network error', false) });
+});
+
+document.getElementById('productPinForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var fd = new URLSearchParams(new FormData(this));
+  fetch('/admin/pin-packages/bulk', { method: 'POST', body: fd, headers:{'Content-Type':'application/x-www-form-urlencoded'} })
+    .then(function(r){ return r.json() })
+    .then(function(d) {
+      if (d.ok) {
+        showResult('Generated ' + d.count + ' Product PINs:<br>' + d.items.map(function(i){ return 'Package: ' + i.package_pin + ' | Login: ' + i.login_pin }).join('<br>'), true);
+        setTimeout(function(){ location.reload() }, 2000);
+      } else { showResult(d.error || 'Failed', false) }
+    })
+    .catch(function(){ showResult('Network error', false) });
+});
+
+document.getElementById('matrixPinForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var fd = new URLSearchParams(new FormData(this));
+  fetch('/admin/pin-packages/matrix', { method: 'POST', body: fd, headers:{'Content-Type':'application/x-www-form-urlencoded'} })
+    .then(function(r){ return r.json() })
+    .then(function(d) {
+      if (d.ok) {
+        showResult('Matrix PIN Generated:<br>Package: ' + d.package_pin + '<br>Login: ' + d.login_pin + '<br>(Left: ' + d.left_count + ', Right: ' + d.right_count + ')', true);
+        setTimeout(function(){ location.reload() }, 2000);
+      } else { showResult(d.error || 'Failed', false) }
+    })
+    .catch(function(){ showResult('Network error', false) });
+});
+
+function expirePin(code, btn) {
+  if (!confirm('Expire this PIN?')) return;
+  btn.disabled = true;
+  fetch('/admin/pins/' + encodeURIComponent(code) + '/expire', { method: 'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'} })
+    .then(function(r){ return r.json() })
+    .then(function(d){ if (d.ok) { location.reload(); } else { alert(d.error || 'Failed'); btn.disabled = false; } })
+    .catch(function(){ alert('Network error'); btn.disabled = false; });
+}
+
+function deletePin(code, btn) {
+  if (!confirm('Delete this PIN permanently?')) return;
+  btn.disabled = true;
+  fetch('/admin/pins/' + encodeURIComponent(code) + '/delete', { method: 'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'} })
+    .then(function(r){ return r.json() })
+    .then(function(d){ if (d.ok) { location.reload(); } else { alert(d.error || 'Failed'); btn.disabled = false; } })
+    .catch(function(){ alert('Network error'); btn.disabled = false; });
+}
+
+var assignPinCode = '';
+function showAssignModal(code) {
+  assignPinCode = code;
+  document.getElementById('assign-code-display').textContent = code;
+  document.getElementById('assign-ref').value = '';
+  document.getElementById('assign-modal').style.display = 'flex';
+}
+function closeAssignModal() {
+  document.getElementById('assign-modal').style.display = 'none';
+}
+function submitAssign() {
+  var ref = document.getElementById('assign-ref').value.trim();
+  if (!ref) { alert('Enter user code, username, or franchise code'); return; }
+  var btn = document.getElementById('assign-submit-btn');
+  btn.disabled = true; btn.textContent = 'Assigning...';
+  fetch('/admin/pins/' + encodeURIComponent(assignPinCode) + '/assign', {
+    method: 'POST',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body: 'assign_to=' + encodeURIComponent(ref)
+  }).then(function(r){ return r.json() })
+    .then(function(d){
+      btn.disabled = false; btn.textContent = 'Assign';
+      if (d.ok) { alert('PIN assigned to ' + d.assigned_to); closeAssignModal(); location.reload(); }
+      else { alert(d.error || 'Failed'); }
+    }).catch(function(){ btn.disabled = false; btn.textContent = 'Assign'; alert('Network error'); });
+}
+
+function toggleAllPins(el) {
+  document.querySelectorAll('.pin-check').forEach(function(cb){ cb.checked = el.checked; });
+}
+
+function showBulkResult(msg, ok) {
+  var el = document.getElementById('bulk-assign-result');
+  el.style.display = 'block';
+  el.style.background = ok ? '#d1fae5' : '#fee2e2';
+  el.style.color = ok ? '#065f46' : '#991b1b';
+  el.style.border = ok ? '1px solid #6ee7b7' : '1px solid #fca5a5';
+  el.innerHTML = msg;
+}
+
+function assignAllPins() {
+  var ref = document.getElementById('bulk-assign-ref').value.trim();
+  if (!ref) { alert('Enter user code, username, or franchise code'); return; }
+  if (!confirm('Assign ALL unused pins to ' + ref + '?')) return;
+  fetch('/admin/pins/assign-all', {
+    method: 'POST',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body: 'assign_to=' + encodeURIComponent(ref)
+  }).then(function(r){ return r.json() })
+    .then(function(d){
+      if (d.ok) { showBulkResult('Assigned ' + d.count + ' pins to ' + d.assigned_to, true); setTimeout(function(){ location.reload() }, 1500); }
+      else { showBulkResult(d.error || 'Failed', false); }
+    }).catch(function(){ showBulkResult('Network error', false); });
+}
+
+function assignSelectedPins() {
+  var ref = document.getElementById('bulk-assign-ref').value.trim();
+  if (!ref) { alert('Enter user code, username, or franchise code'); return; }
+  var codes = [];
+  document.querySelectorAll('.pin-check:checked').forEach(function(cb){ codes.push(cb.value); });
+  if (codes.length === 0) { alert('Select at least one PIN'); return; }
+  if (!confirm('Assign ' + codes.length + ' selected pins to ' + ref + '?')) return;
+  var params = new URLSearchParams();
+  params.append('assign_to', ref);
+  codes.forEach(function(c){ params.append('pin_codes', c); });
+  fetch('/admin/pins/assign-selected', {
+    method: 'POST',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body: params.toString()
+  }).then(function(r){ return r.json() })
+    .then(function(d){
+      if (d.ok) { showBulkResult('Assigned ' + d.count + ' pins to ' + d.assigned_to, true); setTimeout(function(){ location.reload() }, 1500); }
+      else { showBulkResult(d.error || 'Failed', false); }
+    }).catch(function(){ showBulkResult('Network error', false); });
+}
+</script>
+  </div>
+
+  <div id="assign-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:999;align-items:center;justify-content:center">
+    <div style="background:white;border-radius:12px;padding:24px;width:420px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
+      <h3 style="margin:0 0 16px;font-size:16px">Assign PIN</h3>
+      <p style="font-size:13px;color:#64748b;margin-bottom:12px">PIN: <strong style="font-family:monospace" id="assign-code-display"></strong></p>
+      <div class="form-group" style="margin-bottom:10px">
+        <label>User Code / Username / Franchise Code</label>
+        <input type="text" id="assign-ref" placeholder="e.g. NIPL0000123 or FRN001"/>
+      </div>
+      <div class="form-group" style="margin-bottom:16px">
+        <label>Or select Franchise</label>
+        <select id="assign-franchise-select" onchange="document.getElementById('assign-ref').value=this.value">
+          <option value="">-- Franchise --</option>
+          <% (franchises || []).forEach(function(f){ %>
+          <option value="<%= f.code %>"><%= f.code %> - <%= f.name %></option>
+          <% }) %>
+        </select>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button type="button" class="btn" style="background:#e2e8f0;color:#475569" onclick="closeAssignModal()">Cancel</button>
+        <button type="button" class="btn" id="assign-submit-btn" style="background:#3b82f6;color:white" onclick="submitAssign()">Assign</button>
+      </div>
+    </div>
+  </div>
+
+
+
+<script>
+fetch('/admin/api/kyc-pending-count').then(function(r){return r.json()}).then(function(d){if(d.count>0){var b=document.getElementById('kyc-badge');if(b){b.textContent=d.count;b.style.display='inline';}}});
+</script>
+</body>
+</html>

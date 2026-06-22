@@ -1,0 +1,65 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Offers - <%= (typeof company_name !== 'undefined' && company_name) ? company_name : 'Nastige' %></title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #f8fafc; padding: 20px; }
+    .container { max-width: 900px; margin: 0 auto; }
+    .header { text-align: center; margin-bottom: 30px; }
+    .header h1 { color: #1e293b; font-size: 28px; margin-bottom: 8px; }
+    .header p { color: #64748b; }
+    .offer-card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .offer-card.active { border-left: 4px solid #10b981; }
+    .offer-title { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 8px; }
+    .offer-period { font-size: 13px; color: #64748b; margin-bottom: 12px; }
+    .offer-target { display: flex; gap: 20px; flex-wrap: wrap; }
+    .target-item { background: #f1f5f9; padding: 8px 14px; border-radius: 8px; font-size: 13px; }
+    .target-item span { font-weight: 600; color: #667eea; }
+    .offer-reward { margin-top: 12px; padding: 10px; background: #dcfce7; border-radius: 8px; font-weight: 600; color: #166534; }
+    .no-offers { text-align: center; padding: 40px; color: #64748b; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎉 Current Offers</h1>
+      <p>Check out our latest exciting offers and rewards!</p>
+    </div>
+    
+    <% if (offers && offers.length > 0) { %>
+      <% offers.forEach(function(offer) { %>
+        <div class="offer-card active">
+          <div class="offer-title"><%= offer.name %></div>
+          <div class="offer-period">
+            📅 <%= offer.start_date %> to <%= offer.end_date %>
+          </div>
+          <div class="offer-target">
+            <% if (offer.target_pairs) { %>
+              <div class="target-item">Target Pairs: <span><%= offer.target_pairs %></span></div>
+            <% } %>
+            <% if (offer.target_bv) { %>
+              <div class="target-item">Target BV: <span>₹<%= offer.target_bv %></span></div>
+            <% } %>
+            <% if (offer.target_amount) { %>
+              <div class="target-item">Target Amount: <span>₹<%= offer.target_amount %></span></div>
+            <% } %>
+          </div>
+          <% if (offer.reward_amount) { %>
+            <div class="offer-reward">💰 Reward: ₹<%= offer.reward_amount %></div>
+          <% } %>
+        </div>
+      <% }); %>
+    <% } else { %>
+      <div class="no-offers">
+        <p>😕 No active offers at the moment.</p>
+        <p>Check back later for new offers!</p>
+      </div>
+    <% } %>
+  </div>
+</body>
+</html>

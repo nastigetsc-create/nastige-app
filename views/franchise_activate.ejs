@@ -1,0 +1,156 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Franchise Activation | Nastige</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <style>
+    body { background: linear-gradient(135deg, #1e293b, #334155); min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; padding: 20px; }
+    .card { background: #fff; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); padding: 40px; width: 100%; max-width: 500px; }
+    .card h2 { text-align: center; color: #1e293b; margin-bottom: 8px; }
+    .card .subtitle { text-align: center; color: #64748b; margin-bottom: 24px; font-size: 14px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 6px; color: #374151; font-size: 14px; }
+    .form-group input { width: 100%; padding: 12px 14px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 15px; transition: border-color 0.2s; box-sizing: border-box; }
+    .form-group input:focus { outline: none; border-color: #667eea; }
+    .pin-row { display: flex; gap: 12px; }
+    .pin-row .form-group { flex: 1; }
+    button[type="submit"] { width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 8px; }
+    button[type="submit"]:hover { opacity: 0.9; }
+    .login-link { text-align: center; margin-top: 20px; font-size: 14px; color: #64748b; }
+    .login-link a { color: #667eea; text-decoration: none; font-weight: 600; }
+    .plan-details { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-top: 20px; display: none; }
+    .plan-details h3 { color: #1e293b; margin-top: 0; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .plan-details h3 i { color: #667eea; }
+    .plan-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
+    .plan-item:last-child { border-bottom: none; }
+    .plan-label { font-weight: 500; color: #374151; }
+    .plan-value { font-weight: 600; color: #1e293b; }
+    .plan-amount { font-size: 18px; font-weight: 700; color: #10b981; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Franchise Activation</h2>
+    <p class="subtitle">Enter your activation PIN to create your franchise account</p>
+    <% if (error) { %><div class="error" style="margin-bottom:16px"><%= error %></div><% } %>
+    <% if (success) { %><div class="success" style="margin-bottom:16px"><%= success %></div><% } %>
+    <form method="post" action="/franchise/activate" id="activateForm">
+      <div class="pin-row">
+        <div class="form-group">
+          <label>Activation PIN</label>
+          <input name="activation_pin" placeholder="12-digit PIN" required id="activationPin"/>
+        </div>
+        <div class="form-group">
+          <label>Login PIN</label>
+          <input name="login_pin" placeholder="6-digit PIN" required/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-store" style="color:#667eea;margin-right:6px;"></i> Shop / Business Name</label>
+        <input name="member_name" placeholder="Your business name" required/>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-phone" style="color:#667eea;margin-right:6px;"></i> Mobile Number</label>
+        <input name="phone" placeholder="10-digit mobile" pattern="[0-9]{10}"/>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-map-marker-alt" style="color:#667eea;margin-right:6px;"></i> Address</label>
+        <input name="address" placeholder="Full address"/>
+      </div>
+      <div class="form-group">
+        <label>Create Password</label>
+        <input name="password" type="password" placeholder="Min 6 characters" required minlength="6"/>
+      </div>
+      
+      <!-- Plan Details Section -->
+      <div class="plan-details" id="planDetails">
+        <h3><i class="fas fa-info-circle"></i> Plan Details</h3>
+        <div class="plan-item">
+          <span class="plan-label">Plan Name:</span>
+          <span class="plan-value" id="planName">-</span>
+        </div>
+        <div class="plan-item">
+          <span class="plan-label">Product Name:</span>
+          <span class="plan-value" id="productName">-</span>
+        </div>
+        <div class="plan-item">
+          <span class="plan-label">Amount:</span>
+          <span class="plan-value plan-amount" id="planAmount">-</span>
+        </div>
+      </div>
+      
+      <button type="submit">Activate Franchise</button>
+    </form>
+    <div class="login-link">
+      Already activated? <a href="/login">Login here</a>
+    </div>
+  </div>
+
+  <script>
+    // Function to fetch and display plan details based on PIN
+    async function fetchPlanDetails() {
+      const activationPin = document.getElementById('activationPin').value.trim();
+      const planDetailsDiv = document.getElementById('planDetails');
+      
+      // Clear previous details and hide section if PIN is empty
+      if (!activationPin) {
+        document.getElementById('planName').textContent = '-';
+        document.getElementById('productName').textContent = '-';
+        document.getElementById('planAmount').textContent = '-';
+        planDetailsDiv.style.display = 'none';
+        return;
+      }
+      
+      // Show loading state
+      document.getElementById('planName').textContent = 'Loading...';
+      document.getElementById('productName').textContent = 'Loading...';
+      document.getElementById('planAmount').textContent = 'Loading...';
+      planDetailsDiv.style.display = 'block';
+      
+      try {
+        // Assuming there's an endpoint to get plan details by PIN
+        const response = await fetch(`/franchise/plan-details?pin=${encodeURIComponent(activationPin)}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch plan details');
+        }
+        
+        const data = await response.json();
+        
+        // Update the UI with fetched data
+        document.getElementById('planName').textContent = data.plan_name || 'N/A';
+        document.getElementById('productName').textContent = data.product_name || 'N/A';
+        document.getElementById('planAmount').textContent = data.amount ? `₹${data.amount}` : 'N/A';
+        
+      } catch (error) {
+        console.error('Error fetching plan details:', error);
+        document.getElementById('planName').textContent = 'Error';
+        document.getElementById('productName').textContent = 'Error';
+        document.getElementById('planAmount').textContent = 'Error';
+      }
+    }
+    
+    // Event listener for PIN input changes
+    document.getElementById('activationPin').addEventListener('input', function() {
+      // Debounce to avoid too many rapid calls
+      if (this._debounceTimeout) clearTimeout(this._debounceTimeout);
+      this._debounceTimeout = setTimeout(fetchPlanDetails, 500);
+    });
+    
+    // Also fetch details when form is submitted to ensure latest data
+    document.getElementById('activateForm').addEventListener('submit', function(e) {
+      // If PIN is filled, fetch details before submission
+      const pin = document.getElementById('activationPin').value.trim();
+      if (pin && pin.length >= 10) { // Assuming PIN is at least 10 digits
+        e.preventDefault(); // Prevent actual submission
+        fetchPlanDetails().then(() => {
+          // After fetching details, submit the form
+          this.submit();
+        });
+      }
+    });
+  </script>
+</body>
+</html>

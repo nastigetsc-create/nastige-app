@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>PIN Activation | Franchise | Nastige</title>
+  <style>
+    html{font-size:16px;-webkit-text-size-adjust:100%}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1e293b;font-size:14px;line-height:1.5}
+    .admin-header{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:white;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.1)}
+    .admin-header .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px}
+    .admin-header img{height:35px;width:auto}
+    .admin-header .user-menu details{position:relative}
+    .admin-header summary{background:rgba(255,255,255,0.2);padding:6px 14px;border-radius:20px;cursor:pointer;font-size:13px}
+    .admin-header .menu{position:absolute;right:0;top:100%;background:white;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.15);padding:8px 0;min-width:150px;margin-top:8px}
+    .admin-header .menu a{display:block;padding:10px 16px;color:#333;text-decoration:none;font-size:13px}
+    .admin-header .menu a:hover{background:#f5f5f5}
+    .admin-layout{display:flex;gap:20px}
+    .sidebar{width:220px;flex-shrink:0;background:white;border-radius:12px;padding:8px;box-shadow:0 2px 10px rgba(0,0,0,0.05);position:sticky;top:20px;height:fit-content;max-height:calc(100vh - 120px);overflow-y:auto}
+    .sidebar::-webkit-scrollbar{width:4px}
+    .sidebar::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:4px}
+    .side-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;text-decoration:none;color:#475569;font-size:12px;font-weight:500;transition:all 0.1s}
+    .side-link:hover{background:#f1f5f9;color:#1e293b}
+    .side-link.active{background:#1e293b;color:white}
+    .side-link svg{width:16px;height:16px;flex-shrink:0;fill:currentColor}
+    .side-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;padding:12px 10px 4px}
+    @media(max-width:1024px){.admin-layout{flex-direction:column}.sidebar{width:260px;position:fixed;top:0;left:-280px;height:100vh;max-height:100vh;border-radius:0;padding:12px;transition:left 0.25s ease;z-index:1001;overflow-y:auto}.sidebar.open{left:0}.side-link{font-size:12px;padding:8px 10px}.side-section{display:none}}
+    @media (max-width: 768px) {
+      .row { flex-direction: column; }
+      .card { margin-bottom: 10px; }
+      .activate-form { flex-direction: column !important; }
+    }
+    .container{max-width:1100px;margin:20px auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 6px 22px rgba(0,0,0,0.06)}
+  </style>
+</head>
+<body>
+  <% if (admin_backup) { %>
+  <div style="background:#dc2626; color:#fff; padding:10px 16px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:200; font-weight:600">
+    <span>Logged in as Franchise (Admin: <%= admin_backup.username %>)</span>
+    <form method="post" action="/admin/back-to-admin" style="margin:0"><button type="submit" style="background:#fff; color:#dc2626; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-weight:700">Back to Admin</button></form>
+  </div>
+  <% } %>
+  <header class="admin-header">
+    <div class="logo">
+      <img src="/brand/logo" alt="Logo" onerror="this.style.display='none'"/>
+      <span>Nastige Franchise</span>
+    </div>
+    <div class="user-menu">
+      <details>
+        <summary><%= user.franchise_code %></summary>
+        <div class="menu">
+          <a href="/franchise/password">Change Password</a>
+          <a href="/logout" style="color:#ef4444">Logout</a>
+        </div>
+      </details>
+    </div>
+  </header>
+  <div class="admin-layout">
+    <%- include('_franchise_sidebar', { active: 'pins' }) %>
+    <div class="content">
+      <div class="container">
+      <div class="pad">
+      <% if (typeof req !== 'undefined' && req.query && req.query.msg) { %><div class="success"><%= req.query.msg %></div><% } %>
+      <% if (typeof req !== 'undefined' && req.query && req.query.err) { %><div class="error"><%= req.query.err %></div><% } %>
+      <% if (error) { %><div class="error"><%= error %></div><% } %>
+      <% if (success) { %><div class="success"><%= success %></div><% } %>
+
+      <h3>User ID Activation</h3>
+      <p style="color:#666; margin-bottom:16px">Apne assigned PIN se user ki ID activate karo - commission milega!</p>
+
+      <div class="card" style="margin-bottom:16px; border:2px solid #667eea;">
+        <h3>Activate User with PIN</h3>
+        <form method="post" action="/franchise/activate-user" id="activationForm" class="pad">
+          <div style="margin-bottom:14px">
+            <label style="font-weight:600; display:block; margin-bottom:6px">User ID *</label>
+            <input name="user_ref" id="userRefInput" placeholder="User code or username" required style="width:100%; padding:8px 12px; border:2px solid #e5e7eb; border-radius:8px; font-size:14px" oninput="lookupUser(this.value)"/>
+            <div id="userInfo" style="margin-top:4px; font-size:13px; min-height:22px"></div>
+          </div>
+          <div style="margin-bottom:14px">
+            <label style="font-weight:600; display:block; margin-bottom:6px">Package PIN *</label>
+            <input name="package_pin" id="packagePinInput" placeholder="12-digit PIN" required style="width:100%; padding:8px 12px; border:2px solid #e5e7eb; border-radius:8px; font-size:14px" oninput="lookupPin(this.value)"/>
+            <div id="pinInfo" style="margin-top:6px; min-height:22px"></div>
+          </div>
+          <div style="margin-bottom:14px">
+            <label style="font-weight:600; display:block; margin-bottom:6px">Login PIN *</label>
+            <input name="login_pin" id="loginPinInput" placeholder="6-digit PIN" required style="width:100%; padding:8px 12px; border:2px solid #e5e7eb; border-radius:8px; font-size:14px" oninput="verifyLoginPin()"/>
+            <div id="loginPinInfo" style="margin-top:4px; font-size:13px; min-height:22px"></div>
+          </div>
+          <button type="button" onclick="confirmActivation()" style="background:#059669; padding:10px 24px; font-size:14px; font-weight:600; border-radius:8px">Activate User</button>
+        </form>
+      </div>
+
+      <div id="confirmModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center">
+        <div style="background:#fff; padding:24px; border-radius:12px; max-width:400px; width:90%; text-align:center">
+          <h3 style="margin:0 0 12px 0">Are you sure?</h3>
+          <div id="confirmDetails" style="margin-bottom:16px; font-size:14px; color:#555"></div>
+          <div style="display:flex; gap:10px; justify-content:center">
+            <button onclick="submitForm()" style="background:#059669; padding:10px 24px; border-radius:6px; font-weight:600; color:#fff">Yes, Activate</button>
+            <button onclick="closeModal()" style="background:#dc2626; padding:10px 24px; border-radius:6px; font-weight:600; color:#fff">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
+        <h3>Available PINs (<%= availablePins.length %>)</h3>
+        <div class="pad">
+          <% if (availablePins.length === 0) { %>
+            <p style="text-align:center; color:#999; padding:20px">No PINs assigned yet. Admin se PIN assign karwayein.</p>
+          <% } else { %>
+            <table style="width:100%; border-collapse:collapse">
+              <thead>
+                <tr style="background:#f3f4f6">
+                  <th style="padding:10px; text-align:left">Package PIN</th>
+                  <th style="padding:10px; text-align:left">Login PIN</th>
+                  <th style="padding:10px; text-align:left">Plan Name</th>
+                  <th style="padding:10px; text-align:left">Product Name</th>
+                  <th style="padding:10px; text-align:right">BV</th>
+                  <th style="padding:10px; text-align:left">Status</th>
+                  <th style="padding:10px; text-align:center; width:60px">Select</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% availablePins.forEach(p => { %>
+                  <tr style="border-bottom:1px solid #eee; cursor:pointer" onclick="selectPin('<%= p.code %>', '<%= p.login_pin %>')">
+                    <td style="padding:10px"><code style="background:#f0fdf4; padding:2px 6px; border-radius:4px; font-weight:600"><%= p.code %></code></td>
+                    <td style="padding:10px"><code style="background:#fef3c7; padding:2px 6px; border-radius:4px"><%= p.login_pin %></code></td>
+                    <td style="padding:10px"><%= p.plan_name %></td>
+                    <td style="padding:10px"><%= p.product_name %><% if (p.is_matrix_pin) { %> <span class="pill" style="background:#7c3aed; color:#fff">Matrix</span><% } %></td>
+                    <td style="padding:10px; text-align:right; font-weight:600"><%= p.product_bv %></td>
+                    <td style="padding:10px"><span class="pill" style="background:#dcfce7; color:#166534">Available</span></td>
+                    <td style="padding:10px; text-align:center"><input type="radio" name="selected_pin" value="<%= p.code %>" onclick="event.stopPropagation(); selectPin('<%= p.code %>', '<%= p.login_pin %>')"></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          <% } %>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Used PINs (<%= usedPins.length %>)</h3>
+        <div class="pad">
+          <% if (usedPins.length === 0) { %>
+            <p style="text-align:center; color:#999; padding:20px">No PINs used yet.</p>
+          <% } else { %>
+            <table style="width:100%; border-collapse:collapse">
+              <thead>
+                <tr style="background:#f3f4f6">
+                  <th style="padding:10px; text-align:left">Package PIN</th>
+                  <th style="padding:10px; text-align:left">Product</th>
+                  <th style="padding:10px; text-align:left">Activated User</th>
+                  <th style="padding:10px; text-align:left">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% usedPins.forEach(p => { %>
+                  <tr style="border-bottom:1px solid #eee">
+                    <td style="padding:10px"><code style="background:#f3f4f6; padding:2px 6px; border-radius:4px"><%= p.code %></code></td>
+                    <td style="padding:10px"><%= p.product_name %><% if (p.is_matrix_pin) { %> <span class="pill" style="background:#7c3aed; color:#fff">Matrix</span><% } %></td>
+                    <td style="padding:10px"><%= p.used_by_name %></td>
+                    <td style="padding:10px; font-size:12px; color:#666"><%= p.used_at ? new Date(p.used_at).toLocaleString('en-IN', {timeZone:'Asia/Kolkata'}) : '-' %></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          <% } %>
+        </div>
+      </div>
+      </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    let lookupTimeout = null;
+    let pinLookupTimeout = null;
+    let loginPinTimeout = null;
+
+    function confirmActivation() {
+      const userId = document.getElementById('userRefInput').value;
+      const pin = document.getElementById('packagePinInput').value;
+      const loginPin = document.getElementById('loginPinInput').value;
+
+      if (!userId || !pin || !loginPin) {
+        alert('Please fill all fields');
+        return;
+      }
+
+      const userName = document.getElementById('userInfo').innerText || userId;
+      const pinInfo = document.getElementById('pinInfo').innerText || pin;
+
+      document.getElementById('confirmDetails').innerHTML =
+        '<strong>User:</strong> ' + userName + '<br>' +
+        '<strong>PIN:</strong> ' + pin.substring(0, 4) + '****<br>' +
+        '<strong>Product:</strong> ' + pinInfo;
+
+      document.getElementById('confirmModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('confirmModal').style.display = 'none';
+    }
+
+    function submitForm() {
+      document.getElementById('activationForm').submit();
+    }
+
+    function lookupUser(val) {
+      const el = document.getElementById('userInfo');
+      if (lookupTimeout) clearTimeout(lookupTimeout);
+      if (!val || val.trim().length < 2) {
+        el.innerHTML = '';
+        return;
+      }
+      lookupTimeout = setTimeout(function() {
+        fetch('/api/user-lookup?ref=' + encodeURIComponent(val.trim()))
+          .then(r => r.json())
+          .then(data => {
+            if (data.ok && data.username) {
+              const statusColor = data.active ? '#059669' : '#dc2626';
+              const statusText = data.active ? 'ACTIVE' : 'INACTIVE';
+              const statusBg = data.active ? '#dcfce7' : '#fee2e2';
+              el.innerHTML = '<span style="color:#1e293b; font-weight:600">' + (data.member_name || data.user_code || data.username) + '</span>' +
+                ' <span style="display:inline-block; padding:1px 6px; border-radius:3px; font-size:10px; font-weight:700; background:' + statusBg + '; color:' + statusColor + '">' + statusText + '</span>';
+            } else {
+              el.innerHTML = '<span style="color:#dc2626">User not found</span>';
+            }
+          })
+          .catch(() => { el.innerHTML = ''; });
+      }, 400);
+    }
+
+    function lookupPin(val) {
+      const el = document.getElementById('pinInfo');
+      if (pinLookupTimeout) clearTimeout(pinLookupTimeout);
+      if (!val || val.trim().length < 4) {
+        el.innerHTML = '';
+        return;
+      }
+      pinLookupTimeout = setTimeout(function() {
+        fetch('/api/franchise-pin-lookup?pin=' + encodeURIComponent(val.trim()))
+          .then(r => r.json())
+          .then(data => {
+            if (data.ok) {
+              const statusColor = data.available ? '#059669' : '#dc2626';
+              const statusBg = data.available ? '#dcfce7' : '#fee2e2';
+              const statusText = data.available ? 'AVAILABLE' : (data.used ? 'ALREADY USED' : 'NOT AVAILABLE');
+              el.innerHTML = '<div style="padding:10px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0">' +
+                '<div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center">' +
+                '<span><strong>Product:</strong> ' + data.product_name + '</span>' +
+                '<span><strong>BV:</strong> ' + data.bv + '</span>' +
+                '<span><strong>Price:</strong> ₹' + data.price.toFixed(2) + '</span>' +
+                '<span style="display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:700; background:' + statusBg + '; color:' + statusColor + '">' + statusText + '</span>' +
+                (data.used_by ? '<span style="color:#dc2626; font-size:12px">Used by: ' + data.used_by + '</span>' : '') +
+                '</div></div>';
+            } else {
+              el.innerHTML = '<div style="padding:8px; background:#fee2e2; border-radius:6px; color:#dc2626; font-size:13px">' + (data.error || 'PIN not found') + '</div>';
+            }
+          })
+          .catch(() => { el.innerHTML = ''; });
+      }, 400);
+    }
+
+    function selectPin(packagePin, loginPin) {
+      document.getElementById('packagePinInput').value = packagePin;
+      document.getElementById('loginPinInput').value = loginPin;
+      document.querySelectorAll('input[name="selected_pin"]').forEach(r => { r.checked = r.value === packagePin; });
+      lookupPin(packagePin);
+      verifyLoginPin();
+      document.getElementById('packagePinInput').focus();
+    }
+
+    function verifyLoginPin() {
+      const pin = document.getElementById('packagePinInput').value;
+      const loginPin = document.getElementById('loginPinInput').value;
+      const el = document.getElementById('loginPinInfo');
+
+      if (loginPinTimeout) clearTimeout(loginPinTimeout);
+
+      if (!pin || pin.trim().length < 4) {
+        el.innerHTML = '<span style="color:#dc2626">Pehle Package PIN daalo</span>';
+        return;
+      }
+      if (!loginPin || loginPin.trim().length < 4) {
+        el.innerHTML = '';
+        return;
+      }
+
+      loginPinTimeout = setTimeout(function() {
+        fetch('/api/verify-login-pin?pin=' + encodeURIComponent(pin.trim()) + '&login_pin=' + encodeURIComponent(loginPin.trim()))
+          .then(r => r.json())
+          .then(data => {
+            if (data.ok && data.match) {
+              el.innerHTML = '<span style="color:#059669; font-weight:600">✓ Match</span>';
+            } else {
+              el.innerHTML = '<span style="color:#dc2626; font-weight:600">✗ No Match</span>';
+            }
+          })
+          .catch(() => { el.innerHTML = ''; });
+      }, 300);
+    }
+  </script>
+  <script>document.querySelectorAll('.side-link').forEach(function(l){var p=l.getAttribute('href');if(window.location.pathname===p||(p!=='/franchise'&&window.location.pathname.startsWith(p)))l.classList.add('active')});</script>
+</body>

@@ -1,0 +1,198 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>ID Card | Nastige</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f1f5f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 40px 20px;
+      flex-direction: column;
+      gap: 30px;
+    }
+    .card-pair {
+      display: flex;
+      gap: 30px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .id-card, .card-back {
+      width: 340px;
+      height: 540px;
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .id-card { display: flex; flex-direction: column; }
+    .card-back { display: flex; flex-direction: column; }
+    .card-top {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      padding: 10px 20px 50px;
+      text-align: center;
+      position: relative;
+    }
+    .card-top .logo-wrap { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 2px; }
+    .card-top .logo-wrap img { height: 32px; width: auto; display: block; }
+    .card-top .company-name { font-size: 11px; font-weight: 700; color: #fbbf24; letter-spacing: 0.5px; }
+    .card-top .card-type { font-size: 9px; color: rgba(255,255,255,0.6); margin-top: 2px; letter-spacing: 1.5px; font-weight: 600; }
+    .card-top .watermark { position: absolute; right: 14px; top: 14px; font-size: 9px; color: rgba(255,255,255,0.12); font-weight: 700; letter-spacing: 1px; }
+    .photo-section { margin-top: -46px; margin-bottom: 6px; display: flex; justify-content: center; z-index: 2; }
+    .photo-frame {
+      width: 96px; height: 96px; border-radius: 50%; border: 4px solid #fff;
+      background: #e2e8f0; display: flex; align-items: center; justify-content: center; overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .photo-frame img { width: 100%; height: 100%; object-fit: cover; }
+    .photo-frame .placeholder { font-size: 38px; color: #94a3b8; font-weight: 700; }
+    .card-body { padding: 8px 16px 10px; text-align: center; flex: 1; display: flex; flex-direction: column; }
+    .member-name { font-size: 18px; font-weight: 800; color: #1e293b; margin-top: 4px; }
+    .member-id { font-size: 12px; color: #10b981; font-weight: 600; margin-top: 2px; }
+    .rank-badge { display: inline-block; margin-top: 8px; padding: 4px 16px; background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #78350f; border-radius: 20px; font-size: 12px; font-weight: 700; }
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, #e2e8f0, transparent); margin: 10px 0; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; text-align: left; }
+    .qr-section { margin-top: auto; display: flex; align-items: center; gap: 4px; padding: 3px 6px; background: #f8fafc; border-radius: 4px; justify-content: center; }
+    .qr-text { font-size: 7px; color: #64748b; text-align: left; word-break: break-word; line-height: 1.2; }
+    .info-item { padding: 4px 8px; background: #f8fafc; border-radius: 8px; }
+    .info-item .label { font-size: 8px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .info-item .value { font-size: 12px; color: #1e293b; font-weight: 600; margin-top: 1px; word-break: break-word; overflow-wrap: break-word; }
+
+    .card-footer { padding: 0 20px; background: #0f172a; text-align: center; display: flex; align-items: center; justify-content: center; min-height: 32px; }
+    .card-footer span { font-size: 7px; color: rgba(255,255,255,0.4); letter-spacing: 1px; }
+    .back-top { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 12px 20px; text-align: center; }
+    .back-top .co { font-size: 11px; font-weight: 700; color: #fbbf24; letter-spacing: 0.5px; }
+    .back-top .tag { font-size: 8px; color: rgba(255,255,255,0.6); letter-spacing: 1px; margin-top: 1px; }
+    .back-body { padding: 12px 16px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .back-body .section-title { font-size: 9px; font-weight: 700; color: #667eea; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; padding-bottom: 3px; }
+    .back-body .terms-box { padding: 6px 10px; background: #fef2f2; border-radius: 8px; border-left: 3px solid #ef4444; }
+    .back-body .terms-box .terms-label { font-size: 7px; color: #ef4444; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .back-body .terms-box .terms-list { margin-top: 2px; padding-left: 14px; }
+    .back-body .terms-box .terms-list li { font-size: 8px; color: #4b5563; line-height: 1.5; margin-bottom: 1px; }
+    .back-footer { padding: 0 20px; background: #0f172a; text-align: center; display: flex; align-items: center; justify-content: center; min-height: 32px; }
+    .back-footer span { font-size: 7px; color: rgba(255,255,255,0.4); letter-spacing: 1px; }
+    .card-label { text-align: center; font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 6px; letter-spacing: 1px; }
+    .no-print { text-align: center; }
+    .no-print a { display: inline-block; margin: 10px; padding: 10px 24px; background: #667eea; color: #fff; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600; }
+    .no-print a:hover { background: #5a67d8; }
+    .no-print .btn-print { background: #1e293b; }
+    .no-print .btn-print:hover { background: #0f172a; }
+    @media print {
+      body { background: #fff; padding: 10px; gap: 10px; }
+      .card-pair { gap: 10px; }
+      .id-card, .card-back { box-shadow: none; border: 1px solid #ddd; page-break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="no-print">
+    <a href="javascript:window.print()" class="btn-print"><i class="fas fa-print"></i> Print Both Sides</a>
+    <a href="/dashboard"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+  </div>
+
+  <div class="card-pair">
+    <div>
+      <div class="card-label no-print">&#8593; FRONT</div>
+      <div class="id-card">
+        <div class="card-top">
+          <div class="logo-wrap">
+            <img src="/brand/logo" alt="Nastige Logo"/>
+          </div>
+          <div class="company-name"><%= typeof company_name !== 'undefined' && company_name ? company_name : 'Nastige Industries Pvt Ltd' %></div>
+          <div class="card-type">LEADER IDENTIFICATION CARD</div>
+          <div class="watermark">NASTIGE</div>
+        </div>
+        <div class="card-body">
+          <div class="photo-section">
+            <div class="photo-frame">
+              <% if (user.photo_url) { %>
+                <img src="<%= user.photo_url %>" alt="Photo"/>
+              <% } else { %>
+                <div class="placeholder"><%= ((user.member_name || user.username || 'U').charAt(0)).toUpperCase() %></div>
+              <% } %>
+            </div>
+          </div>
+          <div class="member-name"><%= (user.member_name || user.username || 'MEMBER').toUpperCase() %></div>
+          <div class="member-id">ID: <%= (user.user_code || user.username || '').toUpperCase() %></div>
+          <% if (user.rank_name) { %>
+            <div class="rank-badge">&#11088; <%= user.rank_name.toUpperCase() %></div>
+          <% } %>
+          <div class="divider"></div>
+          <div class="info-grid">
+            <div class="info-item"><div class="label">Mobile</div><div class="value"><%= user.phone || '-' %></div></div>
+            <div class="info-item"><div class="label">Email</div><div class="value"><%= user.email || '-' %></div></div>
+            <div class="info-item"><div class="label">Date of Joining</div><div class="value"><%= user.created_at ? new Date(user.created_at).toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric', timeZone: 'Asia/Kolkata'}) : '-' %></div></div>
+            <div class="info-item"><div class="label">Emergency Contact</div><div class="value"><%= user.emergency_phone || '-' %></div></div>
+            <div class="info-item" style="grid-column: span 2;"><div class="label">Address</div><div class="value"><%- (user.address || '-').replace(/\n/g, '<br/>') %></div></div>
+          </div>
+          <div class="qr-section">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=28x28&data=https://nastige.com/verify/<%= encodeURIComponent((user.user_code || user.username || '').toUpperCase()) %>" alt="QR" style="width:28px;height:28px;border-radius:4px;"/>
+            <div class="qr-text"><strong>Nastige ID Verification</strong><br/>Scan to verify | <%= (user.user_code || user.username || '').toUpperCase() %></div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span>NASTIGE | OFFICIAL ID</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card-label no-print">&#8595; BACK</div>
+      <div class="card-back">
+        <div class="back-top">
+          <div class="co"><%= typeof company_name !== 'undefined' && company_name ? company_name : 'Nastige Industries Pvt Ltd' %></div>
+          <div class="tag">IDENTITY CARD | BACK SIDE</div>
+        </div>
+        <div class="back-body">
+          <div>
+            <div class="section-title">&#9888; Terms & Conditions</div>
+            <div class="terms-box">
+              <div class="terms-label">Important Notice</div>
+              <ol class="terms-list">
+                <li>This card is the property of <strong>Nastige</strong> and must be returned upon request.</li>
+                <li>Misuse of this ID card may lead to legal action and termination of membership.</li>
+                <li>Lost or damaged card must be reported immediately to the support team.</li>
+                <li>This card is non-transferable and valid only for the named leader.</li>
+                <li>Members must comply with all company policies and ethical guidelines.</li>
+                <li>Any unauthorized modification to this card will render it invalid.</li>
+                <li>The direct seller is not authorized to collect any type of cheques/demand draft cash in his name from the customer.</li>
+                <li>Nastige Industries Pvt. Ltd. is a direct selling company and this is a commission base company, there is no employee here, I am using this card only for my identity, wearing this card, if anything happens to me, I am myself. Company has no responsibility.</li>
+              </ol>
+            </div>
+          </div>
+          <div style="padding:8px 10px; background:#f8fafc; border-radius:8px; border-left:3px solid #667eea;">
+            <div style="font-size:7px; color:#667eea; font-weight:700; letter-spacing:1px; text-transform:uppercase;">Company Address</div>
+            <div style="font-size:9px; color:#1e293b; margin-top:2px;">
+              <%= typeof company_name !== 'undefined' && company_name ? company_name : 'Nastige Industries Pvt Ltd' %><br/>
+              <%= typeof company_address !== 'undefined' && company_address ? company_address : '123, Sector 14, Rohini, Delhi - 110085' %><br/>
+              Email: <%= typeof company_email !== 'undefined' && company_email ? company_email : 'info@nastige.com' %>
+            </div>
+          </div>
+          <div style="margin-top:auto; padding:10px 12px; background:#f0fdf4; border-radius:8px; border-left:3px solid #10b981; display:flex; align-items:center; gap:12px;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=65x65&data=https://nastige.com/verify/<%= encodeURIComponent((user.user_code || user.username || '').toUpperCase()) %>" alt="QR" style="width:65px;height:65px;border-radius:4px;"/>
+            <div>
+              <div style="font-size:8px; color:#10b981; font-weight:700; letter-spacing:1px; text-transform:uppercase;">Verification</div>
+              <div style="font-size:9px; color:#065f46; margin-top:2px;">Scan QR or visit <strong style="color:#667eea;">nastige.com/verify</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="back-footer">
+          <span>NASTIGE | OFFICIAL DOCUMENT</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

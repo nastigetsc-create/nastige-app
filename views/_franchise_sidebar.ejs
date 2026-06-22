@@ -1,0 +1,61 @@
+<style>
+.f-sidebar-top{position:sticky;top:0;background:white;z-index:10;padding:8px 0 6px;border-bottom:1px solid #e5e7eb;margin-bottom:4px}
+.f-sidebar-links{overflow-y:auto;max-height:calc(100vh - 140px);padding-bottom:8px}
+.f-sidebar-links::-webkit-scrollbar{width:4px}
+.f-sidebar-links::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:4px}
+.f-sidebar-links::-webkit-scrollbar-thumb:hover{background:#9ca3af}
+.f-hamburger{display:none;position:fixed;bottom:20px;right:20px;z-index:1000;width:50px;height:50px;border-radius:50%;background:#1e293b;color:white;border:none;box-shadow:0 4px 16px rgba(0,0,0,0.3);cursor:pointer;font-size:22px;align-items:center;justify-content:center}
+.f-sidebar-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:999}
+@media(max-width:1024px){
+  .f-hamburger{display:flex}
+  .f-sidebar-overlay.active{display:block}
+  .admin-layout .sidebar{position:fixed;top:0;left:-280px;width:260px;height:100vh;max-height:100vh;z-index:1001;border-radius:0;padding:12px;transition:left 0.25s ease;overflow-y:auto;display:block !important;flex-wrap:nowrap !important}
+  .admin-layout .sidebar.open{left:0}
+  .admin-layout .sidebar .side-link{padding:8px 10px !important;font-size:12px !important}
+  .admin-layout .sidebar .side-section{display:none !important}
+}
+@media(max-width:768px){
+  .admin-header{flex-direction:row !important;align-items:center !important;padding:10px 14px !important;gap:8px !important;flex-wrap:wrap !important;text-align:left !important}
+  .admin-header .logo{font-size:14px !important}
+  .admin-header img{height:28px !important}
+  .admin-header summary{font-size:11px !important;padding:5px 10px !important}
+  .container{padding:12px !important;margin:8px !important;border-radius:10px !important}
+  .pad{padding:12px !important}
+  table{display:block;overflow-x:auto;white-space:nowrap;font-size:12px}
+  th,td{padding:8px 6px;font-size:11px;white-space:nowrap}
+  .btn{padding:10px 16px;font-size:13px}
+  .row{flex-direction:column !important;gap:10px !important}
+  .row>.card,.row>a.card{min-width:100% !important}
+  input,select,textarea{font-size:16px !important;padding:10px 12px !important}
+  .wizard-steps{flex-wrap:wrap;gap:4px;padding:0 10px}
+  .wizard-step{padding:8px 12px;font-size:11px}
+  .wizard-arrow{display:none}
+  .product-grid{grid-template-columns:1fr !important}
+}
+</style>
+<button class="f-hamburger" id="fSidebarToggle" onclick="toggleFSidebar()">&#9776;</button>
+<div class="f-sidebar-overlay" id="fSidebarOverlay" onclick="closeFSidebar()"></div>
+<nav class="sidebar" id="fSidebar">
+  <div class="f-sidebar-top">
+    <a class="side-link<%= typeof active !== 'undefined' && active === 'dashboard' ? ' active' : '' %>" href="/franchise" data-text="Dashboard"><svg viewBox="0 0 24 24"><path d="M12 3l9 7v11h-6v-6H9v6H3V10l9-7z"/></svg>Dashboard</a>
+  </div>
+  <div class="f-sidebar-links">
+  <a class="side-link<%= typeof active !== 'undefined' && active === 'pins' ? ' active' : '' %>" href="/franchise/pins" data-text="PIN Activation"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>PIN Activation</a>
+  <a class="side-link<%= typeof active !== 'undefined' && active === 'repurchase' ? ' active' : '' %>" href="/franchise/repurchase" data-text="New Order"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>New Order</a>
+  <a class="side-link<%= typeof active !== 'undefined' && active === 'report' ? ' active' : '' %>" href="/franchise/report" data-text="Report"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 8h8M8 12h6M8 16h4"/></svg>Report</a>
+  <a class="side-link<%= typeof active !== 'undefined' && active === 'orders' ? ' active' : '' %>" href="/franchise/orders" data-text="Orders"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>Orders</a>
+  <a class="side-link<%= typeof active !== 'undefined' && active === 'stock' ? ' active' : '' %>" href="/franchise/stock" data-text="Stock"><svg viewBox="0 0 24 24"><path d="M3 3h18v4H3zm0 7h18v4H3zm0 7h12v4H3z"/></svg>Stock</a>
+  <a class="side-link<%= typeof active !== 'undefined' && active === 'transactions' ? ' active' : '' %>" href="/franchise/transactions" data-text="Transactions"><svg viewBox="0 0 24 24"><path d="M4 4h16v4H4zm0 6h16v2H4zm0 6h16v2H4z"/></svg>Transactions</a>
+  <a class="side-link<%= typeof active !== 'undefined' && active === 'invoices' ? ' active' : '' %>" href="/franchise/invoices" data-text="Invoices"><svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>Invoices</a>
+
+  <div class="side-section">Account</div>
+  <a class="side-link<%= typeof active !== 'undefined' && active === 'commission' ? ' active' : '' %>" href="/franchise/report?type=commission" data-text="Commission"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.94s4.18 1.36 4.18 3.87c0 1.88-1.43 2.91-3.12 3.19z"/></svg>Commission</a>
+  <a class="side-link<%= typeof active !== 'undefined' && active === 'password' ? ' active' : '' %>" href="/franchise/password" data-text="Change Password"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM8 12a4 4 0 1 1 8 0 4 4 0 0 1-8 0z"/></svg>Change Password</a>
+  <a class="side-link" href="/logout" data-text="Logout" onclick="sessionStorage.removeItem('broadcastsShown');" style="color:#dc2626"><svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>Logout</a>
+  </div>
+</nav>
+<script>
+function toggleFSidebar(){var s=document.getElementById('fSidebar'),o=document.getElementById('fSidebarOverlay');s.classList.toggle('open');o.classList.toggle('active')}
+function closeFSidebar(){document.getElementById('fSidebar').classList.remove('open');document.getElementById('fSidebarOverlay').classList.remove('active')}
+document.querySelectorAll('.side-link').forEach(function(l){l.addEventListener('click',function(){closeFSidebar()})});
+</script>

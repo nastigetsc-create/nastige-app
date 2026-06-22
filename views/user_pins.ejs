@@ -1,0 +1,113 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>My Pins | Nastige</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <link rel="stylesheet" href="/css/user-panel.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+  <% if (typeof admin_backup !== 'undefined' && admin_backup) { %>
+  <div style="background:#dc3545;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:600;">
+    <span>You are viewing <strong><%= (user.member_name || user.username).toUpperCase() %></strong>'s account as Admin</span>
+    <form method="post" action="/admin/back-to-admin" style="margin:0">
+      <button type="submit" style="background:#fff;color:#dc3545;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;font-weight:700;">Back to Admin</button>
+    </form>
+  </div>
+  <% } %>
+  <div class="page-wrapper">
+    <div class="page-header">
+      <div class="page-header-left">
+        <img src="/brand/logo" class="page-header-logo" alt="Logo" onerror="this.style.display='none'"/>
+        <div>
+          <h2 style="margin:0; font-size:20px;">My PINs</h2>
+          <p style="margin:4px 0 0; opacity:0.9; font-size:13px;">Activation PINs</p>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <a href="/dashboard" class="back-btn"><i class="fas fa-arrow-left"></i> Dashboard</a>
+      </div>
+    </div>
+<div class="nav-bar">
+  <a href="/dashboard" class="nav-link">Dashboard</a>
+  <a href="/my-offers" class="nav-link">Offers</a>
+  <a href="/products" class="nav-link">Products</a>
+  <a href="/pins" class="nav-link active">My Pins</a>
+  <a href="/my-tree" class="nav-link">Tree</a>
+  <a href="/downline" class="nav-link">Downline</a>
+  <a href="/transactions" class="nav-link">Transactions</a>
+  <a href="/my-ranks" class="nav-link">Ranks</a>
+  <a href="/invoices" class="nav-link">Invoices</a>
+  <a href="/tickets" class="nav-link">Support</a>
+  <a href="/kyc" class="nav-link">KYC</a>
+  <a href="/profile" class="nav-link">Profile</a>
+  <a href="/my-id-card" class="nav-link">ID Card</a>
+</div>
+<div class="content"><!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" style="color:#667eea;"><%= (pins||[]).length %></div>
+        <div class="stat-label">Total PINs</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" style="color:#10b981;"><%= (pins||[]).filter(p => p.status === 'used').length %></div>
+        <div class="stat-label">Used PINs</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" style="color:#f59e0b;"><%= (pins||[]).filter(p => p.status === 'active').length %></div>
+        <div class="stat-label">Available PINs</div>
+      </div>
+    </div>
+
+    <!-- PINs Table -->
+    <div class="card">
+      <div class="card-header">
+        <span><i class="fas fa-key" style="color:#667eea; margin-right:8px;"></i> All PINs</span>
+      </div>
+      <div class="card-body" style="padding:0;">
+        <% if ((pins||[]).length > 0) { %>
+        <table>
+          <thead>
+            <tr>
+              <th>Package PIN</th>
+              <th>Login PIN</th>
+              <th>Plan</th>
+              <th>Product</th>
+              <th>BV</th>
+              <th>Status</th>
+              <th>Used By</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% pins.forEach(function(p) { %>
+            <tr>
+              <td><strong><%= p.code || p.pin_code || '-' %></strong></td>
+              <td><strong><%= p.login_pin || '-' %></strong></td>
+              <td><%= p.plan_name || '-' %></td>
+              <td><%= p.product_name || '-' %><% if (p.is_matrix_pin) { %> <span class="badge" style="background:#7c3aed; color:#fff">Matrix</span><% } %></td>
+              <td><%= p.bv || p.pv || 0 %></td>
+              <td><span class="badge <%= p.status === 'used' ? 'badge-success' : (p.status === 'active' ? 'badge-info' : 'badge-warning') %>"><%= p.status || 'active' %></span></td>
+              <td><%= p.used_by_code || p.used_by || '-' %></td>
+              <td><%= p.used_at ? new Date(p.used_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : '-' %></td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+        <% } else { %>
+        <div style="text-align:center; padding:60px; color:#94a3b8;">
+          <i class="fas fa-key" style="font-size:48px; margin-bottom:12px;"></i>
+          <p>No PINs available</p>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+<script>document.querySelectorAll('.side-link').forEach(function(l){var p=l.getAttribute('href');if(window.location.pathname===p||(p!=='/admin'&&window.location.pathname.startsWith(p)))l.classList.add('active')});</script>
+</body>
+</html>

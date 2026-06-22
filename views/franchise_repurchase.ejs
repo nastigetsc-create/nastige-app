@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>New Order | Franchise | Nastige</title>
+  <style>
+    html{font-size:16px;-webkit-text-size-adjust:100%}*{margin:0;padding:0;box-sizing:border-box}body{background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1e293b;font-size:14px;line-height:1.5}
+    .admin-header{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:white;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.1)}
+    .admin-header .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px}
+    .admin-header img{height:35px;width:auto}
+    .admin-header .user-menu details{position:relative}
+    .admin-header summary{background:rgba(255,255,255,0.2);padding:6px 14px;border-radius:20px;cursor:pointer;font-size:13px}
+    .admin-header .menu{position:absolute;right:0;top:100%;background:white;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.15);padding:8px 0;min-width:150px;margin-top:8px}
+    .admin-header .menu a{display:block;padding:10px 16px;color:#333;text-decoration:none;font-size:13px}
+    .admin-header .menu a:hover{background:#f5f5f5}
+    .admin-layout{display:flex;gap:20px}
+    .sidebar{width:220px;flex-shrink:0;background:white;border-radius:12px;padding:8px;box-shadow:0 2px 10px rgba(0,0,0,0.05);position:sticky;top:55px;height:calc(100vh - 55px);overflow-y:auto}
+    .sidebar::-webkit-scrollbar{width:4px}
+    .sidebar::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:4px}
+    .side-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;text-decoration:none;color:#475569;font-size:12px;font-weight:500;transition:all 0.1s}
+    .side-link:hover{background:#f1f5f9;color:#1e293b}
+    .side-link.active{background:#1e293b;color:white}
+    .side-link svg{width:16px;height:16px;flex-shrink:0;fill:currentColor}
+    .side-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;padding:12px 10px 4px}
+    .content{flex:1;min-width:0}
+    .container{max-width:1100px;margin:20px auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 6px 22px rgba(0,0,0,0.06)}
+    .pad{padding:16px}
+    .error{background:#fee2e2;color:#991b1b;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:13px}
+    .success{background:#d1fae5;color:#065f46;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:13px}
+    .btn{display:inline-block;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;border:none;transition:all 0.2s}
+    .btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.15)}
+    .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
+    @media(max-width:1024px){.admin-layout{flex-direction:column}.sidebar{width:260px;position:fixed;top:0;left:-280px;height:100vh;max-height:100vh;border-radius:0;padding:12px;transition:left 0.25s ease;z-index:1001;overflow-y:auto}.sidebar.open{left:0}.side-link{font-size:12px;padding:8px 10px}.side-section{display:none}}
+
+    .wizard-steps{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:28px;padding:0 20px}
+    .wizard-step{display:flex;align-items:center;gap:10px;padding:10px 18px;border-radius:30px;font-size:13px;font-weight:600;color:#94a3b8;background:#f1f5f9;transition:all 0.3s;white-space:nowrap}
+    .wizard-step.active{background:linear-gradient(135deg,#059669,#10b981);color:#fff;box-shadow:0 4px 14px rgba(5,150,105,0.3)}
+    .wizard-step.done{background:#dcfce7;color:#065f46}
+    .wizard-step .step-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:rgba(255,255,255,0.3);flex-shrink:0}
+    .wizard-step.done .step-num{background:#059669;color:#fff}
+    .wizard-step.active .step-num{background:rgba(255,255,255,0.3)}
+    .wizard-arrow{color:#d1d5db;font-size:18px;margin:0 6px;flex-shrink:0}
+    .wizard-step.active~.wizard-arrow,.wizard-step.done~.wizard-arrow{color:#059669}
+
+    .step-panel{display:none}
+    .step-panel.active{display:block;animation:fadeUp 0.3s ease}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+    .wallet-banner{background:linear-gradient(135deg,#059669 0%,#10b981 100%);color:#fff;border-radius:12px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+    .wallet-banner .label{font-size:13px;opacity:0.85}
+    .wallet-banner .amount{font-size:26px;font-weight:700}
+
+    .customer-box{background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;padding:20px;transition:border-color 0.2s}
+    .customer-box.found{border-color:#059669;background:#f0fdf4}
+    .customer-box.not-found{border-color:#dc2626;background:#fef2f2}
+    .customer-box label{display:block;font-weight:600;font-size:13px;margin-bottom:6px;color:#374151}
+    .customer-box input{width:100%;max-width:360px;padding:12px 16px;border:2px solid #e2e8f0;border-radius:10px;font-size:15px;transition:border-color 0.2s;outline:none}
+    .customer-box input:focus{border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,0.15)}
+    .customer-result{margin-top:10px;font-size:14px;min-height:24px}
+
+    .step-actions{display:flex;gap:12px;margin-top:24px;justify-content:flex-end}
+
+    .product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+    .product-card{background:#fff;border:2px solid #e5e7eb;border-radius:12px;padding:16px;transition:all 0.2s;cursor:pointer;position:relative}
+    .product-card:hover{border-color:#667eea;box-shadow:0 4px 16px rgba(0,0,0,0.08)}
+    .product-card.selected{border-color:#059669;background:#f0fdf4;box-shadow:0 0 0 3px rgba(5,150,105,0.15)}
+    .product-card .check-badge{position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;transition:all 0.2s}
+    .product-card.selected .check-badge{background:#059669}
+    .product-card .p-name{font-weight:700;font-size:15px;margin-bottom:8px;color:#1e293b;padding-right:32px}
+    .product-card .p-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+    .product-card .p-tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+    .p-tag.price{background:#dbeafe;color:#1e40af}
+    .p-tag.bv{background:#f3e8ff;color:#7c3aed}
+    .p-tag.dp{background:#fef3c7;color:#92400e}
+    .stock-info{font-size:12px;color:#6b7280;margin-bottom:10px}
+    .stock-info strong{color:#059669}
+    .stock-info.low{color:#dc2626}
+    .stock-info.low strong{color:#dc2626}
+    .qty-row{display:flex;align-items:center;gap:0;border:2px solid #e5e7eb;border-radius:8px;overflow:hidden;width:fit-content}
+    .qty-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:#f3f4f6;border:none;font-size:18px;font-weight:700;cursor:pointer;color:#374151;transition:background 0.15s}
+    .qty-btn:hover{background:#e2e8f0}
+    .qty-btn:disabled{opacity:0.3;cursor:not-allowed}
+    .qty-val{width:44px;height:36px;text-align:center;border:none;border-left:1px solid #e5e7eb;border-right:1px solid #e5e7eb;font-size:15px;font-weight:600;outline:none}
+    .qty-val::-webkit-outer-spin-button,.qty-val::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+    .out-of-stock{opacity:0.5;pointer-events:none}
+
+    .order-summary{background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;overflow:hidden}
+    .order-summary .sum-head{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:#fff;padding:14px 18px;font-weight:700;font-size:14px}
+    .order-summary .sum-body{padding:16px 18px}
+    .sum-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #e5e7eb;font-size:13px}
+    .sum-item:last-child{border-bottom:none}
+    .sum-item .item-name{font-weight:500;flex:1;margin-right:10px}
+    .sum-item .item-qty{color:#6b7280;font-size:12px;margin-left:6px}
+    .sum-item .item-price{font-weight:600;white-space:nowrap}
+    .sum-totals{padding:14px 18px;background:#f1f5f9;border-top:2px solid #e2e8f0}
+    .sum-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0}
+    .sum-row.grand{font-size:18px;font-weight:700;padding-top:8px;border-top:1px solid #d1d5db;margin-top:6px}
+    .sum-row.grand .sum-val{color:#059669}
+    .sum-empty{text-align:center;padding:30px;color:#94a3b8;font-size:13px}
+    .sum-check{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px}
+    .sum-check .dot{width:8px;height:8px;border-radius:50%}
+    .dot.green{background:#059669}
+    .dot.red{background:#dc2626}
+
+    .confirm-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;justify-content:center;align-items:center}
+    .confirm-overlay.show{display:flex}
+    .confirm-box{background:#fff;border-radius:16px;padding:28px;max-width:420px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:fadeUp 0.25s ease}
+    .confirm-box h3{font-size:18px;margin-bottom:6px}
+    .confirm-box p{color:#6b7280;font-size:13px;margin-bottom:18px}
+    .confirm-box .confirm-total{font-size:28px;font-weight:700;color:#059669;margin-bottom:20px}
+    .confirm-actions{display:flex;gap:10px;justify-content:center}
+
+    .no-stock-msg{text-align:center;padding:40px;color:#94a3b8}
+    .no-stock-msg .icon{font-size:40px;margin-bottom:10px}
+
+    @media(max-width:768px){
+      .wizard-steps{flex-wrap:wrap;gap:4px}
+      .wizard-arrow{display:none}
+      .wizard-step{padding:8px 12px;font-size:11px}
+      .product-grid{grid-template-columns:1fr}
+      .wallet-banner{flex-direction:column;text-align:center;gap:8px}
+    }
+  </style>
+</head>
+<body>
+  <% if (admin_backup) { %>
+  <div style="background:#dc2626; color:#fff; padding:10px 16px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:200; font-weight:600">
+    <span>Logged in as Franchise (Admin: <%= admin_backup.username %>)</span>
+    <form method="post" action="/admin/back-to-admin" style="margin:0"><button type="submit" style="background:#fff; color:#dc2626; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-weight:700">Back to Admin</button></form>
+  </div>
+  <% } %>
+  <header class="admin-header">
+    <div class="logo">
+      <img src="/brand/logo" alt="Logo" onerror="this.style.display='none'"/>
+      <span>Nastige Franchise</span>
+    </div>
+    <div class="user-menu">
+      <details>
+        <summary><%= user.franchise_code %></summary>
+        <div class="menu">
+          <a href="/franchise/password">Change Password</a>
+          <a href="/logout" style="color:#ef4444">Logout</a>
+        </div>
+      </details>
+    </div>
+  </header>
+  <div class="admin-layout">
+    <%- include('_franchise_sidebar', { active: 'repurchase' }) %>
+    <div class="content">
+    <div class="container">
+    <div class="pad">
+
+    <% if (error) { %><div class="error"><%= error %></div><% } %>
+    <% if (success) { %><div class="success"><%= success %></div><% } %>
+
+    <div class="wallet-banner">
+      <div>
+        <div class="label">Wallet Balance</div>
+        <div class="amount">&#8377;<%= (user.fund_wallet || 0).toFixed(2) %></div>
+      </div>
+      <div style="font-size:12px;opacity:0.8">Order lagane ke liye wallet se amount kat jayega</div>
+    </div>
+
+    <div class="wizard-steps">
+      <div class="wizard-step active" id="ws1"><span class="step-num">1</span> Customer</div>
+      <span class="wizard-arrow">&#10132;</span>
+      <div class="wizard-step" id="ws2"><span class="step-num">2</span> Products</div>
+      <span class="wizard-arrow">&#10132;</span>
+      <div class="wizard-step" id="ws3"><span class="step-num">3</span> Review &amp; Place Order</div>
+    </div>
+
+    <form method="post" action="/franchise/orders" id="orderForm">
+      <input type="hidden" name="customer_ref" id="hiddenCustomerRef"/>
+      <div id="hiddenFields"></div>
+
+      <!-- STEP 1: Customer -->
+      <div class="step-panel active" id="step1">
+        <div class="customer-box" id="customerBox">
+          <label>Customer ID ya Username dalo</label>
+          <input type="text" id="customerInput" placeholder="jaise NIPL167100 ya INDU" autocomplete="off"/>
+          <div class="customer-result" id="customerResult"></div>
+        </div>
+        <div class="step-actions">
+          <button type="button" class="btn" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff" onclick="goStep2()">Next: Products &#10132;</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: Products -->
+      <div class="step-panel" id="step2">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <h3 style="margin:0;font-size:16px">Products chuno (apne stock se)</h3>
+          <button type="button" class="btn" style="background:#f1f5f9;color:#475569;font-size:12px;padding:6px 14px;border:1px solid #e2e8f0" onclick="goStep1()">&#8592; Customer</button>
+        </div>
+
+        <% if (!products || products.length === 0) { %>
+          <div class="no-stock-msg">
+            <div class="icon">&#128230;</div>
+            <p>Koi product available nahi hai.<br/>Admin se stock assign karwayein.</p>
+          </div>
+        <% } else { %>
+        <div class="product-grid" id="productGrid">
+          <% (products||[]).forEach(function(p) {
+            var myStock = p.franchise_stock || 0;
+            var price = p.selling_price_inr || p.mrp_inr || 0;
+            var bv = p.bv || 0;
+            var dp = p.dp_inr || 0;
+            var oos = myStock <= 0;
+          %>
+          <div class="product-card<%= oos ? ' out-of-stock' : '' %>" data-id="<%= p.id %>" data-price="<%= price %>" data-bv="<%= bv %>" data-dp="<%= dp %>" data-stock="<%= myStock %>" data-name="<%= p.name.replace(/"/g, '&quot;') %>" onclick="toggleProduct(this)">
+            <div class="check-badge">&#10003;</div>
+            <div class="p-name"><%= p.name %></div>
+            <div class="p-meta">
+              <span class="p-tag price">&#8377;<%= price.toFixed(0) %></span>
+              <span class="p-tag bv"><%= bv %> BV</span>
+              <% if (dp > 0) { %><span class="p-tag dp">DP &#8377;<%= dp.toFixed(0) %></span><% } %>
+            </div>
+            <div class="stock-info<%= myStock <= 5 ? ' low' : '' %>">
+              Stock: <strong><%= myStock %></strong> units
+              <% if (myStock <= 5 && myStock > 0) { %> &#9888; kam hai<% } %>
+              <% if (myStock <= 0) { %> &#10060; out of stock<% } %>
+            </div>
+            <div class="qty-row" onclick="event.stopPropagation()">
+              <button type="button" class="qty-btn" onclick="changeQty(this,-1)" disabled>-</button>
+              <input type="number" class="qty-val" value="1" min="1" max="<%= myStock %>" onchange="updateQty(this)" oninput="updateQty(this)"/>
+              <button type="button" class="qty-btn" onclick="changeQty(this,1)" disabled>+</button>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+        <% } %>
+
+        <div class="step-actions">
+          <button type="button" class="btn" style="background:#f1f5f9;color:#475569;border:1px solid #e2e8f0" onclick="goStep1()">&#8592; Back</button>
+          <button type="button" class="btn" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff" onclick="goStep3()">Next: Review &#10132;</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Review -->
+      <div class="step-panel" id="step3">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <h3 style="margin:0;font-size:16px">Order Review</h3>
+          <button type="button" class="btn" style="background:#f1f5f9;color:#475569;font-size:12px;padding:6px 14px;border:1px solid #e2e8f0" onclick="goStep2()">&#8592; Products</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start">
+          <div>
+            <div class="order-summary" id="summaryCard">
+              <div class="sum-head">&#128722; Selected Items</div>
+              <div class="sum-body" id="summaryItems"></div>
+              <div class="sum-totals" id="summaryTotals" style="display:none"></div>
+            </div>
+
+            <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div class="sum-check"><span class="dot green"></span> Wallet: &#8377;<%= (user.fund_wallet || 0).toFixed(2) %></div>
+              <div class="sum-check" id="balanceCheck"></div>
+            </div>
+          </div>
+
+          <div id="summarySidebar"></div>
+        </div>
+
+        <div class="step-actions">
+          <button type="button" class="btn" style="background:#f1f5f9;color:#475569;border:1px solid #e2e8f0" onclick="goStep2()">&#8592; Back</button>
+          <button type="button" class="btn" style="background:linear-gradient(135deg,#059669,#10b981);color:#fff;font-size:16px;padding:14px 32px" id="placeOrderBtn" onclick="showConfirm()">Place Order &#10003;</button>
+        </div>
+      </div>
+    </form>
+
+    </div>
+    </div>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div class="confirm-overlay" id="confirmModal">
+    <div class="confirm-box">
+      <h3>Order Confirm Karo</h3>
+      <p>Ye order lag raha hai, wallet se amount kat jayega</p>
+      <div class="confirm-total" id="confirmTotal"></div>
+      <div id="confirmItems" style="text-align:left;font-size:13px;color:#374151;margin-bottom:18px;max-height:200px;overflow-y:auto"></div>
+      <div class="confirm-actions">
+        <button class="btn" style="background:#f1f5f9;color:#475569;border:1px solid #e2e8f0" onclick="closeConfirm()">Cancel</button>
+        <button class="btn" style="background:linear-gradient(135deg,#059669,#10b981);color:#fff" id="confirmBtn" onclick="submitOrder()">Ha, Place Order</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.orderSubmitting = false;
+    var walletBalance = <%= user.fund_wallet || 0 %>;
+    var currentStep = 1;
+    var customerFound = false;
+    var selectedProducts = {};
+
+    // --- Wizard navigation ---
+    function setStep(n) {
+      currentStep = n;
+      document.querySelectorAll('.step-panel').forEach(function(p){ p.classList.remove('active') });
+      document.getElementById('step' + n).classList.add('active');
+      for (var i = 1; i <= 3; i++) {
+        var ws = document.getElementById('ws' + i);
+        ws.classList.remove('active','done');
+        if (i < n) ws.classList.add('done');
+        else if (i === n) ws.classList.add('active');
+      }
+      if (n === 3) buildSummary();
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    // --- Step 1: Customer ---
+    var lookupTimer = null;
+    document.getElementById('customerInput').addEventListener('input', function() {
+      var ref = this.value.trim();
+      var box = document.getElementById('customerBox');
+      var res = document.getElementById('customerResult');
+      if (lookupTimer) clearTimeout(lookupTimer);
+      if (ref.length < 2) { res.innerHTML = ''; box.className = 'customer-box'; customerFound = false; return; }
+      lookupTimer = setTimeout(function() {
+        fetch('/api/customer?name=' + encodeURIComponent(ref))
+          .then(function(r){ return r.json() })
+          .then(function(d) {
+            if (d.name) {
+              var badge = d.status === 'active'
+                ? '<span style="background:#dcfce7;color:#16a34a;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600">ACTIVE</span>'
+                : '<span style="background:#fee2e2;color:#dc2626;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600">INACTIVE</span>';
+              res.innerHTML = '&#10003; <strong>' + d.name + '</strong> (' + d.user_code + ') ' + badge;
+              res.style.color = '#059669';
+              box.className = 'customer-box found';
+              customerFound = true;
+            } else {
+              res.innerHTML = '&#10060; Customer nahi mila';
+              res.style.color = '#dc2626';
+              box.className = 'customer-box not-found';
+              customerFound = false;
+            }
+          })
+          .catch(function(){ res.innerHTML = ''; box.className = 'customer-box'; customerFound = false; });
+      }, 400);
+    });
+
+    function goStep1() { setStep(1); }
+    function goStep2() {
+      var ref = document.getElementById('customerInput').value.trim();
+      if (!ref) { alert('Pehle Customer ID dalo'); return; }
+      document.getElementById('hiddenCustomerRef').value = ref;
+      setStep(2);
+    }
+    function goStep3() {
+      var items = Object.keys(selectedProducts);
+      if (items.length === 0) { alert('Kam se kam 1 product select karo'); return; }
+      setStep(3);
+    }
+
+    // --- Step 2: Products ---
+    function toggleProduct(card) {
+      if (card.classList.contains('out-of-stock')) return;
+      var id = card.dataset.id;
+      var qtyRow = card.querySelector('.qty-row');
+      var qtyInput = card.querySelector('.qty-val');
+      var btns = qtyRow.querySelectorAll('.qty-btn');
+
+      if (card.classList.contains('selected')) {
+        card.classList.remove('selected');
+        delete selectedProducts[id];
+        btns[0].disabled = true;
+        btns[1].disabled = true;
+        qtyInput.disabled = true;
+      } else {
+        card.classList.add('selected');
+        btns[0].disabled = false;
+        btns[1].disabled = false;
+        qtyInput.disabled = false;
+        selectedProducts[id] = {
+          name: card.dataset.name,
+          price: parseFloat(card.dataset.price),
+          bv: parseInt(card.dataset.bv),
+          stock: parseInt(card.dataset.stock),
+          qty: parseInt(qtyInput.value) || 1
+        };
+      }
+    }
+
+    function changeQty(btn, delta) {
+      var row = btn.closest('.qty-row');
+      var input = row.querySelector('.qty-val');
+      var card = btn.closest('.product-card');
+      var max = parseInt(input.max) || 99;
+      var val = parseInt(input.value) || 1;
+      val = Math.max(1, Math.min(max, val + delta));
+      input.value = val;
+      updateQty(input);
+    }
+
+    function updateQty(input) {
+      var card = input.closest('.product-card');
+      var id = card.dataset.id;
+      var max = parseInt(input.max) || 99;
+      var val = Math.max(1, Math.min(max, parseInt(input.value) || 1));
+      input.value = val;
+      if (selectedProducts[id]) {
+        selectedProducts[id].qty = val;
+      }
+    }
+
+    // --- Step 3: Review ---
+    function buildSummary() {
+      var items = Object.keys(selectedProducts);
+      var sumBody = document.getElementById('summaryItems');
+      var sumTotals = document.getElementById('summaryTotals');
+      var balCheck = document.getElementById('balanceCheck');
+      var total = 0;
+      var totalBV = 0;
+
+      if (items.length === 0) {
+        sumBody.innerHTML = '<div class="sum-empty">Koi product selected nahi hai.<br/>Products pe wapas jao aur chuno.</div>';
+        sumTotals.style.display = 'none';
+        document.getElementById('placeOrderBtn').disabled = true;
+        return;
+      }
+
+      var html = '';
+      for (var i = 0; i < items.length; i++) {
+        var p = selectedProducts[items[i]];
+        var lineTotal = p.price * p.qty;
+        total += lineTotal;
+        totalBV += p.bv * p.qty;
+        html += '<div class="sum-item">' +
+          '<span class="item-name">' + p.name + '<span class="item-qty">x' + p.qty + '</span></span>' +
+          '<span class="item-price">&#8377;' + lineTotal.toFixed(2) + '</span></div>';
+      }
+      sumBody.innerHTML = html;
+
+      var short = walletBalance - total;
+      var balColor = short >= 0 ? '#059669' : '#dc2626';
+      var balIcon = short >= 0 ? '&#10003;' : '&#10007;';
+
+      sumTotals.style.display = 'block';
+      sumTotals.innerHTML =
+        '<div class="sum-row"><span>Total BV</span><span style="font-weight:600;color:#7c3aed">' + totalBV + '</span></div>' +
+        '<div class="sum-row grand"><span>Total Amount</span><span class="sum-val">&#8377;' + total.toFixed(2) + '</span></div>';
+
+      balCheck.innerHTML = '<span class="dot" style="background:' + balColor + '"></span> ' + balIcon + ' ' +
+        (short >= 0 ? 'Balance bachega: &#8377;' + short.toFixed(2) : 'Balance kam hai: &#8377;' + Math.abs(short).toFixed(2) + ' zaroorat');
+      balCheck.style.color = balColor;
+
+      document.getElementById('placeOrderBtn').disabled = short < 0;
+
+      // Hidden inputs - server expects product_id[] and quantity[] as arrays
+      var hf = document.getElementById('hiddenFields');
+      hf.innerHTML = '';
+      items.forEach(function(id) {
+        var pi = document.createElement('input');
+        pi.type = 'hidden'; pi.name = 'product_id'; pi.value = id;
+        hf.appendChild(pi);
+        var qi = document.createElement('input');
+        qi.type = 'hidden'; qi.name = 'quantity'; qi.value = selectedProducts[id].qty;
+        hf.appendChild(qi);
+      });
+    }
+
+    function showConfirm() {
+      var items = Object.keys(selectedProducts);
+      if (items.length === 0) { alert('Koi product selected nahi hai'); return; }
+
+      var total = 0;
+      var totalBV = 0;
+      var html = '<div style="margin-bottom:8px;color:#6b7280;font-size:12px">Customer: <strong>' + (document.getElementById('hiddenCustomerRef').value || '-') + '</strong></div>';
+      for (var i = 0; i < items.length; i++) {
+        var p = selectedProducts[items[i]];
+        var lt = p.price * p.qty;
+        total += lt;
+        totalBV += p.bv * p.qty;
+        html += '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f3f4f6">' +
+          '<span>' + p.name + ' x' + p.qty + '</span><span style="font-weight:600">&#8377;' + lt.toFixed(2) + '</span></div>';
+      }
+      html += '<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:12px;color:#6b7280"><span>Total BV</span><span>' + totalBV + '</span></div>';
+
+      document.getElementById('confirmTotal').innerHTML = '&#8377;' + total.toFixed(2);
+      document.getElementById('confirmItems').innerHTML = html;
+      document.getElementById('confirmModal').classList.add('show');
+    }
+
+    function closeConfirm() {
+      document.getElementById('confirmModal').classList.remove('show');
+    }
+
+    function submitOrder() {
+      if (window.orderSubmitting) return;
+      window.orderSubmitting = true;
+      var btn = document.getElementById('confirmBtn');
+      btn.disabled = true;
+      btn.innerHTML = 'Processing...';
+      document.getElementById('orderForm').submit();
+    }
+
+    // Init qty inputs disabled
+    document.querySelectorAll('.qty-val').forEach(function(input){ input.disabled = true; });
+  </script>
+  </div>
+  </div>
+<script>document.querySelectorAll('.side-link').forEach(function(l){var p=l.getAttribute('href');if(window.location.pathname===p||(p!=='/franchise'&&window.location.pathname.startsWith(p)))l.classList.add('active')});</script>
+</body>
+</html>

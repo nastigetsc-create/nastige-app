@@ -1,0 +1,113 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Company Account | <%= company_name || 'Nastige' %></title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <style>
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #f8fafc, #e2e8f0); min-height: 100vh; margin: 0; padding: 20px; }
+    .container { max-width: 800px; margin: 0 auto; background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.1); }
+    .header { background: linear-gradient(135deg, #1e293b, #334155); color: #fff; padding: 20px 30px; display: flex; align-items: center; gap: 16px; position: relative; }
+    .header-logo { height: 50px; max-width: 150px; object-fit: contain; border-radius: 8px; }
+    .header-text { text-align: center; flex: 1; }
+    .header h1 { margin: 0; font-size: 24px; }
+    .header p { margin: 4px 0 0; opacity: 0.8; font-size: 14px; }
+    .content { padding: 30px; }
+    .account-card { background: linear-gradient(145deg, #f8fafc, #fff); border-radius: 16px; padding: 24px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
+    .account-card h3 { color: #1e293b; margin: 0 0 16px; font-size: 18px; display: flex; align-items: center; gap: 10px; }
+    .detail-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-label { color: #64748b; font-size: 14px; }
+    .detail-value { color: #1e293b; font-weight: 600; font-size: 14px; text-align: right; word-break: break-all; }
+    .qr-section { text-align: center; padding: 20px; background: #f8fafc; border-radius: 12px; margin-top: 16px; }
+    .qr-section img { max-width: 200px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+    .upi-badge { background: linear-gradient(135deg, #10b981, #059669); color: #fff; padding: 10px 20px; border-radius: 20px; font-weight: 600; display: inline-block; margin-top: 10px; font-size: 16px; }
+    .no-details { text-align: center; padding: 60px; color: #64748b; }
+    @media print { body { background: #fff; } .container { box-shadow: none; } }
+  </style>
+</head>
+<body>
+  <div style="max-width:800px;margin:0 auto 16px;">
+    <a href="javascript:history.back()" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:rgba(255,255,255,0.9);border-radius:10px;text-decoration:none;color:#1e293b;font-weight:500;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:all 0.2s;">
+      <span style="font-size:18px;">←</span>
+      <span>Back</span>
+    </a>
+  </div>
+  <div class="container">
+    <div class="header">
+      <img src="/brand/logo" class="header-logo" alt="Logo" onerror="this.style.display='none'"/>
+      <div class="header-text">
+        <% if (company_name) { %>
+          <h1><%= company_name %></h1>
+        <% } else { %>
+          <h1>Company Account</h1>
+        <% } %>
+        <p>Payment Details for Account Activation</p>
+      </div>
+    </div>
+    
+    <div class="content">
+      
+      <% if (upi_id || account_number) { %>
+        
+        <% if (upi_id) { %>
+          <div class="account-card" style="text-align: center;">
+            <h3>📱 UPI Payment</h3>
+            <div class="upi-badge">UPI ID: <%= upi_id %></div>
+            <% if (qr_image) { %>
+              <div class="qr-section">
+                <img src="<%= qr_image %>" alt="UPI QR Code"/>
+              </div>
+            <% } %>
+          </div>
+        <% } %>
+        
+        <% if (account_number) { %>
+          <div class="account-card">
+            <h3>🏦 Bank Transfer</h3>
+            <% if (qr_image && !upi_id) { %>
+              <div class="qr-section">
+                <img src="<%= qr_image %>" alt="Payment QR Code"/>
+              </div>
+            <% } %>
+            <div class="detail-row">
+              <span class="detail-label">Account Name</span>
+              <span class="detail-value"><%= account_name || '-' %></span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Account Number</span>
+              <span class="detail-value"><%= account_number %></span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Bank Name</span>
+              <span class="detail-value"><%= bank_name || '-' %></span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Branch</span>
+              <span class="detail-value"><%= bank_branch || '-' %></span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">IFSC Code</span>
+              <span class="detail-value"><%= ifsc || '-' %></span>
+            </div>
+          </div>
+        <% } %>
+        
+      <% } else { %>
+        <div class="no-details">
+          <h3>⚠️ Account Details Coming Soon</h3>
+          <p>Payment details will be updated shortly. Please check back later.</p>
+        </div>
+      <% } %>
+      
+      <div style="text-align: center; margin-top: 30px; padding: 20px; background: #fef3c7; border-radius: 12px;">
+        <p style="margin: 0; color: #92400e; font-size: 14px;">
+          <strong>Note:</strong> After payment, please share the screenshot with your sponsor or upload it in your dashboard.
+        </p>
+      </div>
+    </div>
+  </div>
+  <script src="/lightbox.js"></script>
+</body>
+</html>

@@ -1,0 +1,328 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Edit User | Nastige</title>
+  <style>
+    html{font-size:16px;-webkit-text-size-adjust:100%;scroll-padding-top:0}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1e293b;font-size:14px;line-height:1.5}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+    .dashboard-wrapper{max-width:1600px;margin:0 auto;padding:20px}
+    .header{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:white;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;border-radius:16px;margin-bottom:18px}
+    .header-left{display:flex;align-items:center;gap:12px}
+    .header-logo{height:44px;border-radius:8px}
+    .header-right{display:flex;align-items:center;gap:10px}
+    .user-chip{background:rgba(255,255,255,0.15);padding:6px 14px;border-radius:20px;font-size:13px}
+    .logout-btn{background:rgba(255,255,255,0.15);border:none;color:white;padding:6px 14px;border-radius:20px;cursor:pointer;text-decoration:none;font-size:13px}
+    
+    
+    
+    
+    .card{background:white;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.05);overflow:hidden;margin-bottom:18px}
+    .card-header{padding:14px 18px;border-bottom:1px solid #e2e8f0;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+    .card-body{padding:18px}
+    .info-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f1f5f9}
+    .info-row:last-child{border-bottom:none}
+    .info-label{color:#64748b;font-size:13px;font-weight:500}
+    .info-value{font-size:14px;font-weight:600}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+    .form-group{margin-bottom:18px}
+    .form-group label{display:block;font-size:13px;font-weight:600;color:#475569;margin-bottom:4px}
+    .form-group input,.form-group select{width:100%;padding:10px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;font-family:inherit;background:white;transition:border-color 0.15s}
+    .form-group input:focus,.form-group select:focus{outline:none;border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,0.15)}
+    .form-group input:disabled{background:#f1f5f9;color:#94a3b8;cursor:not-allowed}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .btn{padding:10px 24px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
+    .btn-primary{background:#1e293b;color:white}
+    .btn-primary:hover{background:#0f172a}
+    .btn-success{background:#10b981;color:white}
+    .btn-success:hover{background:#059669}
+    .btn-danger{background:#ef4444;color:white}
+    .btn-danger:hover{background:#dc2626}
+    .btn-secondary{background:#e2e8f0;color:#475569}
+    .btn-secondary:hover{background:#cbd5e1}
+    .btn-warning{background:#f59e0b;color:white}
+    .btn-warning:hover{background:#d97706}
+    .alert{padding:12px 16px;border-radius:8px;margin-bottom:16px;font-weight:500;border-left:4px solid}
+    .alert-success{background:#d1fae5;border-color:#10b981;color:#065f46}
+    .alert-error{background:#fee2e2;border-color:#ef4444;color:#991b1b}
+    .badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600}
+    .badge-active{background:#d1fae5;color:#065f46}
+    .badge-inactive{background:#fee2e2;color:#991b1b}
+    .badge-pending{background:#fef3c7;color:#92400e}
+    .section-title{font-size:15px;font-weight:700;color:#1e293b;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #e2e8f0}
+    .help-text{font-size:12px;color:#94a3b8;margin-top:4px}
+    @media(max-width:768px){.dashboard-wrapper{padding:12px}.header{flex-direction:row;align-items:center;padding:10px 14px;gap:8px;border-radius:12px;flex-wrap:wrap}.form-row,.grid-2,.grid-3{grid-template-columns:1fr}}
+  
+    .admin-layout{display:flex;gap:20px}
+    .sidebar{width:220px;flex-shrink:0;background:white;border-radius:12px;padding:8px;box-shadow:0 2px 10px rgba(0,0,0,0.05);position:sticky;top:20px;height:fit-content;max-height:calc(100vh - 20px);overflow-y:auto}
+    .sidebar::-webkit-scrollbar{width:4px}
+    .sidebar::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:4px}
+    .side-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;text-decoration:none;color:#475569;font-size:12px;font-weight:500;transition:all 0.1s}
+    .side-link:hover{background:#f1f5f9;color:#1e293b}
+    .side-link.active{background:#1e293b;color:white}
+    .side-link svg{width:16px;height:16px;flex-shrink:0;fill:currentColor}
+    .side-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;padding:12px 10px 4px}
+    .content{flex:1;min-width:0}
+    @media(max-width:1024px){.admin-layout{flex-direction:column}.sidebar{width:260px;position:fixed;top:0;left:-280px;height:100vh;max-height:100vh;border-radius:0;padding:12px;transition:left 0.25s ease;z-index:1001;overflow-y:auto}.sidebar.open{left:0}.side-link{font-size:12px;padding:8px 10px}.side-section{display:none}}
+  </style>
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <div class="header">
+      <div class="header-left">
+        <img src="/brand/logo" class="header-logo" alt="Logo" onerror="this.style.display='none'"/>
+        <div>
+          <h2 style="margin:0;font-size:20px;">Admin Dashboard</h2>
+          <p style="margin:4px 0 0;opacity:0.9;font-size:13px;">Nastige Industries Admin Panel</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div style="position:relative;">
+          <span id="adminMenuChip" class="user-chip" onclick="var d=document.getElementById('adminMenuDrop');d.style.display=d.style.display==='block'?'none':'block'" style="cursor:pointer;user-select:none;">Admin ▾</span>
+          <div id="adminMenuDrop" style="display:none;position:absolute;right:0;top:110%;background:white;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.15);min-width:180px;z-index:9999;overflow:hidden;">
+            <a href="/admin/password" style="display:flex;align-items:center;gap:8px;padding:12px 16px;text-decoration:none;color:#1e293b;font-size:13px;font-weight:500;border-bottom:1px solid #f1f5f9;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Change Password
+            </a>
+            <a href="/logout" onclick="sessionStorage.removeItem('broadcastsShown');" style="display:flex;align-items:center;gap:8px;padding:12px 16px;text-decoration:none;color:#dc2626;font-size:13px;font-weight:600;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Logout
+            </a>
+          </div>
+        </div>
+        <script>
+        document.addEventListener('click',function(e){var d=document.getElementById('adminMenuDrop');if(d&&d.style.display==='block'&&!e.target.closest('#adminMenuDrop')&&e.target.id!=='adminMenuChip')d.style.display='none'});
+        </script>
+      </div>
+    </div>
+
+<div class="admin-layout">
+    <%- include('_admin_sidebar', { active: 'users' }) %>
+    <div class="content"><% if (success) { %>
+    <div class="alert alert-success"><%= success %></div>
+    <% } %>
+    <% if (error) { %>
+    <div class="alert alert-error"><%= error %></div>
+    <% } %>
+
+    <div class="card">
+      <div class="card-header">
+        <span>Edit User - <%= user.member_name %></span>
+        <span>
+          <% var s = (user.status || 'active').toLowerCase(); %>
+          <span class="badge <%= s === 'active' ? 'badge-active' : 'badge-inactive' %>"><%= s.toUpperCase() %></span>
+        </span>
+      </div>
+      <div class="card-body">
+        <div class="grid-2">
+          <div>
+            <div class="info-row"><span class="info-label">Member Name</span><span class="info-value"><%= user.member_name %></span></div>
+            <div class="info-row"><span class="info-label">Username</span><span class="info-value"><%= user.username %></span></div>
+            <div class="info-row"><span class="info-label">User Code</span><span class="info-value"><%= user.user_code || '-' %></span></div>
+            <div class="info-row"><span class="info-label">Email</span><span class="info-value"><%= user.email || '-' %></span></div>
+            <div class="info-row"><span class="info-label">Phone</span><span class="info-value"><%= user.phone || '-' %></span></div>
+            <div class="info-row"><span class="info-label">Sponsor</span><span class="info-value"><%= user.leader_ref || '-' %></span></div>
+          </div>
+          <div>
+            <div class="info-row"><span class="info-label">Role</span><span class="info-value"><%= user.role || 'user' %></span></div>
+            <div class="info-row"><span class="info-label">Rank</span><span class="info-value"><%= user.rank_name || '-' %></span></div>
+            <div class="info-row"><span class="info-label">SBV</span><span class="info-value"><%= user.pv || 0 %></span></div>
+            <div class="info-row"><span class="info-label">BV Left / Right</span><span class="info-value"><%= user.org_bv_left || 0 %> / <%= user.org_bv_right || 0 %></span></div>
+            <div class="info-row"><span class="info-label">Carry Left / Right</span><span class="info-value"><%= user.carry_left || 0 %> / <%= user.carry_right || 0 %></span></div>
+            <div class="info-row"><span class="info-label">KYC Status</span><span class="info-value">
+              <% var k = (user.kyc_status || 'pending').toLowerCase(); %>
+              <span class="badge <%= k === 'verified' ? 'badge-active' : k === 'rejected' ? 'badge-inactive' : 'badge-pending' %>"><%= k.toUpperCase() %></span>
+            </span></div>
+            <div class="info-row"><span class="info-label">Joined</span><span class="info-value"><%= user.created_at ? new Date(user.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric', timeZone: 'Asia/Kolkata'}) : '-' %></span></div>
+            <% if (user.activated_at) { %>
+            <div class="info-row"><span class="info-label">Activated</span><span class="info-value"><%= new Date(user.activated_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric', timeZone: 'Asia/Kolkata'}) %></span></div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <form method="POST" action="">
+      <div class="card">
+        <div class="card-header">Personal Details</div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="member_name">Member Name</label>
+              <input type="text" name="member_name" id="member_name" value="<%= user.member_name %>" required/>
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" name="email" id="email" value="<%= user.email %>" required/>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="phone">Phone</label>
+              <input type="text" name="phone" id="phone" value="<%= user.phone %>" required/>
+            </div>
+            <div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Leadership Bonus</div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="sponsor_id">Leader ID (User Code)</label>
+              <input type="text" name="leader_ref" id="sponsor_id" value="<%= user.leader_ref || '' %>" placeholder="Enter leader user code" oninput="verifyLeader(this.value)"/>
+              <div class="help-text">Leave blank to keep current leader: <%= user.leader_ref || 'None' %><% if (leader) { %> — <%= leader.member_name || leader.username %><% } %></div>
+              <div id="leaderPreview" style="font-size:12px;color:#059669;font-weight:600;margin-top:4px;display:none"></div>
+            </div>
+            <div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Password Reset</div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="password">New Password</label>
+              <input type="password" name="new_password" id="password" placeholder="Leave blank to keep unchanged"/>
+            </div>
+            <div class="form-group">
+              <label for="confirm_password">Confirm Password</label>
+              <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm new password"/>
+            </div>
+          </div>
+          <div class="help-text">Only fill if you want to reset the user's password.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Address</div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Address Line 1</label>
+              <input type="text" name="address_line1" value="<%= user.address_line1 || '' %>" placeholder="Address Line 1"/>
+            </div>
+            <div class="form-group">
+              <label>Address Line 2</label>
+              <input type="text" name="address_line2" value="<%= user.address_line2 || '' %>" placeholder="Address Line 2"/>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>City</label>
+              <input type="text" name="city" value="<%= user.city || '' %>" placeholder="City"/>
+            </div>
+            <div class="form-group">
+              <label>State</label>
+              <input type="text" name="state" value="<%= user.state || '' %>" placeholder="State"/>
+            </div>
+            <div class="form-group">
+              <label>Pincode</label>
+              <input type="text" name="pincode" value="<%= user.pincode || '' %>" placeholder="Pincode"/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Bank Details</div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Account Holder Name</label>
+              <input type="text" name="bank_account_name" value="<%= user.bank_account_name || '' %>" placeholder="Account holder name"/>
+            </div>
+            <div class="form-group">
+              <label>Account Number</label>
+              <input type="text" name="bank_account_number" value="<%= user.bank_account_number || '' %>" placeholder="Account number"/>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Bank Name</label>
+              <input type="text" name="bank_name" value="<%= user.bank_name || '' %>" placeholder="Bank name"/>
+            </div>
+            <div class="form-group">
+              <label>IFSC</label>
+              <input type="text" name="bank_ifsc" value="<%= user.bank_ifsc || '' %>" placeholder="IFSC code"/>
+            </div>
+            <div class="form-group">
+              <label>Branch</label>
+              <input type="text" name="bank_branch" value="<%= user.bank_branch || '' %>" placeholder="Branch"/>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>UPI ID</label>
+              <input type="text" name="upi_id" value="<%= user.upi_id || '' %>" placeholder="UPI ID"/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Status</div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="status">Account Status</label>
+              <select name="status" id="status">
+                <option value="active" <%= (user.status || 'active') === 'active' ? 'selected' : '' %>>Active</option>
+                <option value="inactive" <%= user.status === 'inactive' ? 'selected' : '' %>>Inactive</option>
+              </select>
+              <div class="help-text">Inactive users cannot login or transact.</div>
+            </div>
+            <div style="display:flex;align-items:flex-end;padding-bottom:18px;">
+              <a href="/admin/users" class="btn btn-secondary">Cancel</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;justify-content:flex-end;">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+
+  </div>
+  </div>
+
+<script>document.querySelectorAll('.side-link').forEach(function(l){var p=l.getAttribute('href');if(window.location.pathname===p||(p!=='/admin'&&window.location.pathname.startsWith(p)))l.classList.add('active')});</script>
+  </div>
+
+
+<script>
+fetch('/admin/api/kyc-pending-count').then(function(r){return r.json()}).then(function(d){if(d.count>0){var b=document.getElementById('kyc-badge');if(b){b.textContent=d.count;b.style.display='inline';}}});
+
+var leaderTimer = null;
+function verifyLeader(val) {
+  var el = document.getElementById('leaderPreview');
+  if (!val || val.length < 3) { el.style.display = 'none'; return; }
+  clearTimeout(leaderTimer);
+  leaderTimer = setTimeout(function() {
+    fetch('/admin/api/user-lookup?ref=' + encodeURIComponent(val))
+      .then(function(r){ return r.json(); })
+      .then(function(d) {
+        if (d.ok && d.user) {
+          el.textContent = d.user.member_name || d.user.username;
+          el.style.display = 'block';
+        } else {
+          el.textContent = 'Not found';
+          el.style.color = '#ef4444';
+          el.style.display = 'block';
+        }
+      });
+  }, 400);
+}
+</script>
+</body>
+</html>

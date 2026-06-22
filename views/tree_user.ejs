@@ -1,0 +1,373 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>My Genealogy | Nastige</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <link rel="stylesheet" href="/css/user-panel.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    /* ===== CONTROLS ===== */
+    .controls-section { padding: 12px; background: #fff; border-radius: 12px; margin: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .controls-form { display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; }
+    .control-group { flex: 1; min-width: 0; }
+    .control-group label { display: block; margin-bottom: 4px; font-weight: 600; color: #374151; font-size: 11px; text-transform: uppercase; letter-spacing: .3px; }
+    .control-group input, .control-group select { width: 100%; padding: 9px 10px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; outline: none; background: #f8fafc; transition: border-color .2s; }
+    .control-group input:focus, .control-group select:focus { border-color: #06b6d4; background: #fff; box-shadow: 0 0 0 3px rgba(6,182,212,0.1); }
+    .control-group.depth-group { flex: 0 0 80px; }
+    .btn-group { display: flex; gap: 6px; flex-shrink: 0; }
+    .btn { padding: 9px 16px; background: #10b981; color: #fff; border: none; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; transition: background .2s; }
+    .btn:hover { background: #059669; }
+    .btn-secondary { background: #ef4444; }
+    .btn-secondary:hover { background: #dc2626; }
+
+    /* ===== TREE AREA ===== */
+    .tree-area {
+      overflow-x: auto; overflow-y: visible;
+      padding: 24px 12px 40px; min-height: 300px;
+      text-align: center; background: #fff;
+      margin: 8px; border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      -webkit-overflow-scrolling: touch;
+    }
+    .tree-area::-webkit-scrollbar { height: 4px; }
+    .tree-area::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
+    .tree-area::-webkit-scrollbar-track { background: transparent; }
+
+    /* ===== TREE NODE ===== */
+    .tn { display: flex; flex-direction: column; align-items: center; cursor: pointer; padding: 6px 12px; border-radius: 10px; transition: all .2s; }
+    .tn:hover { transform: translateY(-2px); background: #f0fdfa; }
+    .tn-icon { width: 44px; height: 44px; margin-top: 6px; }
+    .tn-icon svg { width: 100%; height: 100%; }
+    .tn-code { font-size: 13px; font-weight: 800; color: #06b6d4; white-space: nowrap; line-height: 1.3; }
+    .tn-name { font-size: 10px; font-weight: 700; color: #06b6d4; text-transform: uppercase; letter-spacing: .3px; white-space: nowrap; max-width: 120px; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; margin-bottom: 2px; }
+
+    /* ===== TREE LAYOUT (flex) ===== */
+    .tree-branch { display: flex; flex-direction: column; align-items: center; width: 100%; }
+    .tree-branch-children { display: flex; justify-content: center; gap: 16px; width: 100%; }
+    .tree-child { display: flex; flex-direction: column; align-items: center; flex: 1 1 0; min-width: 0; }
+    .tree-conn-v { width: 2px; height: 16px; background: #94a3b8; }
+    .tree-conn-h { display: flex; align-items: flex-start; justify-content: center; position: relative; height: 16px; width: 100%; }
+    .tree-conn-h::before { content: ''; position: absolute; top: 0; left: 25%; right: 25%; height: 2px; background: #94a3b8; }
+    .tree-conn-h-left, .tree-conn-h-right { width: 25%; display: flex; justify-content: center; }
+    .tree-conn-h-left::after, .tree-conn-h-right::after { content: ''; width: 2px; height: 16px; background: #94a3b8; }
+
+    /* ===== EMPTY SLOT ===== */
+    .tree-slot {
+      display: flex; align-items: center; justify-content: center;
+      padding: 8px 10px; border: 2px dashed #f97316; border-radius: 10px;
+      background: #fff7ed; width: 100%; max-width: 120px; text-align: center;
+    }
+    .tree-slot-btn {
+      display: inline-block; padding: 5px 10px;
+      border: 2px solid #f97316; border-radius: 6px;
+      background: #fff; color: #f97316;
+      font-size: 11px; font-weight: 700; cursor: pointer;
+      text-decoration: none; transition: all .2s; white-space: nowrap;
+    }
+    .tree-slot-btn:hover { background: #f97316; color: #fff; }
+
+    /* ===== POPUP ===== */
+    #memberPopup {
+      display: none; position: fixed;
+      background: #fff; border: 1px solid #e2e8f0; border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 220px; z-index: 99999999; text-align: left;
+    }
+    #memberPopup.show { display: block; }
+    #memberPopup .popup-header {
+      font-weight: 700; font-size: 11px; color: #fff;
+      background: linear-gradient(135deg, #06b6d4, #0891b2);
+      padding: 8px 12px; border-radius: 10px 10px 0 0;
+    }
+    #memberPopup .popup-body { padding: 8px 12px; }
+    #memberPopup .popup-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 5px 0; border-bottom: 1px solid #f1f5f9; font-size: 11px;
+    }
+    #memberPopup .popup-row:last-child { border-bottom: none; }
+    #memberPopup .popup-label { color: #94a3b8; font-weight: 500; }
+    #memberPopup .popup-value { color: #0f172a; font-weight: 700; }
+
+    /* ===== TABLET (769px+) ===== */
+    @media (min-width: 769px) {
+      .controls-section { padding: 16px 20px; margin: 12px; }
+      .controls-form { gap: 10px; flex-wrap: nowrap; }
+      .control-group label { font-size: 11px; }
+      .control-group input, .control-group select { padding: 10px 12px; font-size: 13px; }
+      .control-group.depth-group { flex: 0 0 100px; }
+      .btn { padding: 10px 20px; font-size: 13px; }
+      .tree-area { padding: 40px 30px 50px; margin: 12px; min-height: 500px; }
+      .tn-icon { width: 48px; height: 48px; margin-top: 8px; }
+      .tn-code { font-size: 15px; }
+      .tn-name { font-size: 12px; }
+      .tree-conn-v { height: 20px; }
+      .tree-conn-h { height: 20px; }
+      .tree-conn-h-left::after, .tree-conn-h-right::after { height: 20px; }
+      .tree-slot { padding: 10px 20px; max-width: 140px; }
+      .tree-slot-btn { padding: 6px 18px; font-size: 12px; }
+      .tree-child { min-width: 0; }
+    }
+
+    /* ===== MOBILE (768px and below) ===== */
+    @media (max-width: 768px) {
+      .controls-section { padding: 10px; margin: 6px; border-radius: 10px; }
+      .controls-form { gap: 6px; }
+      .control-group { flex: 1 1 100%; }
+      .control-group.depth-group { flex: 0 0 70px; }
+      .control-group label { font-size: 10px; margin-bottom: 3px; }
+      .control-group input, .control-group select { padding: 8px; font-size: 13px; border-radius: 8px; }
+      .btn-group { flex: 0 0 auto; width: 100%; }
+      .btn { flex: 1; justify-content: center; padding: 10px; font-size: 13px; }
+
+      .tree-area { padding: 16px 8px 30px; margin: 6px; min-height: 250px; border-radius: 10px; }
+      .tn { padding: 4px 6px; }
+      .tn-code { font-size: 12px; }
+      .tn-name { font-size: 9px; max-width: 90px; }
+      .tn-icon { width: 36px; height: 36px; margin-top: 4px; }
+      .tree-conn-v { height: 14px; }
+      .tree-conn-h { height: 14px; }
+      .tree-conn-h-left::after, .tree-conn-h-right::after { height: 14px; }
+      .tree-child { min-width: 0; flex: 1 1 0; padding: 0 4px; }
+      .tree-branch-children { gap: 10px; }
+      .tree-slot { padding: 6px 10px; max-width: 110px; }
+      .tree-slot-btn { padding: 5px 10px; font-size: 10px; }
+
+      #memberPopup { width: 200px; }
+      #memberPopup .popup-header { font-size: 10px; padding: 6px 10px; }
+      #memberPopup .popup-body { padding: 6px 10px; }
+      #memberPopup .popup-row { font-size: 10px; padding: 4px 0; }
+    }
+
+    /* ===== SMALL MOBILE (480px) ===== */
+    @media (max-width: 480px) {
+      .controls-section { padding: 8px; margin: 4px; }
+      .controls-form { gap: 4px; }
+      .control-group input, .control-group select { padding: 7px; font-size: 12px; }
+      .btn { padding: 9px 12px; font-size: 12px; }
+
+      .tree-area { padding: 12px 4px 24px; margin: 4px; min-height: 200px; }
+      .tn-code { font-size: 11px; }
+      .tn-name { font-size: 8px; max-width: 80px; }
+      .tn-icon { width: 30px; height: 30px; }
+      .tree-branch-children { gap: 6px; }
+      .tree-slot { padding: 6px 8px; max-width: 100px; }
+      .tree-slot-btn { padding: 4px 8px; font-size: 9px; }
+    }
+
+    /* ===== TINY (360px) ===== */
+    @media (max-width: 360px) {
+      .control-group input, .control-group select { padding: 6px; font-size: 11px; }
+      .btn { padding: 8px 10px; font-size: 11px; }
+      .tn-code { font-size: 10px; }
+      .tn-name { font-size: 8px; max-width: 70px; }
+      .tn-icon { width: 26px; height: 26px; }
+    }
+  </style>
+</head>
+<body>
+  <% if (typeof admin_backup !== 'undefined' && admin_backup) { %>
+  <div style="background:#dc3545;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:600;">
+    <span>You are viewing <strong><%= (myUser.member_name || myUser.username).toUpperCase() %></strong>'s account as Admin</span>
+    <form method="post" action="/admin/back-to-admin" style="margin:0">
+      <button type="submit" style="background:#fff;color:#dc3545;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;font-weight:700;">Back to Admin</button>
+    </form>
+  </div>
+  <% } %>
+
+  <div class="page-wrapper">
+    <div class="page-header">
+      <div class="page-header-left">
+        <img src="/brand/logo" class="page-header-logo" alt="Logo" onerror="this.style.display='none'"/>
+        <div>
+          <h2 style="margin:0; font-size:20px;">Genealogy Tree</h2>
+          <p style="margin:4px 0 0; opacity:0.9; font-size:13px;">View Your Network</p>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <a href="/dashboard" class="back-btn"><i class="fas fa-arrow-left"></i> Dashboard</a>
+      </div>
+    </div>
+
+    <div class="nav-bar">
+      <a class="nav-link" href="/dashboard">Dashboard</a>
+      <a class="nav-link" href="/my-offers">Offers</a>
+      <a class="nav-link" href="/products">Products</a>
+      <a class="nav-link" href="/pins">My Pins</a>
+      <a class="nav-link active" href="/my-tree">Tree</a>
+      <a class="nav-link" href="/downline">Downline</a>
+      <a class="nav-link" href="/transactions">Transactions</a>
+      <a class="nav-link" href="/my-ranks">Ranks</a>
+      <a class="nav-link" href="/invoices">Invoices</a>
+      <a class="nav-link" href="/tickets">Support</a>
+      <a class="nav-link" href="/kyc">KYC</a>
+      <a class="nav-link" href="/profile">Profile</a>
+      <a class="nav-link" href="/my-id-card">ID Card</a>
+    </div>
+
+    <div class="controls-section">
+      <form method="get" action="/my-tree" class="controls-form">
+        <div class="control-group">
+          <label>Enter User ID</label>
+          <input type="text" name="user" value="<%= searchUser || '' %>" placeholder="Enter User ID"/>
+        </div>
+        <div class="control-group depth-group">
+          <label>Depth</label>
+          <select name="depth">
+            <option value="1" <%= (depth||2)==1?'selected':''%>>1</option>
+            <option value="2" <%= (depth||2)==2?'selected':''%>>2</option>
+          </select>
+        </div>
+        <div class="btn-group">
+          <button type="submit" class="btn">Search</button>
+          <a href="/my-tree" class="btn btn-secondary">Reset</a>
+        </div>
+      </form>
+    </div>
+
+    <div class="tree-area">
+      <% if (currentUser) { %>
+        <div style="display:inline-flex; flex-direction:column; align-items:center;">
+          <%
+            function iconSvg(u) {
+              var st = String(u.status||'').toLowerCase();
+              var fill = st==='active' ? '#22c55e' : (st==='inactive' ? '#ef4444' : '#f59e0b');
+              var sc = st==='active' ? '#16a34a' : (st==='inactive' ? '#dc2626' : '#d97706');
+              return '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="20" r="14" fill="'+fill+'" stroke="'+sc+'" stroke-width="2"/><path d="M10 60 C10 40 18 30 32 30 C46 30 54 40 54 60 Z" fill="'+fill+'" stroke="'+sc+'" stroke-width="2"/></svg>';
+            }
+
+            function nodeHtml(n) {
+              if (!n) return '';
+              var uc = String(n.user_code || n.member_code || '').toUpperCase();
+              var nm = (n.member_name || '').toUpperCase();
+              var sp = n.sponsor_id ? getUserById(n.sponsor_id) : null;
+              if (!sp && n.placement_parent_id) sp = getUserById(n.placement_parent_id);
+              var spCode = sp ? (sp.user_code || sp.username || '-') : '-';
+              var leftBV = (n.org_bv_left||0)+(n.carry_left||0)+(n.org_rep_bv_left||0)+(n.repurchase_carry_left||0);
+              var rightBV = (n.org_bv_right||0)+(n.carry_right||0)+(n.org_rep_bv_right||0)+(n.repurchase_carry_right||0);
+              var joined = n.created_at ? new Date(n.created_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium' }) : '-';
+              return '<div class="tn" data-id="' + uc + '" data-name="' + nm + '" data-sponsor="' + spCode + '" data-lbv="' + leftBV + '" data-rbv="' + rightBV + '" data-status="' + (n.status||'') + '" data-joined="' + joined + '">' +
+                '<div class="tn-code">' + uc + '</div>' +
+                '<div class="tn-name">' + nm + '</div>' +
+                '<div class="tn-icon">' + iconSvg(n) + '</div>' +
+              '</div>';
+            }
+
+            function emptySlot(side, parentCode) {
+              var label = side === 'left' ? '+ Add Left' : '+ Add Right';
+              var href = '/user/register?parent=' + encodeURIComponent(parentCode) + '&side=' + side;
+              return '<div class="tree-slot"><a class="tree-slot-btn" href="' + href + '">' + label + '</a></div>';
+            }
+
+            function branchHtml(u, d) {
+              if (!u || d <= 0) return '';
+              var lk = u.left_id ? getUserById(u.left_id) : null;
+              var rk = u.right_id ? getUserById(u.right_id) : null;
+              var pCode = u.user_code || u.username || '';
+
+              var leftContent = lk ? nodeHtml(lk) + branchHtml(lk, d-1) : emptySlot('left', pCode);
+              var rightContent = rk ? nodeHtml(rk) + branchHtml(rk, d-1) : emptySlot('right', pCode);
+
+              return '<div class="tree-branch">' +
+                '<div class="tree-conn-v"></div>' +
+                '<div class="tree-conn-h">' +
+                  '<div class="tree-conn-h-left"></div>' +
+                  '<div class="tree-conn-h-right"></div>' +
+                '</div>' +
+                '<div class="tree-branch-children">' +
+                  '<div class="tree-child">' + leftContent + '</div>' +
+                  '<div class="tree-child">' + rightContent + '</div>' +
+                '</div>' +
+              '</div>';
+          }
+          %>
+
+          <%- nodeHtml(currentUser) %>
+          <div class="tree-conn-v"></div>
+          <%- branchHtml(currentUser, depth) %>
+        </div>
+      <% } else { %>
+        <div style="padding:60px;text-align:center">
+          <div style="font-size:48px;margin-bottom:16px"><i class="fas fa-search" style="color:#94a3b8;"></i></div>
+          <div style="font-size:18px;font-weight:600;color:#374151">Search for a Member</div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <div id="memberPopup">
+    <div class="popup-header"><i class="fas fa-user" style="margin-right:4px;"></i> Member Details</div>
+    <div class="popup-body">
+      <div class="popup-row"><span class="popup-label">User ID</span><span class="popup-value" id="popId">-</span></div>
+      <div class="popup-row"><span class="popup-label">Name</span><span class="popup-value" id="popName">-</span></div>
+      <div class="popup-row"><span class="popup-label">Sponsor</span><span class="popup-value" id="popSponsor">-</span></div>
+      <div class="popup-row"><span class="popup-label">Left BV</span><span class="popup-value" id="popLBV">-</span></div>
+      <div class="popup-row"><span class="popup-label">Right BV</span><span class="popup-value" id="popRBV">-</span></div>
+      <div class="popup-row"><span class="popup-label">Status</span><span class="popup-value" id="popStatus">-</span></div>
+      <div class="popup-row"><span class="popup-label">Joined</span><span class="popup-value" id="popJoined">-</span></div>
+    </div>
+  </div>
+
+  <script>
+    var popup = document.getElementById('memberPopup');
+    var activeNode = null;
+    var currentDepth = <%= depth %>;
+
+    function showPopup(node) {
+      var d = node.dataset;
+      var rect = node.getBoundingClientRect();
+      document.getElementById('popId').textContent = d.id || '-';
+      document.getElementById('popName').textContent = d.name || '-';
+      document.getElementById('popSponsor').textContent = d.sponsor || '-';
+      document.getElementById('popLBV').textContent = Number(d.lbv||0).toLocaleString('en-IN');
+      document.getElementById('popRBV').textContent = Number(d.rbv||0).toLocaleString('en-IN');
+      var st = d.status === 'active' ? 'Active' : (d.status === 'inactive' ? 'Inactive' : 'Pending');
+      var sc = d.status === 'active' ? '#16a34a' : (d.status === 'inactive' ? '#dc2626' : '#d97706');
+      document.getElementById('popStatus').innerHTML = '<span style="color:' + sc + ';font-weight:700;">' + st + '</span>';
+      document.getElementById('popJoined').textContent = d.joined || '-';
+      var left = rect.left + rect.width / 2 - 110;
+      var top = rect.bottom + 10;
+      if (left + 230 > window.innerWidth) left = window.innerWidth - 230;
+      if (left < 10) left = 10;
+      if (top + 300 > window.innerHeight) top = rect.top - 300;
+      if (top < 10) top = 10;
+      popup.style.left = left + 'px';
+      popup.style.top = top + 'px';
+      popup.classList.add('show');
+      activeNode = node;
+    }
+
+    function hidePopup() {
+      popup.classList.remove('show');
+      activeNode = null;
+    }
+
+    document.querySelectorAll('.tn').forEach(function(node) {
+      node.addEventListener('click', function(e) {
+        var id = this.dataset.id;
+        if (!id) return;
+        e.preventDefault();
+        window.location.href = '/my-tree?user=' + encodeURIComponent(id) + '&depth=' + currentDepth;
+      });
+
+      node.addEventListener('mouseenter', function() {
+        if (window.matchMedia('(hover: hover)').matches) {
+          showPopup(this);
+        }
+      });
+      node.addEventListener('mouseleave', function() {
+        if (window.matchMedia('(hover: hover)').matches) {
+          hidePopup();
+        }
+      });
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!popup.contains(e.target) && !e.target.closest('.tn')) {
+        hidePopup();
+      }
+    });
+  </script>
+</body>
+</html>

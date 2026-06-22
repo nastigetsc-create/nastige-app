@@ -1,0 +1,163 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Transactions | Nastige</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <link rel="stylesheet" href="/css/user-panel.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+  <% if (typeof admin_backup !== 'undefined' && admin_backup) { %>
+  <div style="background:#dc3545;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:600;">
+    <span>You are viewing <strong><%= (user.member_name || user.username).toUpperCase() %></strong>'s account as Admin</span>
+    <form method="post" action="/admin/back-to-admin" style="margin:0">
+      <button type="submit" style="background:#fff;color:#dc3545;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;font-weight:700;">Back to Admin</button>
+    </form>
+  </div>
+  <% } %>
+  <div class="page-wrapper">
+    <div class="page-header">
+      <div class="page-header-left">
+        <img src="/brand/logo" class="page-header-logo" alt="Logo" onerror="this.style.display='none'"/>
+        <div>
+          <h2 style="margin:0; font-size:20px;">Transactions</h2>
+          <p style="margin:4px 0 0; opacity:0.9; font-size:13px;">Income & Reports</p>
+        </div>
+      </div>
+      <div class="page-header-right">
+        <a href="/dashboard" class="back-btn"><i class="fas fa-arrow-left"></i> Dashboard</a>
+      </div>
+    </div>
+<div class="nav-bar">
+  <a href="/dashboard" class="nav-link">Dashboard</a>
+  <a href="/my-offers" class="nav-link">Offers</a>
+  <a href="/products" class="nav-link">Products</a>
+  <a href="/pins" class="nav-link">My Pins</a>
+  <a href="/my-tree" class="nav-link">Tree</a>
+  <a href="/downline" class="nav-link">Downline</a>
+  <a href="/transactions" class="nav-link active">Transactions</a>
+  <a href="/my-ranks" class="nav-link">Ranks</a>
+  <a href="/invoices" class="nav-link">Invoices</a>
+  <a href="/tickets" class="nav-link">Support</a>
+  <a href="/kyc" class="nav-link">KYC</a>
+  <a href="/profile" class="nav-link">Profile</a>
+  <a href="/my-id-card" class="nav-link">ID Card</a>
+</div>
+<div class="content"><!-- Quick Links -->
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;">
+      <a href="/reports/binary" class="btn btn-primary"><i class="fas fa-chart-bar"></i> Binary Report</a>
+      <a href="/reports/repurchase" class="btn btn-success"><i class="fas fa-sync-alt"></i> Repurchase Report</a>
+      <a href="/reports/leadership" class="btn btn-secondary"><i class="fas fa-crown"></i> Leadership Report</a>
+    </div>
+
+
+
+    <!-- Week-wise Summary with Payout Invoice Links -->
+    <% if (typeof weeklyData !== 'undefined' && (weeklyData||[]).length > 0) { %>
+    <div class="card">
+      <div class="card-header">
+        <span><i class="fas fa-calendar-week" style="color:#8b5cf6; margin-right:8px;"></i> Week-wise Summary</span>
+      </div>
+      <div class="card-body" style="padding:0;">
+        <table>
+          <thead>
+            <tr>
+              <th>Week</th>
+              <th>Binary</th>
+              <th>Repurchase</th>
+              <th>Leadership</th>
+              <th>Gross</th>
+              <th>TDS</th>
+              <th>PRF</th>
+              <th>Net</th>
+              <th>Transfer ID</th>
+              <th>Date</th>
+              <th>Receipt</th>
+              <th>Invoice</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% weeklyData.forEach(function(w) { %>
+            <tr>
+              <td><strong>W<%= w.week %> <%= w.year %></strong><br><span style="font-size:10px;color:#94a3b8;"><%= w.week_start_date ? new Date(w.week_start_date).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : '-' %></span></td>
+              <td style="color:#2563eb;"><%= typeof rupee !== 'undefined' ? rupee.format(w.binaryGross || 0) : '₹' + (w.binaryGross || 0) %></td>
+              <td style="color:#8b5cf6;"><%= typeof rupee !== 'undefined' ? rupee.format(w.repurchaseGross || 0) : '₹' + (w.repurchaseGross || 0) %></td>
+              <td style="color:#f59e0b;"><%= typeof rupee !== 'undefined' ? rupee.format(w.lbGross || 0) : '₹' + (w.lbGross || 0) %></td>
+              <td style="color:#64748b;"><%= typeof rupee !== 'undefined' ? rupee.format(w.totalGross || 0) : '₹' + (w.totalGross || 0) %></td>
+              <td style="color:#dc2626;"><%= typeof rupee !== 'undefined' ? rupee.format(w.totalTds || 0) : '₹' + (w.totalTds || 0) %></td>
+              <td style="color:#d97706;"><%= typeof rupee !== 'undefined' ? rupee.format(w.totalAdmin || 0) : '₹' + (w.totalAdmin || 0) %></td>
+              <td style="color:#10b981; font-weight:700;"><%= typeof rupee !== 'undefined' ? rupee.format(w.totalNet || 0) : '₹' + (w.totalNet || 0) %></td>
+              <td style="font-size:11px; font-weight:600; color:<%= w.transfer_id ? '#10b981' : '#94a3b8' %>;">
+                <% if (w.transfer_id) { %>
+                  <i class="fas fa-check-circle" style="color:#10b981;"></i> <%= w.transfer_id %>
+                <% } else { %>
+                  <i class="fas fa-clock" style="color:#f59e0b;"></i> Pending
+                <% } %>
+              </td>
+              <td style="font-size:11px;"><%= w.transfer_date ? new Date(w.transfer_date).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : (w.payout_id ? '-' : '-') %></td>
+              <td>
+                <% if (w.receipt_url) { %>
+                  <a href="<%= w.receipt_url %>" target="_blank" style="color:#667eea;"><i class="fas fa-file-pdf"></i></a>
+                <% } else { %>
+                  <span style="color:#94a3b8;">-</span>
+                <% } %>
+              </td>
+              <td>
+                <% if (w.payout_id) { %>
+                  <a href="/payout-invoice/<%= w.payout_id %>" class="btn btn-primary" style="padding:4px 10px; font-size:11px;"><i class="fas fa-file-invoice"></i> View</a>
+                <% } else { %>
+                  <span style="color:#94a3b8; font-size:11px;">-</span>
+                <% } %>
+              </td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- Self Purchase -->
+    <% if (typeof selfPurchases !== 'undefined' && (selfPurchases||[]).length > 0) { %>
+    <div class="card">
+      <div class="card-header">
+        <span><i class="fas fa-shopping-cart" style="color:#10b981; margin-right:8px;"></i> Self Purchase</span>
+        <a href="/user/orders" style="font-size:12px; color:#667eea; text-decoration:none;">View All →</a>
+      </div>
+      <div class="card-body" style="padding:0;">
+        <table>
+          <thead>
+            <tr>
+              <th>Order/ID</th>
+              <th>Date</th>
+              <th>Type</th>
+              <th>BV</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% selfPurchases.slice(0, 5).forEach(function(item) { %>
+            <tr>
+              <td><strong><%= item.type === 'order' ? (item.order_no || ('#' + item.id)) : ('Activation #' + item.id) %></strong></td>
+              <td><%= new Date(item.created_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) %></td>
+              <td><span class="badge <%= item.type === 'order' ? 'badge-info' : 'badge-success' %>"><%= item.type === 'order' ? 'Order' : 'Activation' %></span></td>
+              <td><%= item.total_bv || 0 %></td>
+              <td><%= typeof rupee !== 'undefined' ? rupee.format(item.total_inr || 0) : '₹' + (item.total_inr || 0) %></td>
+              <td><span class="badge <%= item.status === 'approved' || item.status === 'completed' ? 'badge-success' : (item.status === 'pending' ? 'badge-warning' : 'badge-danger') %>"><%= item.status || 'pending' %></span></td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <% } %>
+  </div>
+  </div>
+  </div>
+<script>document.querySelectorAll('.side-link').forEach(function(l){var p=l.getAttribute('href');if(window.location.pathname===p||(p!=='/admin'&&window.location.pathname.startsWith(p)))l.classList.add('active')});</script>
+</body>
+</html>

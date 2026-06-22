@@ -1,0 +1,741 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Franchise Management | Nastige</title>
+  <style>
+    html{font-size:16px;-webkit-text-size-adjust:100%;scroll-padding-top:0}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1e293b;font-size:14px;line-height:1.5}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f1f5f9;color:#1e293b}
+    .wrapper{max-width:1600px;margin:0 auto;padding:20px}
+    .header{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:white;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;border-radius:16px;margin-bottom:18px}
+    .header-left{display:flex;align-items:center;gap:12px}
+    .header-logo{height:44px;border-radius:8px}
+    .header-right{display:flex;align-items:center;gap:10px}
+    .user-chip{background:rgba(255,255,255,0.15);padding:6px 14px;border-radius:20px;font-size:13px}
+    .logout-btn{background:rgba(255,255,255,0.15);border:none;color:white;padding:6px 14px;border-radius:20px;cursor:pointer;text-decoration:none;font-size:13px}
+    .logout-btn:hover{background:rgba(255,255,255,0.3)}
+    
+    
+    
+    
+    .msg{padding:12px 16px;border-radius:8px;margin-bottom:16px;font-weight:500;font-size:14px}
+    .msg-error{background:#fef2f2;border:1px solid #fecaca;border-left:4px solid #ef4444;color:#991b1b}
+    .msg-success{background:#ecfdf5;border:1px solid #a7f3d0;border-left:4px solid #10b981;color:#065f46}
+    .card{background:white;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.05);overflow:hidden;margin-bottom:18px}
+    .card-header{padding:14px 18px;border-bottom:1px solid #e2e8f0;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center}
+    .card-body{padding:18px}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{background:#f8fafc;text-align:left;padding:10px 12px;font-weight:600;color:#475569;border-bottom:2px solid #e2e8f0;white-space:nowrap}
+    td{padding:10px 12px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+    tr:hover{background:#f8fafc}
+    .badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600}
+    .badge-active{background:#d1fae5;color:#065f46}
+    .badge-blocked{background:#fef2f2;color:#991b1b}
+    .badge-pending{background:#fef3c7;color:#92400e}
+    .btn{display:inline-block;padding:8px 16px;border-radius:8px;border:none;font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;transition:all .15s}
+    .btn-sm{padding:5px 10px;font-size:11px}
+    .btn-primary{background:#1e293b;color:white;border:none}
+    .btn-primary:hover{background:#334155}
+    .btn-success{background:#10b981;color:white;border:none}
+    .btn-success:hover{background:#059669}
+    .btn-warning{background:#f59e0b;color:white;border:none}
+    .btn-warning:hover{background:#d97706}
+    .btn-danger{background:#ef4444;color:white;border:none}
+    .btn-danger:hover{background:#dc2626}
+    .btn-outline{border:1px solid #e2e8f0;background:white;color:#475569}
+    .btn-outline:hover{background:#f8fafc}
+    .btn-info{background:#0ea5e9;color:white;border:none}
+    .btn-info:hover{background:#0284c7}
+    .btn-purple{background:#8b5cf6;color:white;border:none}
+    .btn-purple:hover{background:#7c3aed}
+    .form-group{margin-bottom:14px}
+    .form-group label{display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:4px}
+    .form-control{width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;outline:none;transition:border .15s}
+    .form-control:focus{border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,0.15)}
+    .form-control-sm{padding:6px 10px;font-size:12px}
+    select.form-control{appearance:auto}
+    .inline-flex{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .mt-12{margin-top:12px}
+    .mt-20{margin-top:20px}
+    .mb-12{margin-bottom:12px}
+    .text-muted{color:#94a3b8;font-size:12px}
+    .text-right{text-align:right}
+    .fw-600{font-weight:600}
+    .section-title{font-size:14px;font-weight:700;color:#1e293b;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #e2e8f0}
+    .stat-chip{background:#f8fafc;padding:6px 14px;border-radius:8px;font-size:12px;display:inline-flex;align-items:center;gap:6px}
+    .stat-chip strong{font-size:14px}
+    .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center}
+    .modal-overlay.active{display:flex}
+    .modal{background:white;border-radius:16px;padding:24px;max-width:600px;width:90%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+    .modal h3{margin-bottom:16px;font-size:16px}
+    .table-wrap{overflow-x:auto}
+    .flex-between{display:flex;justify-content:space-between;align-items:center}
+    .tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}
+    .tab-btn{padding:8px 16px;border-radius:8px;border:1px solid #e2e8f0;background:white;color:#64748b;font-size:13px;cursor:pointer;font-weight:500}
+    .tab-btn.active{background:#1e293b;color:white;border-color:#1e293b}
+    .tab-btn:hover:not(.active){background:#f1f5f9}
+    .tab-content{display:none}
+    .tab-content.active{display:block}
+    .copy-btn{background:transparent;border:1px solid #e2e8f0;border-radius:4px;padding:2px 6px;font-size:11px;cursor:pointer;color:#64748b}
+    .copy-btn:hover{background:#f1f5f9}
+    .stock-input{width:70px;padding:4px 6px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;text-align:center}
+    @media(max-width:768px){.wrapper{padding:12px}.header{flex-direction:row;align-items:center;padding:10px 14px;gap:8px;border-radius:12px;flex-wrap:wrap}.grid-2,.grid-3{grid-template-columns:1fr}.card-body{padding:14px}td,th{padding:8px 6px;font-size:12px}}
+  
+    .admin-layout{display:flex;gap:20px}
+    .sidebar{width:220px;flex-shrink:0;background:white;border-radius:12px;padding:8px;box-shadow:0 2px 10px rgba(0,0,0,0.05);position:sticky;top:20px;height:fit-content;max-height:calc(100vh - 20px);overflow-y:auto}
+    .sidebar::-webkit-scrollbar{width:4px}
+    .sidebar::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:4px}
+    .side-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;text-decoration:none;color:#475569;font-size:12px;font-weight:500;transition:all 0.1s}
+    .side-link:hover{background:#f1f5f9;color:#1e293b}
+    .side-link.active{background:#1e293b;color:white}
+    .side-link svg{width:16px;height:16px;flex-shrink:0;fill:currentColor}
+    .side-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;padding:12px 10px 4px}
+    .content{flex:1;min-width:0}
+    @media(max-width:1024px){.admin-layout{flex-direction:column}.sidebar{width:260px;position:fixed;top:0;left:-280px;height:100vh;max-height:100vh;border-radius:0;padding:12px;transition:left 0.25s ease;z-index:1001;overflow-y:auto}.sidebar.open{left:0}.side-link{font-size:12px;padding:8px 10px}.side-section{display:none}}
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="header">
+      <div class="header-left">
+        <img src="/brand/logo" class="header-logo" alt="Logo" onerror="this.style.display='none'"/>
+        <div>
+          <h2 style="margin:0;font-size:20px;">Franchise Management</h2>
+          <p style="margin:4px 0 0;opacity:0.9;font-size:13px;">Manage franchise partners</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div style="position:relative;">
+          <span id="adminMenuChip" class="user-chip" onclick="var d=document.getElementById('adminMenuDrop');d.style.display=d.style.display==='block'?'none':'block'" style="cursor:pointer;user-select:none;">Admin ▾</span>
+          <div id="adminMenuDrop" style="display:none;position:absolute;right:0;top:110%;background:white;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.15);min-width:180px;z-index:9999;overflow:hidden;">
+            <a href="/admin/password" style="display:flex;align-items:center;gap:8px;padding:12px 16px;text-decoration:none;color:#1e293b;font-size:13px;font-weight:500;border-bottom:1px solid #f1f5f9;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Change Password
+            </a>
+            <a href="/logout" onclick="sessionStorage.removeItem('broadcastsShown');" style="display:flex;align-items:center;gap:8px;padding:12px 16px;text-decoration:none;color:#dc2626;font-size:13px;font-weight:600;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Logout
+            </a>
+          </div>
+        </div>
+        <script>
+        document.addEventListener('click',function(e){var d=document.getElementById('adminMenuDrop');if(d&&d.style.display==='block'&&!e.target.closest('#adminMenuDrop')&&e.target.id!=='adminMenuChip')d.style.display='none'});
+        </script>
+      </div>
+    </div>
+
+<div class="admin-layout">
+    <%- include('_admin_sidebar', { active: 'franchises' }) %>
+    <div class="content"><% if (error) { %><div class="msg msg-error"><%= error %></div><% } %>
+    <% if (success) { %><div class="msg msg-success"><%= success %></div><% } %>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="tab-list">Franchises (<%= items.length %>)</button>
+      <button class="tab-btn" data-tab="tab-create">Create Franchise</button>
+      <button class="tab-btn" data-tab="tab-stock">Stock Management</button>
+      <button class="tab-btn" data-tab="tab-commission">Commission Settings</button>
+      <button class="tab-btn" data-tab="tab-orders">Recent Orders (<%= orders.length %>)</button>
+      <button class="tab-btn" data-tab="tab-transactions">Transactions</button>
+      <button class="tab-btn" data-tab="tab-stock-history">Stock History</button>
+    </div>
+
+    <!-- ============ FRANCHISE LIST ============ -->
+    <div id="tab-list" class="tab-content active">
+      <div class="card">
+        <div class="card-header">
+          <span>All Franchises</span>
+          <span class="text-muted"><%= items.length %> total</span>
+        </div>
+        <div class="card-body" style="padding:0">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Member Name</th>
+                  <th>Branch</th>
+                  <th>Phone</th>
+                  <th>City</th>
+                  <th>Wallet</th>
+                  <th>Commission</th>
+                  <th>Status</th>
+                  <th style="width:200px">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (items.length === 0) { %>
+                <tr><td colspan="9" style="text-align:center;padding:30px;color:#94a3b8">No franchises created yet</td></tr>
+                <% } %>
+                <% items.forEach(function(f) { %>
+                <tr>
+                  <td><strong><%= f.franchise_code || '-' %></strong><br/><span class="text-muted" style="font-size:11px"><%= f.username %></span></td>
+                  <td><%= f.member_name || '-' %></td>
+                  <td><%= f.branch_name || '-' %></td>
+                  <td><%= f.phone || '-' %></td>
+                  <td><%= f.city || '-' %></td>
+                  <td><strong>&#8377;<%= (f.fund_wallet || 0).toFixed(2) %></strong></td>
+                  <td>&#8377;<%= (f.commission_wallet || 0).toFixed(2) %></td>
+                  <td><span class="badge <%= f.status === 'active' ? 'badge-active' : 'badge-blocked' %>"><%= f.status || 'active' %></span></td>
+                  <td>
+                    <div class="inline-flex" style="gap:4px">
+                      <button class="btn btn-sm btn-primary" onclick="editFranchise(<%= f.id %>, '<%= f.member_name %>', '<%= f.branch_name || '' %>', '<%= f.phone || '' %>', '<%= f.address || '' %>', '<%= f.city || '' %>')">Edit</button>
+                      <button class="btn btn-sm btn-warning" onclick="changePassword(<%= f.id %>, '<%= f.franchise_code %>')">Pass</button>
+                      <button class="btn btn-sm btn-success" onclick="addStock(<%= f.id %>, '<%= f.franchise_code %> - <%= f.member_name %>')">Stock</button>
+                      <button class="btn btn-sm btn-info" onclick="fundTransfer(<%= f.id %>, '<%= f.franchise_code %>')">Fund</button>
+                      <button class="btn btn-sm btn-purple" onclick="commissionPayout(<%= f.id %>, '<%= f.franchise_code %>')">Pay</button>
+                      <form method="POST" action="/admin/login-as-franchise/<%= f.id %>" style="display:inline">
+                        <button type="submit" class="btn btn-sm btn-outline" style="border:1px solid #0ea5e9;color:#0ea5e9" onclick="return confirm('Login as <%= f.franchise_code %>?')">Login</button>
+                      </form>
+                      <form method="POST" action="/admin/franchise/<%= f.id %>/toggle-status" style="display:inline">
+                        <button class="btn btn-sm <%= f.status === 'active' ? 'btn-danger' : 'btn-success' %>"><%= f.status === 'active' ? 'Block' : 'Unblock' %></button>
+                      </form>
+                      <form method="POST" action="/admin/franchise/delete" style="display:inline" onsubmit="return confirm('Are you sure you want to DELETE franchise <%= f.franchise_code %> (<%= f.member_name %>)? This cannot be undone.')">
+                        <input type="hidden" name="franchise_id" value="<%= f.id %>">
+                        <button type="submit" class="btn btn-sm btn-danger" style="background:#dc2626;color:#fff;border:none">Delete</button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ CREATE FRANCHISE ============ -->
+    <div id="tab-create" class="tab-content">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">Create New Franchise</div>
+          <div class="card-body">
+            <form method="POST" action="/admin/franchises">
+              <div class="form-group">
+                <label>Member Name *</label>
+                <input type="text" name="member_name" class="form-control" required placeholder="Full name"/>
+              </div>
+              <div class="form-group">
+                <label>Branch Name</label>
+                <input type="text" name="branch_name" class="form-control" placeholder="Branch / shop name"/>
+              </div>
+              <div class="form-group">
+                <label>Phone</label>
+                <input type="text" name="phone" class="form-control" placeholder="10-digit mobile"/>
+              </div>
+              <div class="form-group">
+                <label>Address</label>
+                <textarea name="address" class="form-control" rows="2" placeholder="Full address"></textarea>
+              </div>
+              <div class="form-group">
+                <label>City</label>
+                <input type="text" name="city" class="form-control" placeholder="City"/>
+              </div>
+              <div class="form-group">
+                <label>Password *</label>
+                <input type="password" name="password" class="form-control" required minlength="6" placeholder="Min 6 characters"/>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width:100%">Create Franchise</button>
+            </form>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">Quick Info</div>
+          <div class="card-body">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div class="stat-chip"><span>Total Franchises</span> <strong><%= items.length %></strong></div>
+              <div class="stat-chip"><span>Active</span> <strong><%= items.filter(function(f){return f.status==='active'}).length %></strong></div>
+              <div class="stat-chip"><span>Blocked</span> <strong><%= items.filter(function(f){return f.status!=='active'}).length %></strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ STOCK MANAGEMENT ============ -->
+    <div id="tab-stock" class="tab-content">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">Add Stock to Franchise</div>
+          <div class="card-body">
+            <form method="POST" action="/admin/franchise/add-stock">
+              <div class="form-group">
+                <label>Select Franchise</label>
+                <select name="franchise_id" class="form-control" required>
+                  <option value="">-- Select --</option>
+                  <% items.forEach(function(f) { %>
+                  <option value="<%= f.id %>"><%= f.franchise_code %> - <%= f.member_name %> (<%= f.branch_name || '' %>)</option>
+                  <% }); %>
+                </select>
+              </div>
+              <div class="section-title">Product Quantities</div>
+              <% products.forEach(function(p) { %>
+              <div class="form-group" style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                <label style="flex:1;margin:0;font-size:12px"><%= p.name %> (<%= p.code || '' %>)</label>
+                <input type="number" name="quantity_<%= p.id %>" class="stock-input" min="0" value="0" placeholder="0"/>
+              </div>
+              <% }); %>
+              <% if (products.length === 0) { %><div class="text-muted">No active products found</div><% } %>
+              <button type="submit" class="btn btn-success mt-12" style="width:100%">Add Stock</button>
+            </form>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">Remove Stock from Franchise</div>
+          <div class="card-body">
+            <form method="POST" action="/admin/franchise/remove-stock">
+              <div class="form-group">
+                <label>Select Franchise</label>
+                <select name="franchise_id" class="form-control" required>
+                  <option value="">-- Select --</option>
+                  <% items.forEach(function(f) { %>
+                  <option value="<%= f.id %>"><%= f.franchise_code %> - <%= f.member_name %> (<%= f.branch_name || '' %>)</option>
+                  <% }); %>
+                </select>
+              </div>
+              <div class="section-title">Product Quantities to Remove</div>
+              <% products.forEach(function(p) { %>
+              <div class="form-group" style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                <label style="flex:1;margin:0;font-size:12px"><%= p.name %> (<%= p.code || '' %>)</label>
+                <input type="number" name="quantity_<%= p.id %>" class="stock-input" min="0" value="0" placeholder="0"/>
+              </div>
+              <% }); %>
+              <% if (products.length === 0) { %><div class="text-muted">No active products found</div><% } %>
+              <button type="submit" class="btn btn-warning mt-12" style="width:100%">Remove Stock</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ COMMISSION SETTINGS ============ -->
+    <div id="tab-commission" class="tab-content">
+      <div style="max-width:700px">
+        <form method="POST" action="/admin/franchise/commission-settings">
+
+        <div style="background:linear-gradient(135deg,#ecfdf5 0%,#d1fae5 100%);border:1px solid #a7f3d0;border-radius:12px;padding:20px;margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+            <div style="width:42px;height:42px;border-radius:10px;background:#059669;display:flex;align-items:center;justify-content:center;font-size:20px;color:white">&#10003;</div>
+            <div>
+              <div style="font-size:16px;font-weight:700;color:#065f46">Activation Commission</div>
+              <div style="font-size:12px;color:#047857">Jab koi naya user ID activate karega</div>
+            </div>
+            <div style="margin-left:auto;background:#059669;color:white;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600">COMMISSION MILTA HAI</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div style="background:white;border:1px solid #d1fae5;border-radius:10px;padding:14px">
+              <label style="display:block;font-size:11px;font-weight:600;color:#059669;text-transform:uppercase;margin-bottom:6px">Commission Type</label>
+              <select name="activation_commission_type" class="form-control" style="border-color:#a7f3d0">
+                <option value="bv" <%= actType === 'bv' ? 'selected' : '' %>>&#128176; Per BV (Business Volume)</option>
+                <option value="amount" <%= actType === 'amount' ? 'selected' : '' %>>&#128176; Fixed Amount (&#8377;)</option>
+                <option value="percentage" <%= actType === 'percentage' ? 'selected' : '' %>>&#128176; Percentage (%)</option>
+              </select>
+            </div>
+            <div style="background:white;border:1px solid #d1fae5;border-radius:10px;padding:14px">
+              <label style="display:block;font-size:11px;font-weight:600;color:#059669;text-transform:uppercase;margin-bottom:6px">Commission Value</label>
+              <input type="number" step="0.01" name="franchise_activation_commission_value" class="form-control" value="<%= actVal %>" style="border-color:#a7f3d0;font-size:18px;font-weight:700;color:#065f46"/>
+            </div>
+          </div>
+          <div style="margin-top:12px;padding:10px 14px;background:white;border-radius:8px;border:1px solid #d1fae5;font-size:12px;color:#047857">
+            &#9432; Example: Agar <strong>Per BV</strong> hai aur value <strong>10</strong> hai toh har 1 BV pe franchise ko <strong>&#8377;10</strong> milega
+          </div>
+        </div>
+
+        <div style="background:linear-gradient(135deg,#eff6ff 0%,#dbeafe 100%);border:1px solid #bfdbfe;border-radius:12px;padding:20px;margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+            <div style="width:42px;height:42px;border-radius:10px;background:#2563eb;display:flex;align-items:center;justify-content:center;font-size:20px;color:white">&#128260;</div>
+            <div>
+              <div style="font-size:16px;font-weight:700;color:#1e40af">Repurchase Commission</div>
+              <div style="font-size:12px;color:#1d4ed8">Jab koi existing user repurchase karega</div>
+            </div>
+            <div style="margin-left:auto;background:#2563eb;color:white;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600">COMMISSION MILTA HAI</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div style="background:white;border:1px solid #bfdbfe;border-radius:10px;padding:14px">
+              <label style="display:block;font-size:11px;font-weight:600;color:#2563eb;text-transform:uppercase;margin-bottom:6px">Commission Type</label>
+              <select name="repurchase_commission_type" class="form-control" style="border-color:#93c5fd">
+                <option value="bv" <%= repType === 'bv' ? 'selected' : '' %>>&#128176; Per BV (Business Volume)</option>
+                <option value="amount" <%= repType === 'amount' ? 'selected' : '' %>>&#128176; Fixed Amount (&#8377;)</option>
+                <option value="percentage" <%= repType === 'percentage' ? 'selected' : '' %>>&#128176; Percentage (%)</option>
+              </select>
+            </div>
+            <div style="background:white;border:1px solid #bfdbfe;border-radius:10px;padding:14px">
+              <label style="display:block;font-size:11px;font-weight:600;color:#2563eb;text-transform:uppercase;margin-bottom:6px">Commission Value</label>
+              <input type="number" step="0.01" name="franchise_repurchase_commission_value" class="form-control" value="<%= repVal %>" style="border-color:#93c5fd;font-size:18px;font-weight:700;color:#1e40af"/>
+            </div>
+          </div>
+          <div style="margin-top:12px;padding:10px 14px;background:white;border-radius:8px;border:1px solid #bfdbfe;font-size:12px;color:#1d4ed8">
+            &#9432; Example: Agar <strong>Fixed Amount</strong> hai aur value <strong>50</strong> hai toh har repurchase pe franchise ko <strong>&#8377;50</strong> milega
+          </div>
+        </div>
+
+        <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:14px;font-size:13px;color:#92400e;margin-bottom:16px">
+          <strong>&#9888;&#65039; Note:</strong> Ye settings sabhi franchises pe apply hoti hain. Commission automatically activation/repurchase ke waqt calculate hoga.
+        </div>
+
+        <button type="submit" style="width:100%;background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:white;padding:12px;font-size:14px;font-weight:600;border:none;border-radius:10px;cursor:pointer">&#128190; Save Commission Settings</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ============ RECENT ORDERS ============ -->
+    <div id="tab-orders" class="tab-content">
+      <div class="card">
+        <div class="card-header">Recent Franchise Orders (Last 50)</div>
+        <div class="card-body" style="padding:0">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Order #</th>
+                  <th>Franchise</th>
+                  <th>Customer</th>
+                  <th>Product</th>
+                  <th>Qty</th>
+                  <th>Amount</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (orders.length === 0) { %>
+                <tr><td colspan="8" style="text-align:center;padding:30px;color:#94a3b8">No franchise orders yet</td></tr>
+                <% } %>
+                <% orders.forEach(function(o) { %>
+                <tr>
+                  <td><%= o.order_no || o.id || '-' %></td>
+                  <td><%= o.franchise_code %><br/><span class="text-muted" style="font-size:11px"><%= o.franchise_name %></span></td>
+                  <td><%= o.customer_code %><br/><span class="text-muted" style="font-size:11px"><%= o.customer_name %></span></td>
+                  <td><%= o.product_name %></td>
+                  <td><%= (o.items && Array.isArray(o.items)) ? o.items.reduce(function(s,i){return s+parseInt(i.quantity||0)},0) : (o.quantity || '-') %></td>
+                  <td><strong>&#8377;<%= (o.total || o.amount || 0).toFixed(2) %></strong></td>
+                  <td style="font-size:11px;white-space:nowrap"><%= o.created_at ? new Date(o.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit', timeZone: 'Asia/Kolkata'}) : '-' %></td>
+                  <td><span class="badge <%= o.status === 'delivered' ? 'badge-active' : o.status === 'cancelled' ? 'badge-blocked' : 'badge-pending' %>"><%= o.status || 'pending' %></span></td>
+                </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ TRANSACTIONS ============ -->
+    <div id="tab-transactions" class="tab-content">
+      <div class="card">
+        <div class="card-header">Franchise Wallet Transactions (Last 200)</div>
+        <div class="card-body" style="padding:0">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Franchise</th>
+                  <th>Type</th>
+                  <th>Amount</th>
+                  <th>Balance</th>
+                  <th>Commission</th>
+                  <th>Note</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (transactions.length === 0) { %>
+                <tr><td colspan="8" style="text-align:center;padding:30px;color:#94a3b8">No transactions yet</td></tr>
+                <% } %>
+                <% transactions.forEach(function(t) { %>
+                <% var f = items.find(function(x){return x.id === t.franchise_id}) %>
+                <tr>
+                  <td><%= t.id %></td>
+                  <td><%= f ? f.franchise_code : t.franchise_id %></td>
+                  <td><span class="badge <%= t.type === 'credit' ? 'badge-active' : t.type === 'debit' ? 'badge-blocked' : 'badge-pending' %>"><%= t.type %></span></td>
+                  <td style="color:<%= t.amount >= 0 ? '#10b981' : '#ef4444' %>;font-weight:600">&#8377;<%= (t.amount||0).toFixed(2) %></td>
+                  <td>&#8377;<%= (t.balance_after||0).toFixed(2) %></td>
+                  <td>&#8377;<%= (t.commission_after||0).toFixed(2) %></td>
+                  <td style="font-size:12px"><%= t.note || '-' %></td>
+                  <td style="font-size:11px;white-space:nowrap"><%= t.created_at ? new Date(t.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit', timeZone: 'Asia/Kolkata'}) : '-' %></td>
+                </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ STOCK HISTORY ============ -->
+    <div id="tab-stock-history" class="tab-content">
+      <div class="card">
+        <div class="card-header">Franchise Stock History (Last 100)</div>
+        <div class="card-body" style="padding:0">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Franchise</th>
+                  <th>Product</th>
+                  <th>Qty</th>
+                  <th>Type</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (stockHistory.length === 0) { %>
+                <tr><td colspan="5" style="text-align:center;padding:30px;color:#94a3b8">No stock history yet</td></tr>
+                <% } %>
+                <% stockHistory.forEach(function(h) { %>
+                <% var f = items.find(function(x){return x.id === h.franchise_id}) %>
+                <tr>
+                  <td><%= f ? f.franchise_code : h.franchise_id %></td>
+                  <td><%= h.product_name || 'Product #' + h.product_id %></td>
+                  <td><%= h.quantity %></td>
+                  <td><span class="badge <%= h.type === 'add' ? 'badge-active' : 'badge-blocked' %>"><%= h.type === 'add' ? 'Added' : 'Removed' %></span></td>
+                  <td style="font-size:11px;white-space:nowrap"><%= h.created_at ? new Date(h.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit', timeZone: 'Asia/Kolkata'}) : '-' %></td>
+                </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Franchise Modal -->
+  <div id="editModal" class="modal-overlay">
+    <div class="modal">
+      <h3>Edit Franchise</h3>
+      <form method="POST" action="" id="editForm">
+        <div class="form-group">
+          <label>Member Name</label>
+          <input type="text" name="member_name" id="edit_name" class="form-control" required/>
+        </div>
+        <div class="form-group">
+          <label>Branch Name</label>
+          <input type="text" name="branch_name" id="edit_branch" class="form-control"/>
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="text" name="phone" id="edit_phone" class="form-control" placeholder="10-digit mobile"/>
+        </div>
+        <div class="form-group">
+          <label>Address</label>
+          <textarea name="address" id="edit_address" class="form-control" rows="2"></textarea>
+        </div>
+        <div class="form-group">
+          <label>City</label>
+          <input type="text" name="city" id="edit_city" class="form-control"/>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button type="button" class="btn btn-outline" onclick="closeModal('editModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Change Password Modal -->
+  <div id="passwordModal" class="modal-overlay">
+    <div class="modal">
+      <h3>Change Franchise Password</h3>
+      <form method="POST" action="/admin/franchise/password">
+        <input type="hidden" name="franchise_id" id="pw_id"/>
+        <div class="form-group">
+          <label>Franchise</label>
+          <p id="pw_name_display" style="font-weight:600;font-size:14px"></p>
+        </div>
+        <div class="form-group">
+          <label>New Password (min 6 chars)</label>
+          <input type="password" name="new_password" class="form-control" required minlength="6"/>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button type="button" class="btn btn-outline" onclick="closeModal('passwordModal')">Cancel</button>
+          <button type="submit" class="btn btn-warning">Change Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Stock Modal -->
+  <div id="stockModal" class="modal-overlay">
+    <div class="modal">
+      <h3>Add Stock to Franchise</h3>
+      <form method="POST" action="/admin/franchise/add-stock">
+        <input type="hidden" name="franchise_id" id="stock_id"/>
+        <div class="form-group">
+          <label>Franchise</label>
+          <p id="stock_name_display" style="font-weight:600;font-size:14px"></p>
+        </div>
+        <div style="margin-bottom:8px;font-size:13px;font-weight:600;color:#475569;border-bottom:1px solid #e2e8f0;padding-bottom:6px">Product Quantities</div>
+        <div id="stockProductHeader" style="display:flex;gap:8px;margin-bottom:6px;padding:0 0 4px;border-bottom:1px solid #f1f5f9;font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase">
+          <span style="flex:1">Product</span>
+          <span style="width:55px;text-align:center">In</span>
+          <span style="width:55px;text-align:center">Out</span>
+          <span style="width:55px;text-align:center">Bal</span>
+          <span style="width:65px;text-align:center">Add</span>
+        </div>
+        <% products.forEach(function(p) { %>
+        <div class="form-group" style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <label style="flex:1;margin:0;font-size:12px;font-weight:500"><%= p.name %></label>
+          <span class="stock-in" data-pid="<%= p.id %>" style="width:55px;text-align:center;font-size:12px;font-weight:600;color:#059669">0</span>
+          <span class="stock-out" data-pid="<%= p.id %>" style="width:55px;text-align:center;font-size:12px;font-weight:600;color:#dc2626">0</span>
+          <span class="stock-bal" data-pid="<%= p.id %>" style="width:55px;text-align:center;font-size:12px;font-weight:700;color:#1e293b">0</span>
+          <input type="number" name="quantity_<%= p.id %>" class="stock-input" min="0" value="0" style="width:65px"/>
+        </div>
+        <% }); %>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+          <button type="button" class="btn btn-outline" onclick="closeModal('stockModal')">Cancel</button>
+          <button type="submit" class="btn btn-success">Add Stock</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Fund Transfer Modal -->
+  <div id="fundModal" class="modal-overlay">
+    <div class="modal">
+      <h3>Fund Transfer</h3>
+      <form method="POST" action="/admin/franchise/fund-transfer">
+        <input type="hidden" name="franchise_id" id="fund_id"/>
+        <div class="form-group">
+          <label>Franchise</label>
+          <p id="fund_name_display" style="font-weight:600;font-size:14px"></p>
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select name="type" class="form-control" required>
+            <option value="credit">Credit (Add Funds)</option>
+            <option value="debit">Debit (Deduct Funds)</option>
+            <option value="commission_transfer">Transfer Commission to Fund</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Amount (&#8377;)</label>
+          <input type="number" step="0.01" min="0.01" name="amount" class="form-control" required/>
+        </div>
+        <div class="form-group">
+          <label>Note (optional)</label>
+          <input type="text" name="note" class="form-control" placeholder="Reason for transaction"/>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button type="button" class="btn btn-outline" onclick="closeModal('fundModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Commission Payout Modal -->
+  <div id="payoutModal" class="modal-overlay">
+    <div class="modal">
+      <h3>Commission Payout to Bank</h3>
+      <form method="POST" action="/admin/franchise/commission-to-bank">
+        <input type="hidden" name="franchise_id" id="payout_id"/>
+        <div class="form-group">
+          <label>Franchise</label>
+          <p id="payout_name_display" style="font-weight:600;font-size:14px"></p>
+        </div>
+        <div class="form-group">
+          <label>Amount (&#8377;)</label>
+          <input type="number" step="0.01" min="0.01" name="amount" class="form-control" required/>
+        </div>
+        <div class="form-group">
+          <label>Bank Reference / UTR No.</label>
+          <input type="text" name="bank_ref" class="form-control" required placeholder="Enter bank reference number"/>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button type="button" class="btn btn-outline" onclick="closeModal('payoutModal')">Cancel</button>
+          <button type="submit" class="btn btn-warning">Process Payout</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function editFranchise(id, name, branch, phone, address, city) {
+      document.getElementById('editForm').action = '/admin/franchises/' + id + '/edit';
+      document.getElementById('edit_name').value = name;
+      document.getElementById('edit_branch').value = branch;
+      document.getElementById('edit_phone').value = phone;
+      document.getElementById('edit_address').value = address;
+      document.getElementById('edit_city').value = city;
+      document.getElementById('editModal').classList.add('active');
+    }
+    function changePassword(id, label) {
+      document.getElementById('pw_id').value = id;
+      document.getElementById('pw_name_display').textContent = label;
+      document.getElementById('passwordModal').classList.add('active');
+    }
+    var franchiseStockStats = <%- JSON.stringify(franchiseStockStats) %>;
+    var productIds = <%- JSON.stringify(products.map(function(p){ return p.id })) %>;
+    function addStock(id, label) {
+      document.getElementById('stock_id').value = id;
+      document.getElementById('stock_name_display').textContent = label;
+      var stats = franchiseStockStats[id] || {};
+      productIds.forEach(function(pid) {
+        var s = stats[pid] || { in_qty: 0, out_qty: 0, balance: 0 };
+        var inEl = document.querySelector('.stock-in[data-pid="'+pid+'"]');
+        var outEl = document.querySelector('.stock-out[data-pid="'+pid+'"]');
+        var balEl = document.querySelector('.stock-bal[data-pid="'+pid+'"]');
+        if (inEl) inEl.textContent = s.in_qty;
+        if (outEl) outEl.textContent = s.out_qty;
+        if (balEl) balEl.textContent = s.balance;
+      });
+      document.getElementById('stockModal').classList.add('active');
+    }
+    function fundTransfer(id, label) {
+      document.getElementById('fund_id').value = id;
+      document.getElementById('fund_name_display').textContent = label;
+      document.getElementById('fundModal').classList.add('active');
+    }
+    function commissionPayout(id, label) {
+      document.getElementById('payout_id').value = id;
+      document.getElementById('payout_name_display').textContent = label;
+      document.getElementById('payoutModal').classList.add('active');
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+    document.querySelectorAll('.modal-overlay').forEach(function(el) {
+      el.addEventListener('click', function(e) {
+        if (e.target === this) this.classList.remove('active');
+      });
+    });
+    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
+        document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active')});
+        this.classList.add('active');
+        document.getElementById(this.getAttribute('data-tab')).classList.add('active');
+      });
+    });
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('msg')) {
+      var m = document.createElement('div');
+      m.className = 'msg msg-success';
+      m.textContent = params.get('msg');
+      document.querySelector('.tabs').before(m);
+    }
+    if (params.get('err')) {
+      var m = document.createElement('div');
+      m.className = 'msg msg-error';
+      m.textContent = params.get('err');
+      document.querySelector('.tabs').before(m);
+    }
+  </script>
+<script>document.querySelectorAll('.side-link').forEach(function(l){var p=l.getAttribute('href');if(window.location.pathname===p||(p!=='/admin'&&window.location.pathname.startsWith(p)))l.classList.add('active')});</script>
+  </div>
+  </div>
+
+
+<script>
+fetch('/admin/api/kyc-pending-count').then(function(r){return r.json()}).then(function(d){if(d.count>0){var b=document.getElementById('kyc-badge');if(b){b.textContent=d.count;b.style.display='inline';}}});
+</script>
+</body>
+</html>

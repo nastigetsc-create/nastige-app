@@ -1,0 +1,284 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Invoice <%= invoice ? invoice.invoice_no : '' %> - Nastige</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#eef2f7;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1e293b;font-size:13px;line-height:1.4}
+    .wrap{max-width:1600px;margin:0 auto;padding:20px}
+
+    .top-bar{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:white;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;border-radius:10px;margin-bottom:16px}
+    .top-bar-left{display:flex;align-items:center;gap:12px}
+    .top-bar-left img{height:38px;border-radius:6px}
+    .top-bar-right{display:flex;align-items:center;gap:8px}
+    .chip{background:rgba(255,255,255,0.15);padding:4px 12px;border-radius:16px;font-size:11px}
+    .logout-btn{background:rgba(255,255,255,0.15);border:none;color:white;padding:4px 12px;border-radius:16px;cursor:pointer;text-decoration:none;font-size:11px;transition:background .2s}
+    .logout-btn:hover{background:rgba(255,255,255,0.25)}
+
+    .btn{display:inline-flex;align-items:center;gap:5px;padding:7px 16px;border-radius:6px;font-size:12px;font-weight:600;border:none;cursor:pointer;text-decoration:none;transition:all .15s}
+    .btn-outline{background:white;border:1px solid #d1d5db;color:#374151}
+    .btn-outline:hover{background:#f9fafb}
+    .btn-danger{background:#ef4444;color:white}
+    .btn-danger:hover{background:#dc2626}
+    .btn-print{background:#667eea;color:white}
+    .btn-print:hover{background:#5a67d8}
+    .actions{display:flex;gap:8px;justify-content:center;margin-top:16px}
+
+    .paper{max-width:850px;margin:0 auto;background:white;border:2px solid #374151;font-size:11px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+
+    .p-bar{display:flex;justify-content:space-between;align-items:center;padding:8px 24px;border-bottom:1px solid #e2e8f0;background:#f8fafc;font-size:10px;color:#64748b}
+
+    .p-header{display:grid;grid-template-columns:1fr 1fr;gap:0;padding:18px 24px;border-bottom:1px solid #e2e8f0}
+
+    .p-co{display:flex;gap:14px;align-items:flex-start}
+    .p-logo{width:58px;height:58px;border-radius:8px;object-fit:contain;border:1px solid #e2e8f0}
+    .p-co-info h2{font-size:15px;font-weight:700;margin:0 0 4px;color:#111827}
+    .p-co-info p{font-size:10px;color:#6b7280;line-height:1.6;margin:0}
+    .p-co-info p strong{color:#374151}
+
+    .p-oi{font-size:10px}
+    .p-oi table{width:100%;border-collapse:collapse}
+    .p-oi td{padding:2px 6px;vertical-align:top;line-height:1.7}
+    .p-oi td:first-child{font-weight:600;color:#6b7280;white-space:nowrap;width:100px}
+    .p-oi td:last-child{color:#111827}
+
+    .p-cust{display:grid;grid-template-columns:1fr 1fr;gap:0;padding:12px 24px;border-bottom:1px solid #e2e8f0;font-size:10px}
+    .p-cust .c1{padding-right:14px}
+    .p-cust .c2{border-left:1px solid #e2e8f0;padding-left:14px}
+    .p-cl{font-weight:600;color:#6b7280;margin-bottom:3px;font-size:9px;text-transform:uppercase;letter-spacing:0.3px}
+    .p-cn{font-weight:700;font-size:11px;color:#111827}
+    .p-cust .addr{margin-top:4px;font-size:9px;color:#6b7280;line-height:1.5}
+
+    .p-meta{display:grid;grid-template-columns:1fr 1fr;gap:0;padding:10px 24px;border-bottom:1px solid #e2e8f0;font-size:10px}
+    .p-ml{font-weight:600;color:#6b7280}
+    .p-mv{color:#111827;margin-left:4px}
+
+    .p-body{display:grid;grid-template-columns:1fr 230px;min-height:180px}
+
+    .p-tbl{width:100%;border-collapse:collapse;font-size:10px}
+    .p-tbl th{background:#f1f5f9;padding:8px 10px;text-align:left;font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;color:#6b7280;border-bottom:2px solid #e2e8f0}
+    .p-tbl th.r{text-align:right}
+    .p-tbl td{padding:8px 10px;border-bottom:1px solid #f3f4f6;color:#111827}
+    .p-tbl td.r{text-align:right}
+    .p-tbl td.b{font-weight:700}
+    .p-tbl .cd{font-size:8px;color:#9ca3af;margin-top:1px}
+
+    .p-sum{border-left:2px solid #e2e8f0;padding:14px 16px;font-size:10px;display:flex;flex-direction:column;justify-content:flex-start}
+    .p-sr{display:flex;justify-content:space-between;align-items:center;padding:5px 0;color:#6b7280}
+    .p-sr .v{font-weight:600;color:#111827}
+    .p-sr.tot{border-top:2px solid #111827;margin-top:8px;padding-top:8px;font-size:13px;font-weight:700;color:#111827}
+    .p-sr.tot .v{font-weight:800;font-size:14px}
+
+    .p-words{padding:10px 24px;border-top:1px solid #e2e8f0;font-size:10px;background:#f0fdf4;border-left:4px solid #059669}
+    .p-words strong{color:#065f46}
+
+    .p-foot{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:14px 24px;border-top:1px solid #e2e8f0;font-size:8px;color:#6b7280;line-height:1.6}
+    .p-dec{font-size:8px;line-height:1.5;color:#6b7280}
+    .p-dec strong{color:#374151;font-size:8.5px}
+    .p-sign{text-align:right;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-end}
+    .p-sign .co-name{font-weight:700;font-size:11px;color:#111827;margin-bottom:24px}
+    .p-sign .line{border-top:1px solid #9ca3af;padding-top:6px;font-size:9px;color:#374151;margin-top:8px;text-align:center;min-width:160px}
+
+    @media print{
+      *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
+      html,body{margin:0;padding:0;background:white;font-size:10px}
+      .wrap{padding:0}
+      .top-bar,.actions{display:none!important}
+      .paper{box-shadow:none;border:2px solid #374151;max-width:100%}
+      .p-header{padding:10px 18px}
+      .p-cust{padding:8px 18px}
+      .p-meta{padding:6px 18px}
+      .p-body{min-height:140px}
+      .p-tbl th,.p-tbl td{padding:5px 7px;font-size:8.5px}
+      .p-sum{padding:8px 10px;font-size:9px}
+      .p-words{padding:6px 18px}
+      .p-foot{padding:8px 18px;font-size:7.5px}
+      @page{margin:5mm;size:A4 portrait}
+    }
+    @media(max-width:768px){
+      .wrap{padding:10px}
+      .p-header,.p-cust,.p-meta,.p-body{grid-template-columns:1fr}
+      .p-body{grid-template-columns:1fr}
+      .p-sum{border-left:none;border-top:2px solid #e2e8f0}
+      .p-cust .c2{border-left:none;border-top:1px solid #e2e8f0;padding-left:0;padding-top:10px;margin-top:10px}
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <img src="/brand/logo" alt="Logo" onerror="this.style.display='none'"/>
+      <div>
+        <h2 style="margin:0;font-size:16px;font-weight:700">Invoice</h2>
+        <p style="margin:2px 0 0;opacity:0.8;font-size:11px">Nastige Industries Admin Panel</p>
+      </div>
+    </div>
+    <div class="top-bar-right">
+      <span class="chip">Admin</span>
+    </div>
+  </div>
+
+<% if (!invoice) { %>
+  <div style="background:white;border-radius:10px;padding:40px;text-align:center;color:#ef4444;box-shadow:0 2px 10px rgba(0,0,0,0.05)">
+    <h3 style="margin:0 0 8px">Invoice Not Found</h3>
+    <p style="color:#6b7280;margin:0 0 16px">The requested invoice does not exist.</p>
+    <a href="/admin/gst-bills" class="btn btn-outline">Back to GST Bills</a>
+  </div>
+<% } else { %>
+<%
+  var qty = invoice.quantity || 1;
+  var total = invoice.total_inr || 0;
+  var gstInr = invoice.gst_inr || 0;
+  var cgstVal = invoice.cgst_inr || invoice.cgst || (gstInr / 2);
+  var sgstVal = invoice.sgst_inr || invoice.sgst || (gstInr / 2);
+  var igstVal = invoice.igst_inr || invoice.igst || 0;
+  var subtotal = invoice.subtotal || invoice.price_inr || (gst_type === 'inclusive' ? total - gstInr : total);
+  var gstPercent = invoice.gst_percent || (invoice.items && invoice.items[0] ? invoice.items[0].gst_percent : 0) || 0;
+  var isIgst = igstVal > 0;
+  var createdDate = new Date(invoice.created_at);
+  var formattedDate = createdDate.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric', timeZone: 'Asia/Kolkata'});
+  var formattedTime = createdDate.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true, timeZone: 'Asia/Kolkata'});
+  var todayDate = new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric', timeZone: 'Asia/Kolkata'});
+%>
+<div class="paper">
+  <div class="p-bar">
+    <span><%= todayDate %> <%= new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true, timeZone: 'Asia/Kolkata'}) %></span>
+    <span style="font-weight:700;letter-spacing:1px;font-size:11px">INVOICE</span>
+    <span><%= company_name %></span>
+  </div>
+
+  <div class="p-header">
+    <div class="p-co">
+      <img src="/brand/logo" class="p-logo" alt="Logo" onerror="this.style.display='none'"/>
+      <div class="p-co-info">
+        <h2><%= company_name %></h2>
+        <% if (company_address) { %><p><%= company_address %></p><% } %>
+        <% if (company_phone) { %><p>Phone: <%= company_phone %></p><% } %>
+        <% if (company_email) { %><p>Email: <%= company_email %></p><% } %>
+        <% if (company_gstin) { %><p><strong>GSTIN: <%= company_gstin %></strong></p><% } %>
+      </div>
+    </div>
+    <div class="p-oi">
+      <table>
+        <tr><td>Order Date:</td><td colspan="3"><%= formattedDate %>, <%= formattedTime %></td></tr>
+        <tr><td>Deliver To:</td><td colspan="3"><%= user ? (user.member_name || user.username || '-') : '-' %></td></tr>
+        <tr><td>Customer Name:</td><td colspan="3"><%= user ? (user.member_name || user.username || '-') : '-' %></td></tr>
+        <tr><td>Payment Mode:</td><td colspan="3"></td></tr>
+        <tr><td>Invoice No:</td><td colspan="3"><strong><%= invoice.invoice_no || '-' %></strong></td></tr>
+        <tr><td>Order Notes:</td><td colspan="3"><%= invoice.notes || '-' %></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="p-cust">
+    <div class="c1">
+      <div class="p-cl">Customer (Name, Billing Address)</div>
+      <div class="p-cn"><%= user ? (user.member_name || user.username || 'N/A') : 'N/A' %></div>
+      <div class="addr"><% if (user && user.address) { %><%= user.address %><% } else { %>Same as billing<% } %></div>
+    </div>
+    <div class="c2">
+      <div class="p-cl">Customer (Name, Shipping Address)</div>
+      <div class="p-cn"><%= user ? (user.member_name || user.username || 'N/A') : 'N/A' %></div>
+      <div class="addr"><%= invoice.shipping_address || invoice.address || 'Same as billing' %></div>
+    </div>
+  </div>
+
+  <div class="p-meta">
+    <div><span class="p-ml">Mobile No:</span><span class="p-mv"><%= user && user.phone ? user.phone : '-' %></span></div>
+    <div><span class="p-ml">GST No:</span><span class="p-mv"><%= user && user.gst_number ? user.gst_number : '-' %></span></div>
+  </div>
+
+  <div class="p-body">
+    <div style="overflow-x:auto">
+      <table class="p-tbl">
+        <thead>
+          <tr>
+            <th style="min-width:100px">Product Name</th>
+            <th style="min-width:80px">Product Code</th>
+            <th>HSN Code</th>
+            <th class="r">GST (%)</th>
+            <th class="r">Quantity</th>
+            <th class="r">Gross Amount</th>
+            <th class="r">Taxable Value</th>
+            <th class="r"><%= isIgst ? 'IGST' : 'CGST' %></th>
+            <th class="r">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (invoice.items && invoice.items.length > 0) { %>
+            <% invoice.items.forEach(function(item) { %>
+            <tr>
+              <td><strong><%= item.product_name || invoice.product_name || 'Product' %></strong></td>
+              <td><%= item.product_code || product_code || '-' %><div class="cd"><%= item.product_code || product_code || '' %></div></td>
+              <td><%= item.hsn_code || hsn_code || '-' %></td>
+              <td class="r"><%= item.gst_percent || gstPercent || 0 %>%</td>
+              <td class="r"><%= item.quantity || qty %></td>
+              <td class="r"><%= rupee.format(item.amount || item.total_inr || 0) %></td>
+              <td class="r"><%= rupee.format(item.taxable_value || item.price_inr || 0) %></td>
+              <td class="r"><%= rupee.format(item.gst_inr || item.igst || item.cgst || 0) %></td>
+              <td class="r b"><%= rupee.format(item.amount || item.total_inr || 0) %></td>
+            </tr>
+            <% }); %>
+          <% } else { %>
+            <tr>
+              <td><strong><%= invoice.product_name || 'Product' %></strong></td>
+              <td><%= product_code || '-' %><div class="cd"><%= product_code || '' %></div></td>
+              <td><%= hsn_code || '-' %></td>
+              <td class="r"><%= gstPercent || 0 %>%</td>
+              <td class="r"><%= qty %></td>
+              <td class="r"><%= rupee.format(total) %></td>
+              <td class="r"><%= rupee.format(subtotal) %></td>
+              <td class="r"><%= rupee.format(isIgst ? igstVal : cgstVal) %></td>
+              <td class="r b"><%= rupee.format(total) %></td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="p-sum">
+      <div class="p-sr"><span>Total Amount</span><span class="v"><%= rupee.format(total) %> Rs.</span></div>
+      <div class="p-sr"><span>+ GST</span><span class="v"><%= rupee.format(gstInr) %> Rs.</span></div>
+      <% if (isIgst) { %>
+      <div class="p-sr"><span>+ IGST</span><span class="v"><%= rupee.format(igstVal) %> Rs.</span></div>
+      <% } else { %>
+      <div class="p-sr"><span>+ CGST</span><span class="v"><%= rupee.format(cgstVal) %> Rs.</span></div>
+      <div class="p-sr"><span>+ SGST</span><span class="v"><%= rupee.format(sgstVal) %> Rs.</span></div>
+      <% } %>
+      <div class="p-sr"><span>Handling Charges</span><span class="v">0.00 Rs.</span></div>
+      <div class="p-sr"><span>Redeem Wallet</span><span class="v">0.00 Rs.</span></div>
+      <div class="p-sr tot"><span>Net Payable</span><span class="v"><%= rupee.format(total) %></span></div>
+    </div>
+  </div>
+
+  <div class="p-words">
+    <strong>AMOUNT IN WORD: </strong><%= amount_words %>
+  </div>
+
+  <div class="p-foot">
+    <div>
+      <div class="p-dec"><strong>Declaration:</strong> It is hereby Certified that this invoice shows the actual price of the goods described herein and that no other invoice has been or will be issued, and that all particulars are true and correct.</div>
+    </div>
+    <div class="p-sign">
+      <div class="co-name"><%= company_name %></div>
+      <div class="line">PLACE AND DATE OF ISSUE<br/>Delhi & <%= todayDate %></div>
+      <div class="line">SEAL AND SIGNATURE</div>
+    </div>
+  </div>
+</div>
+
+<div class="actions">
+  <button onclick="window.print()" class="btn btn-print">Print Invoice</button>
+  <a href="/admin/gst-bills" class="btn btn-outline">Back to GST Bills</a>
+  <form action="/admin/invoice/<%= invoice.invoice_no %>/delete" method="POST" style="display:inline" onsubmit="return confirm('Delete this invoice permanently?')">
+    <button type="submit" class="btn btn-danger">Delete</button>
+  </form>
+</div>
+<% } %>
+</div>
+</body>
+</html>

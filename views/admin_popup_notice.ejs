@@ -1,0 +1,174 @@
+﻿<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Popup Notice Settings | Nastige</title>
+  <style>
+    html{font-size:16px;-webkit-text-size-adjust:100%;scroll-padding-top:0}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1e293b;font-size:14px;line-height:1.5}
+    .wrapper{max-width:1600px;margin:0 auto;padding:20px}
+    .header{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:white;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;border-radius:16px;margin-bottom:18px}
+    .header-left{display:flex;align-items:center;gap:12px}
+    .header-logo{height:44px;border-radius:8px}
+    .header-right{display:flex;align-items:center;gap:10px}
+    .user-chip{background:rgba(255,255,255,0.15);padding:6px 14px;border-radius:20px;font-size:13px}
+    .logout-btn{background:rgba(255,255,255,0.15);border:none;color:white;padding:6px 14px;border-radius:20px;cursor:pointer;text-decoration:none}
+    
+    
+    
+    
+    .card{background:white;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.05);overflow:hidden}
+    .card-header{padding:14px 18px;border-bottom:1px solid #e2e8f0;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+    .card-body{padding:18px}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .form-group{margin-bottom:14px}
+    .form-group label{display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px}
+    .form-control{width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;box-sizing:border-box}
+    .form-control:focus{border-color:#667eea;outline:none;box-shadow:0 0 0 3px rgba(102,126,234,0.15)}
+    .form-textarea{width:100%;padding:12px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;box-sizing:border-box;resize:vertical;min-height:250px;line-height:1.6}
+    .form-textarea:focus{border-color:#667eea;outline:none;box-shadow:0 0 0 3px rgba(102,126,234,0.15)}
+    .btn{display:inline-block;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;text-decoration:none}
+    .btn-primary{background:#1e293b;color:white}
+    .btn-primary:hover{background:#0f172a}
+    .toggle{position:relative;display:inline-block;width:36px;height:20px;vertical-align:middle}
+    .toggle input{opacity:0;width:0;height:0}
+    .toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#cbd5e1;border-radius:20px;transition:0.3s}
+    .toggle-slider:before{position:absolute;content:"";height:14px;width:14px;left:3px;bottom:3px;background:white;border-radius:50%;transition:0.3s}
+    .toggle input:checked + .toggle-slider{background:#10b981}
+    .toggle input:checked + .toggle-slider:before{transform:translateX(16px)}
+    .color-swatch{display:inline-block;width:24px;height:24px;border-radius:6px;border:2px solid #e2e8f0;vertical-align:middle;margin-left:6px}
+    .alert{background:#d1fae5;border:1px solid #6ee7b7;border-left:4px solid #10b981;border-radius:8px;padding:12px 16px;margin-bottom:16px;color:#065f46;font-weight:500}
+    .alert-error{background:#fee2e2;border:1px solid #fca5a5;border-left:4px solid #ef4444;color:#991b1b}
+    .popup-preview{background:white;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.15);padding:30px;max-width:400px;margin:0 auto;position:relative}
+    .popup-preview-close{position:absolute;top:12px;right:16px;font-size:20px;color:#94a3b8;cursor:pointer}
+    @media(max-width:768px){.wrapper{padding:12px}.header{flex-direction:row;align-items:center;padding:10px 14px;gap:8px;border-radius:12px;flex-wrap:wrap}.grid-2{grid-template-columns:1fr}}
+  
+    .admin-layout{display:flex;gap:20px}
+    .sidebar{width:220px;flex-shrink:0;background:white;border-radius:12px;padding:8px;box-shadow:0 2px 10px rgba(0,0,0,0.05);position:sticky;top:20px;height:fit-content;max-height:calc(100vh - 20px);overflow-y:auto}
+    .sidebar::-webkit-scrollbar{width:4px}
+    .sidebar::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:4px}
+    .side-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;text-decoration:none;color:#475569;font-size:12px;font-weight:500;transition:all 0.1s}
+    .side-link:hover{background:#f1f5f9;color:#1e293b}
+    .side-link.active{background:#1e293b;color:white}
+    .side-link svg{width:16px;height:16px;flex-shrink:0;fill:currentColor}
+    .side-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;padding:12px 10px 4px}
+    .content{flex:1;min-width:0}
+    @media(max-width:1024px){.admin-layout{flex-direction:column}.sidebar{width:260px;position:fixed;top:0;left:-280px;height:100vh;max-height:100vh;border-radius:0;padding:12px;transition:left 0.25s ease;z-index:1001;overflow-y:auto}.sidebar.open{left:0}.side-link{font-size:12px;padding:8px 10px}.side-section{display:none}}
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="header">
+      <div class="header-left">
+        <img src="/brand/logo" class="header-logo" alt="Logo" onerror="this.style.display='none'"/>
+        <div>
+          <h2 style="margin:0;font-size:20px;">Admin Dashboard</h2>
+          <p style="margin:4px 0 0;opacity:0.9;font-size:13px;">Nastige Industries Admin Panel</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div style="position:relative;">
+          <span id="adminMenuChip" class="user-chip" onclick="var d=document.getElementById('adminMenuDrop');d.style.display=d.style.display==='block'?'none':'block'" style="cursor:pointer;user-select:none;">Admin ▾</span>
+          <div id="adminMenuDrop" style="display:none;position:absolute;right:0;top:110%;background:white;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.15);min-width:180px;z-index:9999;overflow:hidden;">
+            <a href="/admin/password" style="display:flex;align-items:center;gap:8px;padding:12px 16px;text-decoration:none;color:#1e293b;font-size:13px;font-weight:500;border-bottom:1px solid #f1f5f9;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Change Password
+            </a>
+            <a href="/logout" onclick="sessionStorage.removeItem('broadcastsShown');" style="display:flex;align-items:center;gap:8px;padding:12px 16px;text-decoration:none;color:#dc2626;font-size:13px;font-weight:600;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Logout
+            </a>
+          </div>
+        </div>
+        <script>
+        document.addEventListener('click',function(e){var d=document.getElementById('adminMenuDrop');if(d&&d.style.display==='block'&&!e.target.closest('#adminMenuDrop')&&e.target.id!=='adminMenuChip')d.style.display='none'});
+        </script>
+      </div>
+    </div>
+
+<div class="admin-layout">
+    <%- include('_admin_sidebar', { active: 'popup-notice' }) %>
+    <div class="content"><% if (success) { %>
+    <div class="alert"><%= success %></div>
+    <% } %>
+    <% if (error) { %>
+    <div class="alert alert-error"><%= error %></div>
+    <% } %>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">Popup Notice Settings</div>
+        <div class="card-body">
+          <form action="/admin/popup-notice" method="POST">
+            <div class="form-group">
+              <label class="toggle" style="margin-right:8px">
+                <input type="checkbox" name="popup_notice_enabled" <%= settings.popup_notice_enabled ? 'checked' : '' %>/>
+                <span class="toggle-slider"></span>
+              </label>
+              <span style="font-size:13px;color:#374151">Enable Popup Notice</span>
+            </div>
+            <div class="form-group">
+              <label>Popup Title</label>
+              <input class="form-control" name="popup_notice_title" value="<%= settings.popup_notice_title || '' %>" placeholder="e.g. Announcement"/>
+            </div>
+            <div class="form-group">
+              <label>Popup Message</label>
+              <textarea class="form-textarea" name="popup_notice_message" placeholder="Enter the notice message..." rows="12" style="min-height:250px;font-size:14px;padding:14px;line-height:1.7;resize:vertical;"><%= settings.popup_notice_message || '' %></textarea>
+            </div>
+            <div class="form-group">
+              <label>Button Text</label>
+              <input class="form-control" name="popup_notice_button_text" value="<%= settings.popup_notice_button_text || 'Close' %>"/>
+            </div>
+            <div class="form-group">
+              <label>Button Link (optional)</label>
+              <input class="form-control" name="popup_notice_button_link" value="<%= settings.popup_notice_button_link || '' %>" placeholder="e.g. /promotions"/>
+            </div>
+            <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div class="form-group">
+                <label>
+                  Background Color
+                  <span class="color-swatch" id="bgSwatch" style="background:<%= settings.popup_notice_bg || '#ffffff' %>"></span>
+                </label>
+                <input class="form-control" type="color" name="popup_notice_bg" value="<%= settings.popup_notice_bg || '#ffffff' %>" onchange="document.getElementById('bgSwatch').style.background=this.value;document.getElementById('previewPopup').style.background=this.value"/>
+              </div>
+              <div class="form-group">
+                <label>
+                  Accent Color
+                  <span class="color-swatch" id="accentSwatch" style="background:<%= settings.popup_notice_color || '#667eea' %>"></span>
+                </label>
+                <input class="form-control" type="color" name="popup_notice_color" value="<%= settings.popup_notice_color || '#667eea' %>" onchange="document.getElementById('accentSwatch').style.background=this.value;document.getElementById('previewBtn').style.background=this.value"/>
+              </div>
+            </div>
+            <button class="btn btn-primary" type="submit">Save Settings</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Preview</div>
+        <div class="card-body" style="background:#f1f5f9;display:flex;align-items:center;justify-content:center;min-height:300px">
+          <div class="popup-preview" id="previewPopup" style="background:<%= settings.popup_notice_bg || '#ffffff' %>">
+            <span class="popup-preview-close">&times;</span>
+            <h3 style="margin:0 0 12px;font-size:18px;color:#1e293b"><%= settings.popup_notice_title || 'Popup Title' %></h3>
+            <p style="margin:0 0 16px;font-size:14px;color:#475569;line-height:1.6"><%= settings.popup_notice_message || 'Your notice message will appear here.' %></p>
+            <div style="text-align:center">
+              <span id="previewBtn" style="display:inline-block;background:<%= settings.popup_notice_color || '#667eea' %>;color:white;padding:10px 28px;border-radius:8px;font-size:14px;font-weight:600"><%= settings.popup_notice_button_text || 'Close' %></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+<script>document.querySelectorAll('.side-link').forEach(function(l){var p=l.getAttribute('href');if(window.location.pathname===p||(p!=='/admin'&&window.location.pathname.startsWith(p)))l.classList.add('active')});</script>
+  </div>
+
+
+<script>
+fetch('/admin/api/kyc-pending-count').then(function(r){return r.json()}).then(function(d){if(d.count>0){var b=document.getElementById('kyc-badge');if(b){b.textContent=d.count;b.style.display='inline';}}});
+</script>
+</body>
+</html>
