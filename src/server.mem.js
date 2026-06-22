@@ -2956,6 +2956,16 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '..', 'views'));
 app.set('view cache', false);
 app.use(compression());
+app.use((req, res, next) => {
+  const origSetHeader = res.setHeader.bind(res);
+  res.setHeader = (name, value) => {
+    if (name.toLowerCase() === 'content-type' && typeof value === 'string' && value.includes('text/') && !value.includes('charset')) {
+      value = value + '; charset=utf-8';
+    }
+    return origSetHeader(name, value);
+  };
+  next();
+});
 app.use(express.static(path.join(__dirname, '..', 'public')));
 const ROOT_UPLOADS_DIR = path.join(__dirname, '..', 'uploads');
 app.use('/uploads', express.static(ROOT_UPLOADS_DIR));
