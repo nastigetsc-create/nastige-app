@@ -3100,12 +3100,14 @@ app.use((req, res, next) => {
     const host = req.get('Host');
     const referer = req.get('Referer');
     if (origin && host) {
-      const originHost = new URL(origin).hostname;
-      const serverHost = host.split(':')[0];
-      if (originHost !== serverHost) {
-        console.log('[CSRF BLOCKED]', req.method, req.path, 'origin:', origin);
-        return res.status(403).json({ error: 'Forbidden: Cross-origin request blocked' });
-      }
+      try {
+        const originHost = new URL(origin).hostname;
+        const serverHost = host.split(':')[0];
+        if (originHost !== serverHost) {
+          console.log('[CSRF BLOCKED]', req.method, req.path, 'origin:', origin);
+          return res.status(403).json({ error: 'Forbidden: Cross-origin request blocked' });
+        }
+      } catch(e) {}
     }
     if (referer) {
       try {
