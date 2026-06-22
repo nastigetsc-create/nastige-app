@@ -927,6 +927,101 @@ function scheduleBirthdayEmails() {
 }
 scheduleBirthdayEmails();
 
+
+
+// ========== DAILY MYSQL BACKUP (5 AM IST) ==========
+const MYSQL_BACKUP_DIR = path.join(BACKUP_DIR, 'mysql');
+fs.mkdirSync(MYSQL_BACKUP_DIR, { recursive: true });
+
+async function dailyMySQLBackup() {
+  if (!USE_MYSQL) {
+    console.log('[MYSQL-BACKUP] MySQL not enabled, skipping');
+    return null;
+  }
+  const conn = await mysqlAdapter.getPool().getConnection();
+  try {
+    const ts = new Date().toISOString().replace(/[:.]/g, '-');
+    const filename = `mysql_backup_${ts}.sql`;
+    const filepath = path.join(MYSQL_BACKUP_DIR, filename);
+    let sql = '-- Nastige MLM MySQL Auto Backup\n';
+    sql += `-- Date: ${new Date().toISOString()}\n\n`;
+    sql += 'SET NAMES utf8mb4;\nSET FOREIGN_KEY_CHECKS=0;\n\n';
+
+    const tables = mysqlAdapter.ALL_COLLECTIONS.concat(['settings', 'counters']);
+    for (const table of tables) {
+      try {
+        const [createRows] = await conn.execute(`SHOW CREATE TABLE \`${table}\``);
+        if (createRows.length > 0) {
+          sql += `-- Table: ${table}\n`;
+          sql += `DROP TABLE IF EXISTS \`${table}\`;\n`;
+          sql += createRows[0]['Create Table'] + ';\n\n';
+        }
+        const [rows] = await conn.execute(`SELECT * FROM \`${table}\``);
+        if (rows.length > 0) {
+          const cols = Object.keys(rows[0]);
+          const quotedCols = cols.map(c => `\`${c}\``).join(', ');
+          for (const row of rows) {
+            const vals = cols.map(c => {
+              const v = row[c];
+              if (v === null) return 'NULL';
+              if (typeof v === 'number') return String(v);
+              if (typeof v === 'boolean') return v ? '1' : '0';
+              if (typeof v === 'object') return conn.escape(JSON.stringify(v));
+              return conn.escape(String(v));
+            }).join(', ');
+            sql += `INSERT INTO \`${table}\` (${quotedCols}) VALUES (${vals});\n`;
+          }
+          sql += '\n';
+          console.log(`[MYSQL-BACKUP] ${table}: ${rows.length} rows`);
+        }
+      } catch (e) {
+        sql += `-- Skipped ${table}: ${e.message}\n\n`;
+      }
+    }
+
+    sql += 'SET FOREIGN_KEY_CHECKS=1;\n';
+    fs.writeFileSync(filepath, sql, 'utf8');
+    const stats = fs.statSync(filepath);
+    console.log(`[MYSQL-BACKUP] Complete: ${filename} (${(stats.size / 1024).toFixed(1)} KB)`);
+
+    // Delete backups older than 7 days
+    const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    const oldFiles = fs.readdirSync(MYSQL_BACKUP_DIR).filter(f => f.startsWith('mysql_backup_'));
+    for (const f of oldFiles) {
+      const fp = path.join(MYSQL_BACKUP_DIR, f);
+      try {
+        if (fs.statSync(fp).mtimeMs < cutoff) {
+          fs.unlinkSync(fp);
+          console.log(`[MYSQL-BACKUP] Deleted old: ${f}`);
+        }
+      } catch (_) {}
+    }
+
+    return filepath;
+  } catch (e) {
+    console.error('[MYSQL-BACKUP] Error:', e.message);
+    return null;
+  } finally {
+    conn.release();
+  }
+}
+
+function scheduleDailyBackup() {
+  const now = DateTime.now().setZone('Asia/Kolkata');
+  const target = now.set({ hour: 5, minute: 0, second: 0, millisecond: 0 });
+  let msTillTarget = target.toMillis() - now.toMillis();
+  if (msTillTarget < 0) msTillTarget += 86400000;
+  setTimeout(() => {
+    dailyMySQLBackup();
+    setInterval(dailyMySQLBackup, 86400000);
+  }, msTillTarget);
+  console.log('[MYSQL-BACKUP] Scheduled for 5 AM IST daily (in ' + Math.round(msTillTarget / 60000) + ' min)');
+}
+scheduleDailyBackup();
+
+
+
+
 // Restore STAR WINNER rank from rank_history + celebrations for users who lost it
 [(db.rank_history || []).map(h => ({ user_id: h.user_id, rank_name: h.rank_name, achieved_at: h.achieved_at })),
  (db.celebrations || []).filter(c => c.rank_achieved === 'STAR WINNER').map(c => ({ user_id: c.user_id, rank_name: c.rank_achieved, achieved_at: c.celebration_date }))
