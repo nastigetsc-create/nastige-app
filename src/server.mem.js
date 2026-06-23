@@ -2704,41 +2704,8 @@ function getDynamicRank(userId) {
   const u = typeof userId === 'object' ? userId : getUserById(userId);
   if (!u || u.role !== 'user') return u.rank_name || null;
 
-  // Check STAR WINNER (IDs within 7 days)
-  const starWinnerRule = (db.rank_rules || []).find(r => r.criteria_type === 'direct_joins_7_days');
-  const hasPurchasedProduct_rank = (u.pv > 0) || u.plan_id;
-  if (starWinnerRule && u.status === 'active' && hasPurchasedProduct_rank) {
-    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
-    const activationDate = u.activated_at ? new Date(u.activated_at) : new Date(u.created_at);
-    const sevenDaysLater = new Date(activationDate.getTime() + sevenDaysMs);
-
-    function countSingleLine(startId, side) {
-      let c = 0, cur = startId;
-      const msStart = activationDate.getTime(), msEnd = sevenDaysLater.getTime();
-      while (cur) {
-        const usr = getUserById(cur);
-        if (!usr || usr.status !== 'active') break;
-        const t = new Date(usr.activated_at || usr.created_at).getTime();
-        if (t < msStart || t > msEnd) break;
-        c++;
-        const next = (db.users || []).find(ch => ch.placement_parent_id === cur && ch.placement_side === side && ch.sponsor_id === cur);
-        cur = next ? next.id : null;
-      }
-      return c;
-    }
-
-    const leftChild = (db.users || []).find(c => c.placement_parent_id === u.id && c.placement_side === 'left' && c.sponsor_id === u.id);
-    const rightChild = (db.users || []).find(c => c.placement_parent_id === u.id && c.placement_side === 'right' && c.sponsor_id === u.id);
-    const leftActive = leftChild ? countSingleLine(leftChild.id, 'left') : 0;
-    const rightActive = rightChild ? countSingleLine(rightChild.id, 'right') : 0;
-    const s = getSettingsRow();
-    const targetLeft = s.star_target_left || starWinnerRule.target_left || 2;
-    const targetRight = s.star_target_right || starWinnerRule.target_right || 2;
-    if (leftActive >= targetLeft && rightActive >= targetRight) return 'STAR WINNER';
-  }
-
-  // Check PV-based ranks
-  const tL = u.user_code === 'N77668569' ? (u.carry_left||0)+(u.org_bv_left||0) : subtreeStats(u.left_id).pv;
+  // PV-based ranks only (subtree live calculation)
+  const tL = subtreeStats(u.left_id).pv;
   const tR = subtreeStats(u.right_id).pv;
   const allRankRules = ensureRankRules().filter(r => r.criteria_type !== 'direct_joins_7_days' && !r._fixed).sort((a, b) => (a.order || 0) - (b.order || 0));
   let bestRank = null;
