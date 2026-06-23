@@ -2716,9 +2716,6 @@ function getDynamicRank(userId) {
   const u = typeof userId === 'object' ? userId : getUserById(userId);
   if (!u || u.role !== 'user') return u.rank_name || null;
 
-  // STAR WINNER is permanent — once achieved, never lose it
-  if (u.rank_name === 'STAR WINNER') return 'STAR WINNER';
-
   // Check STAR WINNER (IDs within 7 days)
   const starWinnerRule = (db.rank_rules || []).find(r => r.criteria_type === 'direct_joins_7_days');
   const hasPurchasedProduct_rank = (u.pv > 0) || u.plan_id;
