@@ -8907,8 +8907,8 @@ app.get('/admin/users', requireAuth('admin'), (req, res) => {
       pv: u.pv || 0,
       carry_left: u.carry_left || 0,
       carry_right: u.carry_right || 0,
-      org_bv_left: u.org_bv_left || 0,
-      org_bv_right: u.org_bv_right || 0,
+      org_bv_left: subtreeStats(u.left_id).pv,
+      org_bv_right: subtreeStats(u.right_id).pv,
       plan_id: u.plan_id || null,
       activated_at: u.activated_at || null,
       leader_ref: u.leader_ref || null
