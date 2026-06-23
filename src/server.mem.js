@@ -1022,19 +1022,7 @@ scheduleDailyBackup();
 
 
 
-// Restore STAR WINNER rank from rank_history + celebrations for users who lost it
-[(db.rank_history || []).map(h => ({ user_id: h.user_id, rank_name: h.rank_name, achieved_at: h.achieved_at })),
- (db.celebrations || []).filter(c => c.rank_achieved === 'STAR WINNER').map(c => ({ user_id: c.user_id, rank_name: c.rank_achieved, achieved_at: c.celebration_date }))
-].flat().forEach(entry => {
-  if (entry.rank_name === 'STAR WINNER') {
-    const u = getUserById(entry.user_id);
-    if (u && u.role === 'user' && u.rank_name !== 'STAR WINNER') {
-      u.rank_name = 'STAR WINNER';
-      u.rank_updated_at = entry.achieved_at || u.rank_updated_at;
-      console.log('[STARTUP] Restored STAR WINNER:', u.user_code, u.member_name);
-    }
-  }
-});
+// Ranks are now always calculated live via getDynamicRank — no startup restore needed
 
 function generateUserCode6() {
   let code = null;
