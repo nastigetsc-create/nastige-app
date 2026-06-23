@@ -18151,13 +18151,14 @@ app.get('/downline', requireAuth('user'), requireMonthlyRepurchase(), (req, res)
       if (u) {
         let sponsor = u.sponsor_id ? getUserById(u.sponsor_id) : null;
         if (!sponsor && u.placement_parent_id) sponsor = getUserById(u.placement_parent_id);
-        const { left, right } = computeUserLegPV(u);
+        const leftPV = subtreeStats(u.left_id).pv;
+        const rightPV = subtreeStats(u.right_id).pv;
         const ranks = getOrderedRanks();
         let displayRank = null;
         for (let i = ranks.length - 1; i >= 0; i--) {
           const r = ranks[i];
           if (r.criteria_type === 'direct_joins_7_days') continue;
-          if (left >= (r.left_pv || 0) && right >= (r.right_pv || 0)) {
+          if (leftPV >= (r.left_pv || 0) && rightPV >= (r.right_pv || 0)) {
             displayRank = r.name;
             break;
           }
