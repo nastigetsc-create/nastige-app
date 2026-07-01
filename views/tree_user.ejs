@@ -309,6 +309,7 @@
       <div class="popup-row"><span class="popup-label">Right BV</span><span class="popup-value" id="popRBV">-</span></div>
       <div class="popup-row"><span class="popup-label">Status</span><span class="popup-value" id="popStatus">-</span></div>
       <div class="popup-row"><span class="popup-label">Joined</span><span class="popup-value" id="popJoined">-</span></div>
+      <div style="padding:6px 0 2px;text-align:center"><a id="popViewTree" href="#" style="display:inline-block;background:#06b6d4;color:#fff;padding:6px 16px;border-radius:6px;font-size:11px;font-weight:700;text-decoration:none">View Tree</a></div>
     </div>
   </div>
 
@@ -329,6 +330,7 @@
       var sc = d.status === 'active' ? '#16a34a' : (d.status === 'inactive' ? '#dc2626' : '#d97706');
       document.getElementById('popStatus').innerHTML = '<span style="color:' + sc + ';font-weight:700;">' + st + '</span>';
       document.getElementById('popJoined').textContent = d.joined || '-';
+      document.getElementById('popViewTree').href = '/my-tree?user=' + encodeURIComponent(d.id) + '&depth=' + currentDepth;
       var left = rect.left + rect.width / 2 - 110;
       var top = rect.bottom + 10;
       if (left + 230 > window.innerWidth) left = window.innerWidth - 230;
