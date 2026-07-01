@@ -76,6 +76,9 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 220px; z-index: 99999999; text-align: left;
     }
     #memberPopup.show { display: block; }
+    @media (max-width: 768px) {
+      #memberPopup { width: 90%; left: 5% !important; right: 5%; max-width: 320px; }
+    }
     #memberPopup .popup-header {
       font-weight: 700; font-size: 11px; color: #fff;
       background: linear-gradient(135deg, #06b6d4, #0891b2);
@@ -344,23 +347,32 @@
     }
 
     document.querySelectorAll('.tn').forEach(function(node) {
+      var isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
       node.addEventListener('click', function(e) {
         var id = this.dataset.id;
         if (!id) return;
-        e.preventDefault();
-        window.location.href = '/my-tree?user=' + encodeURIComponent(id) + '&depth=' + currentDepth;
+        if (isTouchDevice) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (activeNode === this) {
+            hidePopup();
+          } else {
+            showPopup(this);
+          }
+        } else {
+          window.location.href = '/my-tree?user=' + encodeURIComponent(id) + '&depth=' + currentDepth;
+        }
       });
 
-      node.addEventListener('mouseenter', function() {
-        if (window.matchMedia('(hover: hover)').matches) {
+      if (!isTouchDevice) {
+        node.addEventListener('mouseenter', function() {
           showPopup(this);
-        }
-      });
-      node.addEventListener('mouseleave', function() {
-        if (window.matchMedia('(hover: hover)').matches) {
+        });
+        node.addEventListener('mouseleave', function() {
           hidePopup();
-        }
-      });
+        });
+      }
     });
 
     document.addEventListener('click', function(e) {
